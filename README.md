@@ -6,26 +6,27 @@ This repository is forked from https://github.com/JRPan/crisp-artifact and sligh
 
 ### Cloning
 ```bash
-mkdir -p "$HOME/projects"
+mkdir -p "$HOME/projects" && cd "$HOME/projects"
 git clone https://github.com/jorgenfinsveen/crisp-sim.git crisp_framework
+export CRISP_ROOT="$HOME/projects/crisp_framework"
 ```
 
 ### Creating necessary directories
 ```bash
 mkdir -p "$HOME/usr/local"
 mkdir -p "$HOME/opt"
-mkdir -p "$HOME/.environment/python"
+mkdir -p "$HOME/.environments/python"
 ```
 
 ### Installing a Python environment
 ```bash
 module load Python/3.13.5-GCCcore-14.3.0
 python -m venv "$HOME/.environments/python/env"
-cp "$HOME/projects/.install/idun-setup/pyenv" $HOME
+cp "$CRISP_ROOT/.install/idun-setup/pyenv" $HOME
 chmod +x "$HOME/pyenv"
 source "$HOME/pyenv"
 
-pip install -r "$HOME/projects/.install/idun-setup/requirements.txt"
+pip install -r "$CRISP_ROOT/.install/idun-setup/requirements.txt"
 ```
 
 ### Installing CUDA
@@ -40,19 +41,23 @@ ln -s "$HOME/usr/local/cuda-11.7" "$HOME/usr/local/cuda-$CUDA_VERSION"
 ### Installing Embree3
 ```bash
 export EMBREE_VERSION="3.13.5"
-cd "$HOME/opt"
-wget -O embree3.tgz https://github.com/embree/embree/releases/download/v$EMBREE_VERSION/embree-$EMBREE_VERSION.x86_64.linux.tar.gz
-tar xzf embree3.tgz && rm -f embree3.tgz
-. /opt/embree-$EMBREE_VERSION.x86_64.linux/embree-vars.sh
+export EMBREE_INSTALL="$HOME/opt/embree3.tgz"
+export EMBREE_VARS="$HOME/opt/embree-$EMBREE_VERSION.x86_64.linux/embree-vars.sh"
+
+wget -O $EMBREE_INSTALL https://github.com/embree/embree/releases/download/v$EMBREE_VERSION/embree-$EMBREE_VERSION.x86_64.linux.tar.gz
+tar xzf $EMBREE_INSTALL && rm -f $EMBREE_INSTALL
+source $EMBREE_VARS
 ```
 
 ### Installing VulkanSDK
 ```bash
 export VULKAN_VERSION="1.3.296.0"
-mkdir -p "$HOME/opt/vulkansdk"
-cd "$HOME/opt/vulkansdk"
-wget -O vulkansdk.tar.xz "https://sdk.lunarg.com/sdk/download/${VULKAN_VERSION}/linux/vulkansdk-linux-x86_64-${VULKAN_VERSION}.tar.xz?Human=true"
-tar -xf vulkansdk.tar.xz && rm -f vulkansdk.tar.xz
+export VULKAN_DIR="$HOME/opt/vulkansdk"
+export VULKAN_INSTALL="$VULKAN_DIR/vulkansdk.tar.xz"
+
+mkdir -p $VULKAN_DIR && cd $VULKAN_DIR
+wget -O $VULKAN_INSTALL "https://sdk.lunarg.com/sdk/download/${VULKAN_VERSION}/linux/vulkansdk-linux-x86_64-${VULKAN_VERSION}.tar.xz?Human=true"
+tar -xf $VULKAN_INSTALL && rm -f $VULKAN_INSTALL
 ln -sfn "${VULKAN_VERSION}" current
 ```
 
@@ -62,11 +67,13 @@ ln -sfn "${VULKAN_VERSION}" current
 
 ### Prepare and build base-image
 ```bash
-mkdir -p "$HOME/containers"
-img="$HOME/containers/crisp-installer.def"
-cp $HOME/projects/crisp_framework/.install/container/crisp-installer.def $img
-sed -i "s|/cluster/home/jorgfi|\$HOME|g" $img
-apptainer build $HOME/containers/crisp-installer.sif $img
+export CRISP_ROOT="$HOME/projects/crisp_framework"
+export SRC="$CRISP_ROOT/.install/container/crisp-installer.def"
+export IMG="$HOME/containers/crisp-installer"
+
+mkdir -p "$HOME/containers" && cp "$SRC" "$IMG.def"
+sed -i "s|/cluster/home/jorgfi|\$HOME|g" "$IMG.def"
+apptainer build "$IMG.sif" "$IMG.def"
 ```
 
 ### Entering the container and mounting directories
@@ -83,9 +90,13 @@ apptainer shell \
 ```bash
 export CUDA_INSTALL_PATH="$HOME/usr/local/cuda-11.7"
 export CUDA_HOME="$HOME/usr/local/cuda-11.7"
-source $ROOT/vulkan-sim/setup_environment
-cd $ROOT/mesa-vulkan-sim
-rm -rf build
+export ROOT="$HOME/projects/crisp_framework"
+export VULKAN_SIM="$ROOT/vulkan-sim"
+export MESA_SIM="$ROOT/mesa-vulkan-sim"
+export ACCEL_SIM="$ROOT/accel-sim-framework"
+
+source "$VULKAN_SIM/setup_environment"
+cd "$MESA_SIM" && rm -rf build
 
 meson setup --prefix="${PWD}/lib" build \
 	-Dgallium-drivers=iris,swrast,zink \
@@ -98,9 +109,9 @@ meson configure build \
 	
 ninja -C build/ install
 
-export VK_ICD_FILENAMES="$ROOT/mesa-vulkan-sim/lib/share/vulkan/icd.d/lvp_icd.x86_64.json"
+export VK_ICD_FILENAMES="$MESA_SIM/lib/share/vulkan/icd.d/lvp_icd.x86_64.json"
 
-(cd $ROOT/vulkan-sim && make -j)
+(cd "$VULKAN_SIM" && make -j)
 
 ninja -C build/ install
 
@@ -115,6 +126,8 @@ exit
 
 ### Request interactive session
 ```bash
+export HOST="stud.ntnu.no"
+
 salloc \
 	--account=share-ie-idi \
 	--cpus-per-task=2 \
@@ -122,7 +135,7 @@ salloc \
 	--mem=128G \
 	--time=23:59:00 \
 	--mail-type=ALL \
-	--mail-user=$USER@stud.ntnu.no # Use other host if applicable.
+	--mail-user=$USER@$HOST
 ```
 
 ```bash
@@ -131,7 +144,7 @@ ssh $USER@[host]
 
 ### Final setup
 ```bash
-cd $HOME/projects/crisp_framework/accel-sim-framework
+cd "$HOME/projects/crisp_framework/accel-sim-framework"
 source env_setup.sh
 
 ./get_crisp_traces.sh
