@@ -30,13 +30,10 @@ pip install -r "$IDUN_SETUP/requirements.txt"
 ### Installing CUDA
 ```bash
 export CUDA_VERSION="11.7"
-export CUDA_SRC="/cluster/apps/eb/software/CUDA/$CUDA_VERSION.0"
 export CUDA_DEST="$HOME/usr/local/cuda-$CUDA_VERSION"
 
-
 module load "CUDA/$CUDA_VERSION.0"
-#cp -r $(which nvcc) "$CUDA_DEST"
-cp -r "$CUDA_SRC" "$CUDA_DEST"
+cp -r "$CUDA_HOME" "$CUDA_DEST"
 ln -s "$CUDA_DEST" "$CUDA_DEST.0"
 ```
 
