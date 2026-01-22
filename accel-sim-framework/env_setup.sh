@@ -50,12 +50,12 @@ setup_env() {
     fi
 }
 
-# Resolves dir-mismatch in GPGPU-Sim/lib
-assert_gcc_symlink() {
-    t_path="$ACCEL_SIM/gpu-simulator/gpgpu-sim/lib"
+# Creates symlink to dir with the .so-files for CUDA within the gcc-x.x dir
+ensure_gcc_symlink_in_dir() {
+    local t_path="$1"
 
     shopt -s nullglob
-    dirs=("$t_path"/gcc-*/)
+    local dirs=("$t_path"/gcc-*/)
     shopt -u nullglob
 
     if [[ ${#dirs[@]} -eq 0 ]]; then
@@ -63,19 +63,19 @@ assert_gcc_symlink() {
         return 1
     fi
 
-    target="${dirs[0]%/}"
-    link="$t_path/gcc-"
+    local target="${dirs[0]%/}"
+    local link="$t_path/gcc-"
 
-    if [[ -L "$link" ]]; then
-        return 0
-    fi
-
-    if [[ -e "$link" ]]; then
-        return 0
-    fi
-
+    [[ -e "$link" ]] && return 0
     ln -s "$target" "$link"
 }
+
+# Resolves dir-mismatch in gpgpu-sim/lib and Vulkan-sim/lib
+assert_gcc_symlink() {
+    ensure_gcc_symlink_in_dir "$ACCEL_SIM/gpu-simulator/gpgpu-sim/lib" || return 1
+    ensure_gcc_symlink_in_dir "$ROOT/vulkan-sim/lib" || return 1
+}
+
 
 # Setup simulator
 set_sim() {
