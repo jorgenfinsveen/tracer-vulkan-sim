@@ -9,33 +9,32 @@ This repository is forked from https://github.com/JRPan/crisp-artifact and sligh
 mkdir -p "$HOME/projects" && cd "$HOME/projects"
 git clone https://github.com/jorgenfinsveen/crisp-sim.git crisp_framework
 export CRISP_ROOT="$HOME/projects/crisp_framework"
+export IDUN_SETUP="$CRISP_ROOT/.install/idun-setup"
 ```
 
 ### Creating necessary directories
 ```bash
-mkdir -p "$HOME/usr/local"
-mkdir -p "$HOME/opt"
-mkdir -p "$HOME/.environments/python"
+mkdir -p "$HOME"/{opt,usr/local,.environments/python}
 ```
 
 ### Installing a Python environment
 ```bash
 module load Python/3.13.5-GCCcore-14.3.0
 python -m venv "$HOME/.environments/python/env"
-cp "$CRISP_ROOT/.install/idun-setup/pyenv" $HOME
-chmod +x "$HOME/pyenv"
-source "$HOME/pyenv"
+cp -r "$IDUN_SETUP/pyenv" "$HOME"
+chmod +x "$HOME/pyenv" && source "$HOME/pyenv"
 
-pip install -r "$CRISP_ROOT/.install/idun-setup/requirements.txt"
+pip install -r "$IDUN_SETUP/requirements.txt"
 ```
 
 ### Installing CUDA
 ```bash
-export CUDA_VERSION="11.7.0"
+export CUDA_VERSION="11.7"
+export CUDA_DEST="$HOME/usr/local/cuda-$CUDA_VERSION"
 
-module load "CUDA/$CUDA_VERSION"
-cp -r $(which nvcc) "$HOME/usr/local/cuda-11.7"
-ln -s "$HOME/usr/local/cuda-11.7" "$HOME/usr/local/cuda-$CUDA_VERSION"
+module load "CUDA/$CUDA_VERSION.0"
+cp -r "$CUDA_HOME" "$CUDA_DEST"
+ln -s "$CUDA_DEST" "$CUDA_DEST.0"
 ```
 
 ### Installing Embree3
@@ -43,10 +42,11 @@ ln -s "$HOME/usr/local/cuda-11.7" "$HOME/usr/local/cuda-$CUDA_VERSION"
 export EMBREE_VERSION="3.13.5"
 export EMBREE_INSTALL="$HOME/opt/embree3.tgz"
 export EMBREE_VARS="$HOME/opt/embree-$EMBREE_VERSION.x86_64.linux/embree-vars.sh"
+export EMBREE_URL="https://github.com/embree/embree/releases/download/v$EMBREE_VERSION/embree-$EMBREE_VERSION.x86_64.linux.tar.gz"
 
-wget -O $EMBREE_INSTALL https://github.com/embree/embree/releases/download/v$EMBREE_VERSION/embree-$EMBREE_VERSION.x86_64.linux.tar.gz
-tar xzf $EMBREE_INSTALL && rm -f $EMBREE_INSTALL
-source $EMBREE_VARS
+wget -O "$EMBREE_INSTALL" "$EMBREE_URL"
+tar xzf "$EMBREE_INSTALL" && rm -f "$EMBREE_INSTALL"
+source "$EMBREE_VARS"
 ```
 
 ### Installing VulkanSDK
@@ -54,10 +54,11 @@ source $EMBREE_VARS
 export VULKAN_VERSION="1.3.296.0"
 export VULKAN_DIR="$HOME/opt/vulkansdk"
 export VULKAN_INSTALL="$VULKAN_DIR/vulkansdk.tar.xz"
+export VULKAN_URL="https://sdk.lunarg.com/sdk/download/${VULKAN_VERSION}/linux/vulkansdk-linux-x86_64-${VULKAN_VERSION}.tar.xz?Human=true"
 
-mkdir -p $VULKAN_DIR && cd $VULKAN_DIR
-wget -O $VULKAN_INSTALL "https://sdk.lunarg.com/sdk/download/${VULKAN_VERSION}/linux/vulkansdk-linux-x86_64-${VULKAN_VERSION}.tar.xz?Human=true"
-tar -xf $VULKAN_INSTALL && rm -f $VULKAN_INSTALL
+mkdir -p "$VULKAN_DIR" && cd "$VULKAN_DIR"
+wget -O "$VULKAN_INSTALL" "$VULKAN_URL"
+tar -xf "$VULKAN_INSTALL" && rm -f "$VULKAN_INSTALL"
 ln -sfn "${VULKAN_VERSION}" current
 ```
 
@@ -90,6 +91,10 @@ apptainer shell \
 ```bash
 export CUDA_INSTALL_PATH="$HOME/usr/local/cuda-11.7"
 export CUDA_HOME="$HOME/usr/local/cuda-11.7"
+export VULKAN_SDK="$HOME/opt/vulkansdk/current/x86_64"
+export EMBREE_ROOT="/opt/embree-$EMBREE_VERSION.x86_64.linux"
+export PATH="$VULKAN_SDK/bin:$CUDA_HOME/bin:${PATH:+$PATH}"
+export LD_LIBRARY_PATH="${LD_LIBRARY_PATH:+$LD_LIBRARY_PATH:}$EMBREE_ROOT/lib:$CUDA_HOME/lib64:$VULKAN_SDK/lib"
 export ROOT="$HOME/projects/crisp_framework"
 export VULKAN_SIM="$ROOT/vulkan-sim"
 export MESA_SIM="$ROOT/mesa-vulkan-sim"
