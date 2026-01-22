@@ -3,6 +3,8 @@
 import os
 import yaml
 from pathlib import Path
+from datetime import datetime
+
 
 DIR_PATH = Path(__file__).resolve().parent
 SIM_CONFIGS_DIR = f"{DIR_PATH}/configs"
@@ -97,17 +99,24 @@ def assert_benchmark_ready():
     yield
 
 
-def build_command(instance, config, aggregate=False):
-    # Todo: Gjør slik at dersom aggregate er satt så slås TEST1, TEST2, ... osv kommandoene sammen til én kommando hvor de alle er listet opp under -C parameteret adskilt med komma
-    cmd = ""
+def build_command(config, instance=None, aggregate=False):
+    cmd = []
     exec_path = os.path.expandvars("$ACCEL_SIM/util/job_launching/run_simulations.py")
-    cmd += exec_path
-    cmd += f" -l {config['launcher']}"
-    cmd += f" -B {config['benchmark']}"
-    cmd += f" -C {instance}-{'-'.join(config['extra_configs'])}"
-    cmd += f" -T {config['trace_dir']}"
-    cmd += f" -N {config['name_prefix']}-{instance}"
-    cmd += f" -r {config['results_dir']}/{instance}"
+    cmd.append(exec_path)
+    cmd.append(f" -l {config['launcher']}")
+    cmd.append(f" -B {config['benchmark']}")
+    if aggregate:
+        c_line = f" -C "
+        extra_configs = "-".join(config["extra_configs"])
+        for inst in config["instances"]:
+            c_line += f"{inst}-{extra_configs},"
+        cmd.append(c_line[:-1])
+        instance = '$(date +"%Y_%m_%d__%H_%M")'
+    else:
+        cmd.append(f" -C {instance}-{'-'.join(config['extra_configs'])}")
+    cmd.append(f" -T {config['trace_dir']}")
+    cmd.append(f" -N {config['name_prefix']}-{instance}")
+    cmd.append(f" -r {config['results_dir']}/{instance}")
     return cmd
 
 
@@ -115,10 +124,9 @@ def export_commands(commands, path):
     with open(path, 'w') as f:
         f.write('#!/usr/bin/env bash\n\n')
         for command in commands:
-            tokens = command.split()
-            cmd = tokens[0] + ' \\\n' 
-            for i in range(1, len(tokens), 2):
-                cmd += '\t' + tokens[i] + ' ' + tokens[i+1] + ' \\\n'
+            cmd = command[0] + ' \\\n'
+            for i in range(1, len(command)):
+                cmd += command[i] + ' \\\n'
             f.write(cmd[:-3] + '\n\n')
     os.system(f"chmod +x {path}")
 
@@ -135,9 +143,12 @@ def main():
     ensure_dirs_present([pipeline_config["results_dir"]])
     commands = []
     
-    for inst in pipeline_config["instances"]:
-        if not prepare_instance(inst, pipeline_config["config_destinations"]): continue
-        commands.append(build_command(inst, pipeline_config))
+    if pipeline_config["aggregate"]:
+        commands.append(build_command(config=pipeline_config, aggregate=True))
+    else:
+        for inst in pipeline_config["instances"]:
+            if not prepare_instance(inst, pipeline_config["config_destinations"]): continue
+            commands.append(build_command(config=pipeline_config, instance=inst))
 
     export_path = os.path.join(pipeline_config['results_dir'], 'cmd.sh')
     export_commands(commands, export_path)
