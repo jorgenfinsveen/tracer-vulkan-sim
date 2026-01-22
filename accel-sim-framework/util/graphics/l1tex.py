@@ -530,6 +530,12 @@ sim['l1_tex_hitrate'] = sim['l1_tex_hit'] / sim['l1_tex_access']
 sim['l2_tex_hitrate'] = sim['l2_tex_hit'] / sim['l2_tex_read']
 hw['label'] = sim['label'].to_list()
 
+import plotly.express as px
+
+fig = px.scatter(x=[0, 1, 2, 3, 4], y=[0, 1, 4, 9, 16])
+fig.show()
+fig.write_image("./{0}.pdf".format("l1_tex_lod"), format="pdf")
+
 
 fig = plot(hw, sim,"l1tex__texin_requests.sum", "l1_tex_access", "L1 TEX Request")
 fig.write_image("./{0}.pdf".format("l1_tex_lod"), format="pdf")

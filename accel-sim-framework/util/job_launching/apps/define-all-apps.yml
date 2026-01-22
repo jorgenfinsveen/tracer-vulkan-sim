@@ -475,6 +475,13 @@ crisp-artifact:
         - render_passes_2k_lod0:
           - args: 'NO_ARGS'
 
+pipeline:
+    exec_dir: "$HOME/test/"
+    data_dirs: "$HOME/test/"
+    execs:
+        - minitrace:
+          - args: 'NO_ARGS'
+
 vulkan-correlation:
     exec_dir: "$HOME/test/"
     data_dirs: "$HOME/test/"
