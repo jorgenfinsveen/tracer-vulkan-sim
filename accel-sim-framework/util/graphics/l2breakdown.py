@@ -4,10 +4,34 @@ import numpy as np
 import pandas as pd
 import os
 
+
+FULL_PATH_ROOT = os.path.expandvars(f"$ACCEL_SIM/sim_run_11.7")
+
+GPU_CONFIGS = {
+    "orin": "ORIN-SASS-concurrent-fg-VISUAL",
+    "rtx":  "RTX3070-SASS-concurrent-fg-VISUAL"
+}
+
+SIM_DATE = "Tue-Dec--2-14-12-31-2025"
+
+render_passes_2k = [
+    f"render_passes_2k/all1/{GPU_CONFIGS['orin']}",
+    f"render_passes_2k/all1/{GPU_CONFIGS['rtx']}",
+    f"render_passes_2k/NO_ARGS/{GPU_CONFIGS['orin']}",
+    f"render_passes_2k/NO_ARGS/{GPU_CONFIGS['rtx']}"
+]
+
+render_passes_2k_lod0 = [
+    f"render_passes_2k_lod0/NO_ARGS/{GPU_CONFIGS['orin']}",
+    f"render_passes_2k_lod0/NO_ARGS/{GPU_CONFIGS['rtx']}"
+]
+
+
+
 filename = "{0}/{1}".format(
-    "/home/tgrogers-raid/a/pan251/accel-sim-framework/sim_run_11.7/sponza_4k/hotlab/RTX3070-SASS-concurrent-mps_sm8-utility-VISUAL",
-    "gpgpusim_visualizer__Sun-Jun--2-00-45-19-2024.log.gz"
-)
+    f"{FULL_PATH_ROOT}/{render_passes_2k[0]}",
+    f"gpgpusim_visualizer__{SIM_DATE}.log.gz"
+) 
 
 array = pd.DataFrame(
     columns=["globalcyclecount",'cycle_counter', "tex_line", "verte_lines", "compute", "invalid", "g_count", "c_count", 'dynamic_sm_count']
@@ -19,6 +43,7 @@ else:
     file = open(filename, 'r')
 
 cycle = 0
+tracked_cycles = []
 
 while file:
     line = file.readline()
@@ -28,31 +53,61 @@ while file:
         print("Syntax error at '%s'" % line) 
     namePart = nameNdata[0].strip()
     dataPart= nameNdata[1].strip()
+    
+    
     if namePart == "globalcyclecount":
         cycle = int(dataPart)
-        # if (cycle == 500):
-            # array = array[0:0]
-        # array = array.append(pd.Series(0, index=array.columns), ignore_index=True)
-        array = pd.DataFrame([pd.Series(0, index=array.columns)])
-        array = pd.concat([array, new_row], ignore_index=True)
-        array.iloc[-1]['globalcyclecount'] = cycle
-        array.iloc[-1]['cycle_counter'] = 500 * (array.shape[0] - 1)
-        
+
+        # Ny rad: index = len(array)
+        idx = len(array)
+        array.loc[idx, "globalcyclecount"] = cycle
+        array.loc[idx, "cycle_counter"] = 500 * idx
+
     elif namePart == "L2Breakdown":
-        data = dataPart.split(' ')
-        array.iloc[-1]['tex_line'] = int(data[0])
-        array.iloc[-1]['verte_lines'] = int(data[1])
-        array.iloc[-1]['compute'] = int(data[2])
-        array.iloc[-1]['invalid'] = int(data[3])
+        if len(array) == 0:
+            continue  # sikkerhet
+        data = dataPart.split()
+        idx = array.index[-1]
+        array.loc[idx, "tex_line"] = int(data[0])
+        array.loc[idx, "verte_lines"] = int(data[1])
+        array.loc[idx, "compute"] = int(data[2])
+        array.loc[idx, "invalid"] = int(data[3])
+
     elif namePart == "AvgGRThreads":
-        data = float(dataPart)
-        array.iloc[-1]['g_count'] = data
+        if len(array) == 0:
+            continue
+        idx = array.index[-1]
+        array.loc[idx, "g_count"] = float(dataPart)
+
     elif namePart == "AvgCPThreads":
-        data = float(dataPart)
-        array.iloc[-1]['c_count'] = data
-    elif namePart == 'dynamic_sm_count':
-        data = float(dataPart)
-        array.iloc[-1]['dynamic_sm_count'] = data
+        if len(array) == 0:
+            continue
+        idx = array.index[-1]
+        array.loc[idx, "c_count"] = float(dataPart)
+
+    elif namePart == "dynamic_sm_count":
+        if len(array) == 0:
+            continue
+        idx = array.index[-1]
+        array.loc[idx, "dynamic_sm_count"] = float(dataPart)
+
+
+
+
+
+
+#print(f"Num cycles entrances: {len(tracked_cycles)}")
+#print(f"Largest cyclecount: {max(tracked_cycles)}")
+#print(f"Smallest cyclecount: {min(tracked_cycles)}")
+print(array['cycle_counter'])
+
+#array['cycle_counter']=tracked_cycles
+
+import plotly.express as px
+
+fig = px.scatter(x=[0, 1, 2, 3, 4], y=[0, 1, 4, 9, 16])
+fig.show()
+fig.write_image("./{0}.pdf".format("l2breakdown"), format="pdf")
 
 
 fig = go.Figure()

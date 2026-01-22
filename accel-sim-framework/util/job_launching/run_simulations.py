@@ -58,7 +58,7 @@ def extract_version( exec_path, simulator):
     out, err = grep_process.communicate()
     version = re.sub(regex_str, r"\1", str(out.rstrip()))
     return version
-
+ 
 #######################################################################################
 # Class the represents each configuration you are going to run
 # For example, if your sweep file has 2 entries 32k-L1 and 64k-L1 there will be 2
@@ -248,7 +248,7 @@ class ConfigurationSpec:
 
         # Test the existance of required env variables
         if str(os.getenv("GPGPUSIM_ROOT")) == "None":
-            exit("\nERROR - Specify GPGPUSIM_ROOT prior to running this script")
+            exit("\nERROR - Specify GPGPUSIM_ROOT prior to running this script") 
         if str(os.getenv("OPENCL_REMOTE_GPU_HOST")) == "None":
             os.environ["OPENCL_REMOTE_GPU_HOST"] = ""
         if str(os.getenv("GPGPUSIM_CONFIG")) == "None":
@@ -275,10 +275,10 @@ class ConfigurationSpec:
             queue_name = os.getenv("TORQUE_QUEUE_NAME")
 
         # do the text replacement for the .sim file
-        slurm_name_var=benchmark + "-" + self.benchmark_args_subdirs[command_line_args] + "    ." + gpgpusim_build_handle
-
-        replacement_dict = {"NAME":benchmark + "-" + self.benchmark_args_subdirs[command_line_args] + "." +\
-                                gpgpusim_build_handle,
+        slurm_name_var=benchmark + "-" + self.benchmark_args_subdirs[command_line_args] + "." +\
+                                gpgpusim_build_handle
+        slurm_job_id_var=os.getenv("SLURM_JOB_ID")
+        replacement_dict = {"NAME":slurm_name_var,
                             "NODES":"1", 
                             "GPGPUSIM_ROOT":os.getenv("GPGPUSIM_ROOT"),
                             "LIBPATH": libpath,

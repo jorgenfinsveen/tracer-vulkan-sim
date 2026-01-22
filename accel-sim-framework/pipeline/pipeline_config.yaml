@@ -1,0 +1,16 @@
+name_prefix: run-minitrace
+benchmark: pipeline:minitrace
+instances:
+  - TEST1
+  - TEST2
+launcher: local
+extra_configs:
+  - SASS
+  - concurrent
+  - fg
+  - VISUAL
+trace_dir: $ACCEL_SIM/pipeline/traces
+results_dir: $ACCEL_SIM/pipeline/results
+config_destinations:
+  gpgpusim: $ACCEL_SIM/gpu-simulator/gpgpu-sim/configs/custom-cfgs
+  trace: $ACCEL_SIM/gpu-simulator/configs/custom-cfgs
