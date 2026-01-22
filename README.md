@@ -115,8 +115,8 @@ export VK_ICD_FILENAMES="$MESA_SIM/lib/share/vulkan/icd.d/lvp_icd.x86_64.json"
 
 ninja -C build/ install
 
-(cd $ACCEL_SIM/gpu-simulator && rm -rf gpgpu-sim && source setup_environment.sh)
-(cd $ACCEL_SIM && make -j -C ./gpu-simulator)
+(cd "$ACCEL_SIM/gpu-simulator" && rm -rf gpgpu-sim && source setup_environment.sh)
+(source "$ACCEL_SIM/gpu-simulator/setup_environment.sh" && cd "$ACCEL_SIM" && make -j -C ./gpu-simulator)
 
 exit
 ```
@@ -126,7 +126,7 @@ exit
 
 ### Request interactive session
 ```bash
-export HOST="stud.ntnu.no"
+export HOST="stud.ntnu.no" # Change if applicable
 
 salloc \
 	--account=share-ie-idi \
