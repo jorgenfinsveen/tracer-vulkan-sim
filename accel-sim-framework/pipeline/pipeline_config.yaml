@@ -9,6 +9,7 @@ extra_configs:
   - concurrent
   - fg
   - VISUAL
+aggregate: true
 trace_dir: $ACCEL_SIM/pipeline/traces
 results_dir: $ACCEL_SIM/pipeline/results
 config_destinations:
