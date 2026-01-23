@@ -1,8 +1,8 @@
 # How to start
 
 ```bash
-cd "$ACCEL_SIM" && source env_setup.sh
+cd "$ACCEL_SIM" && source setup_environment.sh
 
 cd "$ACCEL_SIM/pipeline"
-setup_env && python start_pipeline.py
+source_all_environments && python launch.py
 ```

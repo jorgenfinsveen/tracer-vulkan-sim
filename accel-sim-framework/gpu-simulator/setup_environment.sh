@@ -26,7 +26,7 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 export ACCELSIM_SETUP_ENVIRONMENT_WAS_RUN=
-export ACCELSIM_ROOT="$( cd "$( dirname "$BASH_SOURCE" )" && pwd )"
+THIS_DIR="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" &>/dev/null && pwd)"
 
 if [ $# = '1' ] ;
 then
@@ -35,11 +35,11 @@ else
     export ACCELSIM_CONFIG=release
 fi
 
-if [ ! -d "$ACCELSIM_ROOT/gpgpu-sim" ] ; then
-    git clone https://github.com/JRPan/gpgpu-sim_distribution.git $ACCELSIM_ROOT/gpgpu-sim
-    git -C $ACCELSIM_ROOT/gpgpu-sim/ checkout dev-vulkan
+if [ ! -d "$THIS_DIR/gpgpu-sim" ] ; then
+    git clone https://github.com/JRPan/gpgpu-sim_distribution.git $THIS_DIR/gpgpu-sim
+    git -C $THIS_DIR/gpgpu-sim/ checkout dev-vulkan
 fi
 
-source $ACCELSIM_ROOT/gpgpu-sim/setup_environment $ACCELSIM_CONFIG
+source $THIS_DIR/gpgpu-sim/setup_environment $ACCELSIM_CONFIG
 
 export ACCELSIM_SETUP_ENVIRONMENT_WAS_RUN=1

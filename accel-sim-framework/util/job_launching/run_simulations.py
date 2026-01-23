@@ -325,6 +325,7 @@ class ConfigurationSpec:
 
         if options.trace_dir != "":
             cfgsubdir = re.sub(r".*(configs.*)gpgpusim.config", r"\1", config_text_file)
+            cfgsubdir = os.path.join("gpu-simulator", cfgsubdir)
             config_text += "\n" + "# Accel-Sim Parameters" + "\n"
             accelsim_cfg = os.path.expandvars(os.path.join("$ACCELSIM_ROOT", cfgsubdir, "trace.config"))
             config_text += open(accelsim_cfg).read()
@@ -356,8 +357,9 @@ if options.trace_dir == "":
     this_directory )
     simulator_path = os.path.join( options.simulator_dir, "libcudart.so" )
 else:
+    gpu_simulator_dir = os.path.join(os.getenv("ACCELSIM_ROOT"), "gpu-simulator")
     options.simulator_dir = common.dir_option_test(
-        options.simulator_dir, os.path.join( os.getenv("ACCELSIM_ROOT"), "bin", os.getenv("ACCELSIM_CONFIG") ),
+        options.simulator_dir, os.path.join( gpu_simulator_dir, "bin", os.getenv("ACCELSIM_CONFIG") ),
     this_directory )
     simulator_path = os.path.join( options.simulator_dir, "accel-sim.out" )
 

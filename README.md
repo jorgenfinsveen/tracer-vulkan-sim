@@ -144,13 +144,13 @@ salloc \
 ```
 
 ```bash
-ssh $USER@[host]
+ssh [host]
 ```
 
 ### Final setup
 ```bash
 cd "$HOME/projects/crisp_framework/accel-sim-framework"
-source env_setup.sh
+source setup_environment.sh
 
 ./get_crisp_traces.sh
 
