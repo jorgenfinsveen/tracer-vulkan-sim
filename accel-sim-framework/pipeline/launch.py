@@ -3,12 +3,11 @@
 import os
 import yaml
 from pathlib import Path
-from datetime import datetime
 
 
 DIR_PATH = Path(__file__).resolve().parent
 SIM_CONFIGS_DIR = f"{DIR_PATH}/configs"
-PIPELINE_CONFIG_FILE = f"{DIR_PATH}/pipeline_config.yaml"
+PIPELINE_CONFIG_FILE = f"{DIR_PATH}/pipeline.yaml"
 
 
 def parse_pipeline_config():
@@ -103,20 +102,20 @@ def build_command(config, instance=None, aggregate=False):
     cmd = []
     exec_path = os.path.expandvars("$ACCEL_SIM/util/job_launching/run_simulations.py")
     cmd.append(exec_path)
-    cmd.append(f" -l {config['launcher']}")
-    cmd.append(f" -B {config['benchmark']}")
+    cmd.append(f"-l {config['launcher']}")
+    cmd.append(f"-B {config['benchmark']}")
     if aggregate:
-        c_line = f" -C "
+        c_line = f"-C "
         extra_configs = "-".join(config["extra_configs"])
         for inst in config["instances"]:
             c_line += f"{inst}-{extra_configs},"
         cmd.append(c_line[:-1])
         instance = '$(date +"%Y_%m_%d__%H_%M")'
     else:
-        cmd.append(f" -C {instance}-{'-'.join(config['extra_configs'])}")
-    cmd.append(f" -T {config['trace_dir']}")
-    cmd.append(f" -N {config['name_prefix']}-{instance}")
-    cmd.append(f" -r {config['results_dir']}/{instance}")
+        cmd.append(f"-C {instance}-{'-'.join(config['extra_configs'])}")
+    cmd.append(f"-T {config['trace_dir']}")
+    cmd.append(f"-N {config['name_prefix']}-{instance}")
+    cmd.append(f"-r {config['results_dir']}/{instance}")
     return cmd
 
 
@@ -126,7 +125,7 @@ def export_commands(commands, path):
         for command in commands:
             cmd = command[0] + ' \\\n'
             for i in range(1, len(command)):
-                cmd += command[i] + ' \\\n'
+                cmd += '\t' + command[i] + ' \\\n'
             f.write(cmd[:-3] + '\n\n')
     os.system(f"chmod +x {path}")
 
@@ -137,20 +136,21 @@ def ensure_dirs_present(dirs):
 
 
 def main():
-    os.system(f"setup_env > /dev/null 2>&1")
-
     pipeline_config = parse_pipeline_config()
     ensure_dirs_present([pipeline_config["results_dir"]])
     commands = []
     
     if pipeline_config["aggregate"]:
+        for inst in pipeline_config["instances"]:
+            if not prepare_instance(inst, pipeline_config["config_destinations"]):
+                pipeline_config["instances"].remove(inst)
         commands.append(build_command(config=pipeline_config, aggregate=True))
     else:
         for inst in pipeline_config["instances"]:
             if not prepare_instance(inst, pipeline_config["config_destinations"]): continue
             commands.append(build_command(config=pipeline_config, instance=inst))
 
-    export_path = os.path.join(pipeline_config['results_dir'], 'cmd.sh')
+    export_path = os.path.join(pipeline_config['results_dir'], 'launch.sh')
     export_commands(commands, export_path)
 
     print("\n\nPipeline creation complete")

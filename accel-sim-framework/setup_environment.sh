@@ -27,26 +27,33 @@ export VULKAN_SDK="$HOME/opt/vulkansdk/current/x86_64"
 export PATH="$VULKAN_SDK/bin:$CUDA_HOME/bin:${PATH:+$PATH}"
 export LD_LIBRARY_PATH="${LD_LIBRARY_PATH:+$LD_LIBRARY_PATH:}$EMBREE_ROOT/lib:$CUDA_HOME/lib64:$VULKAN_SDK/lib"
 
-# Python environment
-source $HOME/pyenv
-
 
 # Sources
-setup_env() {
+source_all_environments() {
     GREEN="\e[32m"
     RED="\e[31m"
     RESET="\e[0m"
 
-    if source "$ROOT/vulkan-sim/setup_environment" >/dev/null 2>&1; then
-        echo -e "[vulkan-sim] Source: ${GREEN}Success${RESET}"
+    echo "Initializing simulators:"
+    source "$ROOT/vulkan-sim/setup_environment" >/dev/null 2>&1
+    if [[ "$GPGPUSIM_SETUP_ENVIRONMENT_WAS_RUN" == "1" ]]; then
+        echo -e "   [vulkan-sim]: ${GREEN}Ready${RESET}"
     else
-        echo -e "[vulkan-sim] Source: ${RED}Failed${RESET}"
+        echo -e "   [vulkan-sim]: ${RED}Error${RESET}"
     fi
 
-    if source "$ACCEL_SIM/gpu-simulator/setup_environment.sh" >/dev/null 2>&1; then
-        echo -e "[accel-sim] Source: ${GREEN}Success${RESET}"
+    source "$ACCEL_SIM/gpu-simulator/setup_environment.sh" >/dev/null 2>&1
+    if [[ "$ACCELSIM_SETUP_ENVIRONMENT_WAS_RUN" == "1" ]]; then
+        echo -e "   [accel-sim]:  ${GREEN}Ready${RESET}"
     else
-        echo -e "[accel-sim] Source: ${RED}Failed${RESET}"
+        echo -e "   [accel-sim]:  ${RED}Error${RESET}"
+    fi
+
+    source "$ACCEL_SIM/gpu-simulator/gpgpu-sim/setup_environment" >/dev/null 2>&1
+    if [[ "$GPGPUSIM_SETUP_ENVIRONMENT_WAS_RUN" == "1" ]]; then
+        echo -e "   [gpgpu-sim]:  ${GREEN}Ready${RESET}"
+    else
+        echo -e "   [gpgpu-sim]:  ${RED}Error${RESET}"
     fi
 }
 
@@ -79,22 +86,26 @@ assert_gcc_symlink() {
 
 # Setup simulator
 set_sim() {
-	source $HOME/pyenv
 	cd $ACCEL_SIM
+    source $HOME/pyenv
 	assert_gcc_symlink
-	setup_env
-	(cd util/graphics && python3 ./setup_concurrent.py)
+	source_all_environments
 	./run.sh
 }
 
 # Run simulator in detached mode
 run() {
-	export -f setup_env
 	export -f set_sim
 	export -f assert_gcc_symlink
+	export -f source_all_environments
 
 	rm -rf "$ACCEL_SIM/logs" && mkdir -p "$ACCEL_SIM/logs"
 	
 	nohup bash -c 'set_sim' > "$ACCEL_SIM/logs/out.log" 2> "$ACCEL_SIM/logs/err.log" &
 	echo "Simulator started with PID $!"
 }
+
+# Python environment
+source $HOME/pyenv
+assert_gcc_symlink
+source_all_environments
