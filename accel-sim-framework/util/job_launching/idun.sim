@@ -7,7 +7,7 @@
 #SBATCH --threads-per-core=1
 #SBATCH --gpus=IDUN_GPUS
 #SBATCH --mem-per-cpu=REPLACE_MEM_USAGE
-#SBACTH --time=IDUN_TIME,
+#SBATCH --time=IDUN_TIME
 #SBATCH --mail-user=IDUN_MAIL_USER
 #SBATCH --mail-type=IDUN_MAIL_TYPE
 #SBATCH --export=ALL
