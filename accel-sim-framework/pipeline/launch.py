@@ -103,6 +103,7 @@ def build_command(config, instance=None, aggregate=False):
     exec_path = os.path.expandvars("$ACCEL_SIM/util/job_launching/run_simulations.py")
     cmd.append(exec_path)
     cmd.append(f"-l {config['launcher']}")
+    cmd.append(f"-M {config['job_mem']}")
     cmd.append(f"-B {config['benchmark']}")
     if aggregate:
         c_line = f"-C "

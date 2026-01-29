@@ -1,17 +1,26 @@
 name_prefix: run-20240723-1728 # run-minitrace
 benchmark: crisp-artifact:render_passes_2k # pipeline:minitrace
+
 instances:
   - ORIN
   - RTX3070
+
 launcher: idun
+
 extra_configs:
   - SASS
   - concurrent
   - fg
   - VISUAL
 aggregate: true
+
 trace_dir: $ACCEL_SIM/hw_run/traces/vulkan/ # $ACCEL_SIM/pipeline/traces/
 results_dir: $ACCEL_SIM/pipeline/results
+
 config_destinations:
   gpgpusim: $ACCEL_SIM/gpu-simulator/gpgpu-sim/configs/custom-cfgs
   trace: $ACCEL_SIM/gpu-simulator/configs/custom-cfgs
+
+# For Slurm jobs. 
+# See more configuration-options in accel-sim-framework/util/job_launching/idun.yaml.
+job_mem: 16G # Default is 4G, but this turned out to be insufficient for the workloads in the artifact.
