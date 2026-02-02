@@ -29,19 +29,22 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 
-
-from optparse import OptionParser
-import os
-import subprocess
+from pathlib import Path
 from subprocess import Popen, PIPE
 
-import sys
+import os
 import re
-import shutil
-import glob
-import datetime
+import sys
 import yaml
+import glob
 import common
+import shutil
+import datetime
+import subprocess
+
+IDUN_CONFIG_FILENAME = "idun.yaml"
+
+IDUN_CONFIG = os.path.join(Path(__file__).resolve().parent, IDUN_CONFIG_FILENAME)
 
 this_directory = os.path.dirname(os.path.realpath(__file__)) + "/"
 # This function will pull the SO name out of the shared object,
@@ -275,6 +278,13 @@ class ConfigurationSpec:
             queue_name = os.getenv("TORQUE_QUEUE_NAME")
 
         # do the text replacement for the .sim file
+        with open(IDUN_CONFIG, "r", encoding="utf-8") as f:
+            idun_overrides =  yaml.safe_load(f) or {}
+            """
+             if "MAIL_USER" in idun_overrides:
+                mail_user_components = idun_overrides["MAIL_USER"].split("@")
+                idun_overrides["MAIL_USER"] = f"{os.getenv(mail_user_components[0])}@{mail_user_components[1]}" 
+            """
         slurm_name_var=benchmark + "-" + self.benchmark_args_subdirs[command_line_args] + "." +\
                                 gpgpusim_build_handle
         slurm_job_id_var=os.getenv("SLURM_JOB_ID")
@@ -292,12 +302,15 @@ class ConfigurationSpec:
                             "MEM_USAGE": mem_usage,
                             "ERR": f'{this_run_dir}/{slurm_name_var}',
                             "OUT": f'{this_run_dir}/{slurm_name_var}'
-                            }
+                            } | idun_overrides
+
         torque_text = open(this_directory + job_template).read().strip()
         for entry in replacement_dict:
-            torque_text = re.sub("REPLACE_" + entry,
-                                 str(replacement_dict[entry]),
-                                 torque_text)
+            for prefix in ["REPLACE_", "IDUN_"]:
+                torque_text = re.sub(prefix + entry,
+                                    str(replacement_dict[entry]),
+                                    torque_text)
+
         open(os.path.join(this_run_dir , job_template), 'w').write(torque_text)
         exec_line = torque_text.splitlines()[-1]
         justrunfile = os.path.join(this_run_dir , "justrun.sh")
@@ -393,6 +406,9 @@ if options.launcher != "":
     elif options.launcher == "sbatch":
         job_submit_call = options.launcher
         job_template = "slurm.sim"
+    elif options.launcher == "idun":
+        job_submit_call = "sbatch"
+        job_template = "idun.sim"
     elif options.launcher == "local":
         job_submit_call = os.path.join(this_directory, "procman.py")
         job_template = "slurm.sim"
