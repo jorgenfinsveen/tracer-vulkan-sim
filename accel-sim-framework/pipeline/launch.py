@@ -9,19 +9,27 @@ DIR_PATH = Path(__file__).resolve().parent
 SIM_CONFIGS_DIR = f"{DIR_PATH}/configs"
 PIPELINE_CONFIG_FILE = f"{DIR_PATH}/pipeline.yaml"
 
+trace_lookup = {}
 
 def parse_pipeline_config():
     config = {}
     with open(PIPELINE_CONFIG_FILE, "r", encoding="utf-8") as f:
         config = yaml.safe_load(f)
-        for pathvar in ["trace_dir", "results_dir"]:
-            config[pathvar] = os.path.expandvars(config[pathvar])
+        config["results_dir"] = os.path.expandvars(config["results_dir"])
+        for dest in ["trace_lookup", "results_dir"]:
+            config[dest] = os.path.expandvars(config[dest])
         for dest in config["config_destinations"]:
             config["config_destinations"][dest] = os.path.expandvars(config["config_destinations"][dest])
         for i in range(len(config["instances"])):
             config["instances"][i] = config["instances"][i].replace("-", "_")
         return config
 
+def parse_trace_lookup(t_path):
+    global trace_lookup
+    with open(t_path, "r", encoding="utf-8") as f:
+        trace_lookup = yaml.safe_load(f)
+        for trace in trace_lookup:
+            trace_lookup[trace] = os.path.expandvars(trace_lookup[trace])
 
 def prepare_instance(instance, dest):
     if not os.path.exists(os.path.join(SIM_CONFIGS_DIR, instance)):
@@ -93,18 +101,13 @@ def prepare_instance(instance, dest):
     return True
 
 
-def assert_benchmark_ready():
-    # Todo: Legg inn trace som benchmark i define-all-apps.yml
-    yield
-
-
-def build_command(config, instance=None, aggregate=False):
+def build_command(config, benchmark, instance=None, aggregate=False):
     cmd = []
     exec_path = os.path.expandvars("$ACCEL_SIM/util/job_launching/run_simulations.py")
     cmd.append(exec_path)
     cmd.append(f"-l {config['launcher']}")
     cmd.append(f"-M {config['job_mem']}")
-    cmd.append(f"-B {config['benchmark']}")
+    cmd.append(f"-B {benchmark}")
     if aggregate:
         c_line = f"-C "
         extra_configs = "-".join(config["extra_configs"])
@@ -114,7 +117,7 @@ def build_command(config, instance=None, aggregate=False):
         instance = '$(date +"%Y_%m_%d__%H_%M")'
     else:
         cmd.append(f"-C {instance}-{'-'.join(config['extra_configs'])}")
-    cmd.append(f"-T {config['trace_dir']}")
+    cmd.append(f"-T {trace_lookup[benchmark.split(':')[0]]}")
     cmd.append(f"-N {config['name_prefix']}-{instance}")
     cmd.append(f"-r {config['results_dir']}/{instance}")
     return cmd
@@ -138,18 +141,21 @@ def ensure_dirs_present(dirs):
 
 def main():
     pipeline_config = parse_pipeline_config()
+    parse_trace_lookup(pipeline_config['trace_lookup'])
     ensure_dirs_present([pipeline_config["results_dir"]])
     commands = []
     
     if pipeline_config["aggregate"]:
-        for inst in pipeline_config["instances"]:
-            if not prepare_instance(inst, pipeline_config["config_destinations"]):
-                pipeline_config["instances"].remove(inst)
-        commands.append(build_command(config=pipeline_config, aggregate=True))
+        for benchmark in pipeline_config["benchmarks"]:
+            for inst in pipeline_config["instances"]:
+                if not prepare_instance(inst, pipeline_config["config_destinations"]):
+                    pipeline_config["instances"].remove(inst)
+            commands.append(build_command(config=pipeline_config, benchmark=benchmark, aggregate=True))
     else:
         for inst in pipeline_config["instances"]:
-            if not prepare_instance(inst, pipeline_config["config_destinations"]): continue
-            commands.append(build_command(config=pipeline_config, instance=inst))
+            for benchmark in pipeline_config["benchmarks"]:
+                if not prepare_instance(inst, pipeline_config["config_destinations"]): continue
+                commands.append(build_command(config=pipeline_config, instance=inst))
 
     export_path = os.path.join(pipeline_config['results_dir'], 'launch.sh')
     export_commands(commands, export_path)
