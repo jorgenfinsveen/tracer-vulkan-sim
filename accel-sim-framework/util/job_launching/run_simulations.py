@@ -306,6 +306,9 @@ class ConfigurationSpec:
 
         torque_text = open(this_directory + job_template).read().strip()
         for entry in replacement_dict:
+            print(f"ENTRY: {entry} - {replacement_dict[entry]}")
+            if entry == "PARTITION" and replacement_dict[entry] == "CPUQ":
+                torque_text = re.sub(r'^#SBATCH --gpus=.*\n?', '', torque_text, flags=re.MULTILINE)
             for prefix in ["REPLACE_", "IDUN_"]:
                 torque_text = re.sub(prefix + entry,
                                     str(replacement_dict[entry]),

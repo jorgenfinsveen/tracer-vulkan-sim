@@ -1,5 +1,5 @@
 name_prefix: run-20240723-1728 # run-minitrace
-benchmark: crisp-artifact:render_passes_2k # pipeline:minitrace
+benchmark: pipeline:minitrace # crisp-artifact:render_passes_2k # pipeline:minitrace
 
 instances:
   - ORIN
@@ -14,7 +14,7 @@ extra_configs:
   - VISUAL
 aggregate: true
 
-trace_dir: $ACCEL_SIM/hw_run/traces/vulkan/ # $ACCEL_SIM/pipeline/traces/
+trace_dir: $ACCEL_SIM/pipeline/traces/ # $ACCEL_SIM/hw_run/traces/vulkan/
 results_dir: $ACCEL_SIM/pipeline/results
 
 config_destinations:
