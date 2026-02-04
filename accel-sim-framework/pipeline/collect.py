@@ -1,63 +1,48 @@
 #!/usr/bin/env python3
-
-# Todo: Etterlign hva collect.sh gjør, men tilpass slik at den bruker riktig benchmark-navn og leter på riktig plass
-# Todo: get_stats.py har et parameter -r som må settes til der results/TESTx er
-# Todo: Gjør slik at resultat-csv-filen blir lagret i results-mappa
-
-
-import argparse
-import csv
-import re
 import sys
 from pathlib import Path
 
-def extract_block(text: str, metric: str):
-    m_re = re.compile(re.escape(metric), re.I)
-    lines = text.splitlines()
-    for i, line in enumerate(lines):
-        if not m_re.search(line):
-            continue
-
-        j = i + 1
-        while j < len(lines) and not lines[j].strip():
-            j += 1
-        if j >= len(lines) or not lines[j].startswith("CFG,"):
-            continue
-
-        bench = [x.strip() for x in lines[j].split(",")[1:]]
-        rows = {}
-
-        for k in range(j + 1, len(lines)):
-            s = lines[k].strip()
-            if not s or s.startswith("-"):
-                break
-            if "\\s*=" in s and not m_re.search(s):
-                break
-
-            parts = [p.strip() for p in lines[k].split(",")]
-            if len(parts) >= 2:
-                cfg, vals = parts[0], parts[1:]
-                vals += [""] * (len(bench) - len(vals))
-                rows[cfg] = vals[:len(bench)]
-
-        return bench, rows
-
-    raise SystemExit(f"metric not found: {metric}")
-
 def main():
-    inp = Path(sys.argv[1])
-    metric = sys.argv[2]
+    if len(sys.argv) != 2:
+        raise SystemExit("usage: collect.py <RUN_ID>  (e.g. 2026_02_03__18_13)")
 
-    bench, rows = extract_block(inp.read_text(errors="replace"), metric)
+    run_id = sys.argv[1].strip()
+    root = Path(__file__).resolve().parent.parent
+    results_root = root / "pipeline" / "results"
+    output_root = results_root / "output"
+    get_stats = root / "util" / "job_launching" / "get_stats.py"
 
-    out = inp.parent / f"{inp.stem}_{re.sub(r'\\W+', '_', metric)}.csv"
-    with out.open("w", newline="") as f:
-        w = csv.writer(f)
-        w.writerow(["CFG"] + bench)
-        for cfg in sorted(rows):
-            w.writerow([cfg] + rows[cfg])
+    o_files = sorted(output_root.rglob(f"{run_id}.o"))
+    if not o_files:
+        raise SystemExit(f"No .o files found for {run_id} under {output_root}")
+
+    sh_path = results_root / f"collect_{run_id}.sh"
+
+    lines = []
+    lines.append("#!/bin/bash")
+    lines.append(f'RUN_ID="{run_id}"')
+    lines.append(f'GET_STATS="{get_stats}"')
+    lines.append('echo "Found .o files:"')
+    for p in o_files:
+        lines.append(f'echo "  {p}"')
+    lines.append('echo "Generating CSV next to each .o file..."')
+
+    for p in o_files:
+        run_dir = p.parent
+        out_csv = run_dir / f"{run_id}.csv"
+        lines.append(f'echo "-> {p}"')
+        lines.append(f'python3 "$GET_STATS" -k -R -r "{run_dir}" -l "{p}" > "{out_csv}"')
+
+    lines.append('echo "Ferdig :)."')
+
+    sh_path.write_text("\n".join(lines) + "\n")
+    sh_path.chmod(0o755)
+
+    print(f"Wrote: {sh_path}")
+    ans = input("Run it now? [y/N] ").strip().lower()
+    if ans == "y":
+        import subprocess
+        subprocess.run(["bash", str(sh_path)], check=True)
 
 if __name__ == "__main__":
-    if len(sys.argv) != 3:
-        raise SystemExit("usage: collect.py <input_csv> <metric>")
     main()
