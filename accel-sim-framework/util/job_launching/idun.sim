@@ -50,7 +50,7 @@ if [ "$UPDATE_LOGS" = "True" ]; then
     python3 "REPLACE_PIPELINE_DIR/utility/updatelogs.py" \
         --target REPLACE_TARGET \
         --logs REPLACE_SUBDIR/simulator_logs.yaml \
-        --pipeline REPLACE_PIPELINE_DIR/pipeline.yaml \
+        --pipeline REPLACE_PIPELINE_DIR/setup/pipeline.yaml \
         --job_name REPLACE_NAME
 fi
 

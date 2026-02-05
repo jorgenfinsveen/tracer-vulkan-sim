@@ -27,7 +27,7 @@ extra_configs:
 
 aggregate: true
 
-trace_lookup: $ACCEL_SIM/pipeline/traces.yaml
+trace_lookup: $ACCEL_SIM/pipeline/setup/traces.yaml
 results_dir: $ACCEL_SIM/pipeline/results
 
 config_destinations:

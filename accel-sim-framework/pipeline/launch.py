@@ -6,8 +6,8 @@ from pathlib import Path
 
 
 DIR_PATH = Path(__file__).resolve().parent
-SIM_CONFIGS_DIR = f"{DIR_PATH}/configs"
-PIPELINE_CONFIG_FILE = f"{DIR_PATH}/pipeline.yaml"
+SIM_CONFIGS_DIR = os.path.join(DIR_PATH, "configs")
+PIPELINE_CONFIG_FILE = os.path.join(DIR_PATH, "setup", "pipeline.yaml")
 
 trace_lookup = {}
 
@@ -119,7 +119,7 @@ def build_command(config, benchmark, instance=None, aggregate=False):
         cmd.append(f"-C {instance}-{'-'.join(config['extra_configs'])}")
     cmd.append(f"-T {trace_lookup[benchmark.split(':')[0]]}")
     cmd.append(f"-N {config['name_prefix']}-{instance}")
-    cmd.append(f"-r {config['results_dir']}/{instance}")
+    cmd.append(f"-r {os.path.join(config['results_dir'], 'output')}")
     if config["override_names"]:
         cmd.append("-o True")
     return cmd

@@ -107,9 +107,11 @@ class ConfigurationSpec:
             for argmap in self.command_line_args_list:
                 args = argmap["args"]
                 mem_usage = argmap["accel-sim-mem"]
-                appargs_run_subdir = os.path.join( benchmark.replace('/','_'),
-                                self.benchmark_args_subdirs[args] )
+                appargs_run_subdir = os.path.join( 
+                    benchmark.replace('/','_'),
+                    self.benchmark_args_subdirs[args])
                 this_run_dir = os.path.join( run_directory, appargs_run_subdir, self.run_subdir.split('-')[0] )
+
                 self.setup_run_directory(full_data_dir, this_run_dir, data_dir, appargs_run_subdir)
 
                 self.text_replace_torque_sim(full_data_dir,
