@@ -120,6 +120,8 @@ def build_command(config, benchmark, instance=None, aggregate=False):
     cmd.append(f"-T {trace_lookup[benchmark.split(':')[0]]}")
     cmd.append(f"-N {config['name_prefix']}-{instance}")
     cmd.append(f"-r {config['results_dir']}/{instance}")
+    if config["override_names"]:
+        cmd.append("-o True")
     return cmd
 
 

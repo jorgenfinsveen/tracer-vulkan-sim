@@ -109,7 +109,7 @@ class ConfigurationSpec:
                 mem_usage = argmap["accel-sim-mem"]
                 appargs_run_subdir = os.path.join( benchmark.replace('/','_'),
                                 self.benchmark_args_subdirs[args] )
-                this_run_dir = os.path.join( run_directory, appargs_run_subdir, self.run_subdir )
+                this_run_dir = os.path.join( run_directory, appargs_run_subdir, self.run_subdir.split('-')[0] )
                 self.setup_run_directory(full_data_dir, this_run_dir, data_dir, appargs_run_subdir)
 
                 self.text_replace_torque_sim(full_data_dir,
@@ -287,9 +287,14 @@ class ConfigurationSpec:
             """
         slurm_name_var=benchmark + "-" + self.benchmark_args_subdirs[command_line_args] + "." +\
                                 gpgpusim_build_handle
-        slurm_job_id_var=os.getenv("SLURM_JOB_ID")
+        err_file = f'{this_run_dir}/{slurm_name_var}.e%j'
+        out_file = f'{this_run_dir}/{slurm_name_var}.o%j'
+        if options.override_names:
+            timestamp = datetime.datetime.now().strftime("%Y_%m_%d__%H_%M")
+            err_file = f'{timestamp}.e'
+            out_file = f'{timestamp}.o'
         replacement_dict = {"NAME":slurm_name_var,
-                            "NODES":"1", 
+                            "NODES":"1",
                             "GPGPUSIM_ROOT":os.getenv("GPGPUSIM_ROOT"),
                             "LIBPATH": libpath,
                             "SUBDIR":this_run_dir,
@@ -300,13 +305,15 @@ class ConfigurationSpec:
                             "QUEUE_NAME":queue_name,
                             "COMMAND_LINE":txt_args,
                             "MEM_USAGE": mem_usage,
-                            "ERR": f'{this_run_dir}/{slurm_name_var}',
-                            "OUT": f'{this_run_dir}/{slurm_name_var}'
+                            "ERR": err_file,
+                            "OUT": out_file,
+                            "UPDATE_LOGS": options.override_names,
+                            "TARGET": out_file[:-2],
+                            "PIPELINE_DIR": os.path.join(os.getenv("ACCEL_SIM"), "pipeline")
                             } | idun_overrides
 
         torque_text = open(this_directory + job_template).read().strip()
         for entry in replacement_dict:
-            print(f"ENTRY: {entry} - {replacement_dict[entry]}")
             if entry == "PARTITION" and replacement_dict[entry] == "CPUQ":
                 torque_text = re.sub(r'^#SBATCH --gpus=.*\n?', '', torque_text, flags=re.MULTILINE)
             for prefix in ["REPLACE_", "IDUN_"]:

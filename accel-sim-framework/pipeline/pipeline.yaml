@@ -1,7 +1,7 @@
 name_prefix: run-20240723-1728 # run-minitrace
 benchmarks: 
- - crisp-artifact:render_passes_2k
- - crisp-artifact:render_passes_2k_lod0
+# - crisp-artifact:render_passes_2k
+# - crisp-artifact:render_passes_2k_lod0
  - pipeline:minitrace
 
 instances:
@@ -10,11 +10,21 @@ instances:
 
 launcher: idun
 
+override_names: true
+
+experiment:
+  params:
+    - gpgpu_n_clusters
+  results:
+    - gpu_tot_ipc
+    - gpu_tot_occupancy
+
 extra_configs:
   - SASS
   - concurrent
   - fg
   - VISUAL
+
 aggregate: true
 
 trace_lookup: $ACCEL_SIM/pipeline/traces.yaml
