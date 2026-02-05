@@ -3,3 +3,4 @@ logfiles
 *.pickle*
 procman/
 __pycache__
+*.log

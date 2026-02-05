@@ -39,22 +39,6 @@ export PATH=REPLACE_PATH
 echo "doing export CUDA_LAUNCH_BLOCKING=1"
 export CUDA_LAUNCH_BLOCKING=1
 
-UPDATE_LOGS=REPLACE_UPDATE_LOGS
-
-if [ "$UPDATE_LOGS" = "True" ]; then
-    if [ ! -f "REPLACE_SUBDIR/simulator_logs.yaml" ]; then
-        touch "REPLACE_SUBDIR/simulator_logs.yaml"
-    fi
-    echo "updating simulator_logs.yaml"
-
-    python3 "REPLACE_PIPELINE_DIR/utility/updatelogs.py" \
-        --target REPLACE_TARGET \
-        --logs REPLACE_SUBDIR/simulator_logs.yaml \
-        --pipeline REPLACE_PIPELINE_DIR/setup/pipeline.yaml \
-        --job_name REPLACE_NAME
-fi
-
-echo "running on node $('hostname')"
+echo "node:$('hostname')"
 echo "doing: REPLACE_EXEC_NAME REPLACE_COMMAND_LINE"
 REPLACE_EXEC_NAME REPLACE_COMMAND_LINE
-

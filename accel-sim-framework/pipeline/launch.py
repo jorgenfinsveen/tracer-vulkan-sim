@@ -14,7 +14,7 @@ trace_lookup = {}
 def parse_pipeline_config():
     config = {}
     with open(PIPELINE_CONFIG_FILE, "r", encoding="utf-8") as f:
-        config = yaml.safe_load(f)
+        config = yaml.safe_load(f) or {}
         config["results_dir"] = os.path.expandvars(config["results_dir"])
         for dest in ["trace_lookup", "results_dir"]:
             config[dest] = os.path.expandvars(config[dest])
@@ -27,7 +27,7 @@ def parse_pipeline_config():
 def parse_trace_lookup(t_path):
     global trace_lookup
     with open(t_path, "r", encoding="utf-8") as f:
-        trace_lookup = yaml.safe_load(f)
+        trace_lookup = yaml.safe_load(f) or {}
         for trace in trace_lookup:
             trace_lookup[trace] = os.path.expandvars(trace_lookup[trace])
 
@@ -119,7 +119,7 @@ def build_command(config, benchmark, instance=None, aggregate=False):
         cmd.append(f"-C {instance}-{'-'.join(config['extra_configs'])}")
     cmd.append(f"-T {trace_lookup[benchmark.split(':')[0]]}")
     cmd.append(f"-N {config['name_prefix']}-{instance}")
-    cmd.append(f"-r {os.path.join(config['results_dir'], 'output')}")
+    cmd.append(f"-r {os.path.join(config['results_dir'], 'output', config['experiment']['name'])}")
     if config["override_names"]:
         cmd.append("-o True")
     return cmd
@@ -170,7 +170,6 @@ def main():
         ans = input("\nStart instances now (y/n): ").strip() 
         if ans.casefold() == "y".casefold():
             os.system(f"bash {export_path}")
-            print("Command executed, verify by using the ps command in the terminal.")
             break
         elif ans.casefold() == "n".casefold():
             break

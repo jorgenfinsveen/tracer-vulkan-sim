@@ -1,0 +1,19 @@
+#!/usr/bin/env bash
+#SBATCH --partition=IDUN_PARTITION
+#SBATCH --job-name=post_job
+#SBATCH --account=IDUN_ACCOUNT
+#SBATCH --mem=32G
+#SBATCH --cpus-per-task=1
+#SBATCH --output=/cluster/home/jorgfi/projects/crisp_framework/accel-sim-framework/util/job_launching/out.log
+#SBATCH --error=/cluster/home/jorgfi/projects/crisp_framework/accel-sim-framework/util/job_launching/err.log
+
+export GPGPUSIM_ROOT=REPLACE_GPGPUSIM_ROOT
+export ACCEL_SIM="REPLACE_PIPELINE_DIR/../"
+
+if [ -f "REPLACE_PIPELINE_DIR/utility/update_logs.py" ]; then
+    python3 "REPLACE_PIPELINE_DIR/utility/update_logs.py" \
+        --target REPLACE_TARGET \
+        --logs REPLACE_RUNDIR/../simulator_logs.yaml \
+        --pipeline REPLACE_PIPELINE_DIR/setup/pipeline.yaml \
+        --job_name REPLACE_NAME 
+fi
