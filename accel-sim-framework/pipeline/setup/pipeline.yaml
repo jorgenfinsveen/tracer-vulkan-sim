@@ -33,4 +33,4 @@ config_destinations:
 
 # For Slurm jobs. 
 # See more configuration-options in accel-sim-framework/util/job_launching/idun.yaml.
-job_mem: 16G # Default is 4G, but this turned out to be insufficient for the workloads in the artifact.[2026_02_05__20_12] unable to find experiments.yaml at: $ACCEL_SIM/pipeline/setup/experiments.yaml[2026_02_05__20_15] unable to find experiments.yaml at: /cluster/home/jorgfi/projects/crisp_framework/accel-sim-framework/pipeline..//pipeline/setup/experiments.yaml
+job_mem: 16G # Default is 4G, but this turned out to be insufficient for the workloads in the artifact.
