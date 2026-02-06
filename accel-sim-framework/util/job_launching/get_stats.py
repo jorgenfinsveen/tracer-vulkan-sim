@@ -82,10 +82,14 @@ parser.add_option("-I", "--ignore_failures", dest="ignore_failures", action="sto
                   help="If an app crashed, still collect its data")
 parser.add_option("-A", "--do_averages", dest="do_averages", action="store_true",
                   help="Print the averages for each statistic")
+parser.add_option("-o", "--override_names", dest="override_names", default="false",
+                  help="Override default names of output-files and use date-time instead.")
+
 (options, args) = parser.parse_args()
 options.logfile = options.logfile.strip()
 options.run_dir = options.run_dir.strip()
 options.sim_name = options.sim_name.strip()
+options.override_names = (options.override_names != "false")
 
 common.load_defined_yamls()
 
@@ -167,6 +171,7 @@ else:
                     configs.append(config)
                     added_cfgs.add(config)
                 app_and_args = os.path.join( app.replace('/','_'), args )
+
                 if app_and_args not in added_apps:
                     apps_and_args.append( app_and_args )
                     exe_and_args = os.path.join( os.path.basename(app), args)
@@ -184,7 +189,17 @@ for idx, app_and_args in enumerate(apps_and_args):
             print("WARNING the outputdir " + output_dir + " does not exist", file=sys.stderr)
             continue
 
-        if config + app_and_args in specific_jobIds:
+        if options.override_names and not options.configs_list != "" and not options.benchmark_list != "":
+            path = f"{output_dir}/{jobname}.o"
+            outfile = os.path.join(path) 
+        elif options.override_names:
+            all_outfiles = [os.path.join(output_dir, f) \
+                           for f in os.listdir(output_dir) if (f == f"{options.logfile}.o")] #if(re.match(r'.*\.o+',f))]
+            if len(all_outfiles) != 0:
+                outfile = max(all_outfiles, key=os.path.getmtime)
+            else:
+                continue
+        elif config + app_and_args in specific_jobIds:
             jobId,jobname = specific_jobIds[ config + app_and_args ]
             torque_submname = re.sub(r".*\.([^\s]*-commit-.*-commit-.*)", r"\1", jobname)
             outfile = os.path.join(output_dir, exes_and_args[idx].replace("/", "-") + "." +\

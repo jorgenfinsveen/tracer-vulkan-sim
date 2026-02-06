@@ -164,7 +164,7 @@ class ConfigurationSpec:
                         log_name = "sim_log.{0}".format(options.launch_name)
                         path = this_directory + "logfiles/"+ log_name + "." + day_string + ".txt"
                         if options.override_names:
-                            path = this_directory + "logfiles/"+ "sim_log.{0}".format(global_timestamp) + ".txt"
+                            path = this_directory + "logfiles/"+ str(benchmark) + ".{0}".format(global_timestamp) + ".txt"
                             logfile = open(path, 'a')
                             print("%s %6s %-22s %-100s %-25s %s" %\
                                ( time_string ,\

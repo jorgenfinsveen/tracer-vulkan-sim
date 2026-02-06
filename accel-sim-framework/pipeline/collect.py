@@ -1,7 +1,24 @@
 #!/usr/bin/env python3
+import os
 import sys
+import yaml
 import subprocess
 from pathlib import Path
+
+DIR_PATH = Path(__file__).resolve().parent
+PIPELINE_CONFIG_FILE = os.path.join(DIR_PATH, "setup", "pipeline.yaml")
+
+pipeline = {}
+
+
+def parse_pipeline_config():
+    global pipeline
+    with open(PIPELINE_CONFIG_FILE, "r", encoding="utf-8") as f:
+        pipeline = yaml.safe_load(f) or {}
+        for dest in ["trace_lookup", "results_dir"]:
+            pipeline[dest] = os.path.expandvars(pipeline[dest])
+        for dest in pipeline["config_destinations"]:
+            pipeline["config_destinations"][dest] = os.path.expandvars(pipeline["config_destinations"][dest])    
 
 def main():
     if len(sys.argv) != 2:
@@ -9,48 +26,47 @@ def main():
 
     run_id = sys.argv[1].strip()
 
-    pipeline_root = Path(__file__).resolve().parent
-    results_root  = pipeline_root / "results"
-    output_root   = results_root / "output"
+    parse_pipeline_config()
 
-    get_stats = pipeline_root.parent / "util" / "job_launching" / "get_stats.py"
-    if not get_stats.exists():
-        get_stats = pipeline_root / "util" / "job_launching" / "get_stats.py"
-    if not get_stats.exists():
-        raise SystemExit(f"Cannot find get_stats.py (edit path). Tried:\n  {pipeline_root.parent / 'util/job_launching/get_stats.py'}\n  {pipeline_root / 'util/job_launching/get_stats.py'}")
+    results_dir = os.path.expandvars(pipeline['results_dir'])
+    output_dir = os.path.join(results_dir, "output", pipeline['experiment']['name'])
+    export_dir = os.path.join(results_dir, "export", "total")
 
-    o_files = sorted(output_root.rglob(f"sim-{run_id}.o"))
-    if not o_files:
-        raise SystemExit(f"No .o files found for sim-{run_id}.o under {output_root}")
+    export_csv = os.path.join(export_dir, f"{run_id}.csv")
+    executable = os.path.join(DIR_PATH.parent, "util", "job_launching", "get_stats.py")
 
-    sh_path = results_root / f"collect_{run_id}.sh"
+    benchmarks = ",".join(pipeline['benchmarks'])
+    configs = ",".join(pipeline['instances'])
 
     lines = []
-    lines.append("#!/bin/bash")
-    lines.append("set -euo pipefail")
-    lines.append(f'RUN_ID="{run_id}"')
-    lines.append(f'GET_STATS="{get_stats}"')
-    lines.append('echo "Found .o files:"')
-    for p in o_files:
-        lines.append(f'echo "  {p}"')
-    lines.append('echo "Generating per-run CSV next to each .o file..."')
+    lines.append("#!/usr/bin/env bash")
+    lines.append("set -euo pipefail\n")
 
-    for p in o_files:
-        run_dir = p.parent
-        out_csv = run_dir / f"{run_id}.csv"
-        lines.append(f'echo "-> {p}"')
-        lines.append(f'python3 "$GET_STATS" -k -R -r "{run_dir}" -l "{p}" > "{out_csv}"')
-        lines.append("")
+    lines.append(f'mkdir -p {export_dir}\n')
 
-    lines.append('echo "Ferdig :)"')
+    lines.append(f'{executable} \\')
+    lines.append('\t-k \\')
+    lines.append('\t-R \\')
+    lines.append('\t-o True \\')
+    lines.append(f'\t-C {configs} \\')
+    lines.append(f'\t-l {run_id} \\')
+    lines.append(f'\t-B {benchmarks} \\')
+    lines.append(f'\t-r {output_dir} \\')
+    lines.append(f'\t > {export_csv}')
 
-    sh_path.write_text("\n".join(lines) + "\n")
-    sh_path.chmod(0o755)
+    lines.append('\necho "Ferdig :)"')
 
-    print(f"Wrote: {sh_path}")
+    export_sh = os.path.join(results_dir, f"2collect_{run_id}.sh")
+    with open(export_sh, 'w', encoding='utf-8') as f:
+        for line in lines:
+            f.write(f"{line}\n")
+
+    os.system(f"chmod +x {export_sh}")
+
+    print(f"Wrote: {export_sh}")
     ans = input("Run it now? [y/N] ").strip().lower()
     if ans == "y":
-        subprocess.run(["bash", str(sh_path)], check=True)
+        subprocess.run(["bash", str(export_sh)], check=True)
 
 if __name__ == "__main__":
     main()
