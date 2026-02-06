@@ -1,4 +1,4 @@
-export CUDA_VERSION="11.7.0"
+export CUDA_VERSION="11.7"
 export EMBREE_VERSION="3.13.5"
 export GCC_VERSION="9.4.0"
 export UBUNTU_VERSION="20.04"

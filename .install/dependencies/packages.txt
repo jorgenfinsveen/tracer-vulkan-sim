@@ -56,3 +56,4 @@ vulkan-tools
 libxkbcommon-dev
 python3-mako
 tree
+bc

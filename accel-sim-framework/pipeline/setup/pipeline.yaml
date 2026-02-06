@@ -1,7 +1,7 @@
-name_prefix: run-20240723-1728 # run-minitrace
+name_prefix: sim # run-minitrace
 benchmarks: 
- - crisp-artifact:render_passes_2k
- - crisp-artifact:render_passes_2k_lod0
+# - crisp-artifact:render_passes_2k
+# - crisp-artifact:render_passes_2k_lod0
  - pipeline:minitrace
 
 instances:
@@ -10,14 +10,21 @@ instances:
 
 launcher: idun
 
+override_names: true
+
+experiment:
+  path: $ACCEL_SIM/pipeline/setup/experiments.yaml
+  name: more_streaming_multiprocessors
+
 extra_configs:
   - SASS
   - concurrent
   - fg
   - VISUAL
+
 aggregate: true
 
-trace_lookup: $ACCEL_SIM/pipeline/traces.yaml
+trace_lookup: $ACCEL_SIM/pipeline/setup/traces.yaml
 results_dir: $ACCEL_SIM/pipeline/results
 
 config_destinations:

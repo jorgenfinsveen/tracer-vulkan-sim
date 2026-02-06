@@ -215,6 +215,8 @@ def parse_run_simulations_options():
                        " on the local node will be used.")
     parser.add_option("-a", "--accelwattch_HW", dest="accelwattch_HW", action="store_true",
                       help="Enable passing hw_perf_bench_name for accelwattch hw and hybrid runs to config file.")
+    parser.add_option("-o", "--override_names", dest="override_names", default="false",
+                      help="Override default names of output-files and use date-time instead.")
 
     (options, args) = parser.parse_args()
     # Parser seems to leave some whitespace on the options, getting rid of it
@@ -228,6 +230,7 @@ def parse_run_simulations_options():
     options.launch_name = options.launch_name.strip()
     if options.job_mem != None:
         options.job_mem = options.job_mem.strip()
+    options.override_names = (options.override_names != "false")
     return (options, args)
 
 # After collection, spew out the tables
