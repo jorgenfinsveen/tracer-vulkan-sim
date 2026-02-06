@@ -1,7 +1,7 @@
-name_prefix: run-20240723-1728 # run-minitrace
+name_prefix: sim # run-minitrace
 benchmarks: 
- - crisp-artifact:render_passes_2k
- - crisp-artifact:render_passes_2k_lod0
+# - crisp-artifact:render_passes_2k
+# - crisp-artifact:render_passes_2k_lod0
  - pipeline:minitrace
 
 instances:

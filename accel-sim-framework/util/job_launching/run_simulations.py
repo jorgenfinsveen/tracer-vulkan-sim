@@ -46,6 +46,8 @@ IDUN_CONFIG_FILENAME = "idun.yaml"
 
 IDUN_CONFIG = os.path.join(Path(__file__).resolve().parent, IDUN_CONFIG_FILENAME)
 
+global_timestamp = ""
+
 this_directory = os.path.dirname(os.path.realpath(__file__)) + "/"
 # This function will pull the SO name out of the shared object,
 # which will have current GIT commit number attatched.
@@ -160,10 +162,23 @@ class ConfigurationSpec:
                         day_string = now_time.strftime("%y.%m.%d-%A")
                         time_string = now_time.strftime("%H:%M:%S")
                         log_name = "sim_log.{0}".format(options.launch_name)
-                        logfile = open(this_directory +\
+                        path = this_directory + "logfiles/"+ log_name + "." + day_string + ".txt"
+                        if options.override_names:
+                            path = this_directory + "logfiles/"+ "sim_log.{0}".format(global_timestamp) + ".txt"
+                            logfile = open(path, 'a')
+                            print("%s %6s %-22s %-100s %-25s %s" %\
+                               ( time_string ,\
+                               torque_out ,\
+                               benchmark ,\
+                               self.benchmark_args_subdirs[args] ,\
+                               self.run_subdir.split('-')[0],\
+                               global_timestamp ), file=logfile)
+                            logfile.close()
+                        else :
+                            logfile = open(this_directory +\
                                        "logfiles/"+ log_name + "." +\
                                        day_string + ".txt",'a')
-                        print("%s %6s %-22s %-100s %-25s %s.%s" %\
+                            print("%s %6s %-22s %-100s %-25s %s.%s" %\
                                ( time_string ,\
                                torque_out ,\
                                benchmark ,\
@@ -171,7 +186,7 @@ class ConfigurationSpec:
                                self.run_subdir,\
                                benchmark,\
                                build_handle ), file=logfile)
-                        logfile.close()
+                            logfile.close()
             self.benchmark_args_subdirs.clear()
         return job_ids
 
@@ -295,9 +310,10 @@ class ConfigurationSpec:
         err_file = f'{this_run_dir}/{slurm_name_var}.e%j'
         out_file = f'{this_run_dir}/{slurm_name_var}.o%j'
         if options.override_names:
-            timestamp = datetime.datetime.now().strftime("%Y_%m_%d__%H_%M")
-            err_file = f'{timestamp}.e'
-            out_file = f'{timestamp}.o'
+            global global_timestamp
+            global_timestamp = datetime.datetime.now().strftime("%Y_%m_%d__%H_%M")
+            err_file = f'{global_timestamp}.e'
+            out_file = f'{global_timestamp}.o'
         replacement_dict = {"NAME":slurm_name_var,
                             "NODES":"1",
                             "GPGPUSIM_ROOT":os.getenv("GPGPUSIM_ROOT"),

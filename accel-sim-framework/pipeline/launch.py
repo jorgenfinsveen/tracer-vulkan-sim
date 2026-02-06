@@ -127,7 +127,8 @@ def build_command(config, benchmark, instance=None, aggregate=False):
 
 def export_commands(commands, path):
     with open(path, 'w') as f:
-        f.write('#!/usr/bin/env bash\n\n')
+        f.write('#!/usr/bin/env bash\n')
+        f.write('set -euo pipefail\n\n')
         for command in commands:
             cmd = command[0] + ' \\\n'
             for i in range(1, len(command)):

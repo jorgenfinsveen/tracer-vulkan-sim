@@ -4,3 +4,4 @@ logfiles
 procman/
 __pycache__
 *.log
+post.sim
