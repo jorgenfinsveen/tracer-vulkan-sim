@@ -11,8 +11,8 @@
 #SBATCH --mail-user=IDUN_MAIL_USER
 #SBATCH --mail-type=IDUN_MAIL_TYPE
 #SBATCH --export=ALL
-#SBATCH --output=REPLACE_OUT.o%j
-#SBATCH --error=REPLACE_ERR.e%j
+#SBATCH --output=REPLACE_OUT
+#SBATCH --error=REPLACE_ERR
 
 if [ "$GPGPUSIM_SETUP_ENVIRONMENT_WAS_RUN" != "1" ]; then
     export GPGPUSIM_ROOT=REPLACE_GPGPUSIM_ROOT
@@ -39,6 +39,6 @@ export PATH=REPLACE_PATH
 echo "doing export CUDA_LAUNCH_BLOCKING=1"
 export CUDA_LAUNCH_BLOCKING=1
 
-echo "running on node $('hostname')"
+echo "node:$('hostname')"
 echo "doing: REPLACE_EXEC_NAME REPLACE_COMMAND_LINE"
 REPLACE_EXEC_NAME REPLACE_COMMAND_LINE
