@@ -57,10 +57,10 @@ def run_bar_charts_for_csvs(csv_paths: list[Path]):
     for csv_path in csv_paths:
         try:
             bar_chart(str(csv_path))
-            print(f"✅ plotted: {csv_path}")
+            print(f"plotted: {csv_path}")
         except TypeError:
             bar_chart(str(csv_path))
-            print(f"✅ plotted: {csv_path}")
+            print(f"plotted: {csv_path}")
 
 
 def menu():
@@ -77,7 +77,7 @@ def menu():
         print("Invalid choice")
         sys.exit(1)
 
-    query = input("CSV filename OR experiment/prefix to match: ").strip()
+    query = input("Experiment to match: ").strip()
     if not query:
         print("No input was provided.")
         sys.exit(1)
