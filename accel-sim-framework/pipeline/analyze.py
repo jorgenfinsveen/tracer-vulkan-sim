@@ -16,7 +16,7 @@ import yaml
 from utility.plots.bar_chart import bar_chart
 
 PIPELINE_ROOT = Path(__file__).resolve().parent
-PIPELINE_YAML = PIPELINE_ROOT / "pipeline.yaml"
+PIPELINE_YAML = PIPELINE_ROOT / "setup" / "pipeline.yaml"
 
 def find_file(root: Path, filename: str) -> Path | None:
     for p in root.rglob(filename):
@@ -24,27 +24,27 @@ def find_file(root: Path, filename: str) -> Path | None:
             return p
     return None
 
-def load_experiment_name() -> str:
+def load_metric_metric() -> str:
     if not PIPELINE_YAML.exists():
         raise SystemExit(f"Missing pipeline config: {PIPELINE_YAML}")
 
     with PIPELINE_YAML.open() as f:
         data = yaml.safe_load(f) or {}
 
-    exp = data.get("experiment", {})
-    name = exp.get("name")
-    if not name:
+    collect = data.get("collect", {})
+    metric = collect.get("metric")
+    if not metric:
         raise SystemExit("pipeline.yaml missing experiment.name")
-    return str(name)
+    return str(metric)
 
-def find_experiment_csvs(experiment_name: str) -> list[Path]:
-    export_root = PIPELINE_ROOT / "results"
-    hits = list(export_root.rglob(f"*{experiment_name}*.csv"))
+def find_experiment_csvs(metric_metric: str) -> list[Path]:
+    export_root = PIPELINE_ROOT / "results" / "export"
+    hits = list(export_root.rglob(f"*{metric_metric}*.csv"))
     return sorted([p for p in hits if p.is_file()])
 
 def default_run():
-    experiment_name = load_experiment_name()
-    csvs = find_experiment_csvs(experiment_name)
+    metric_metric = load_metric_metric()
+    csvs = find_experiment_csvs(metric_metric)
     run_bar_charts_for_csvs(csvs)
 
 def run_bar_charts_for_csvs(csv_paths: list[Path]):

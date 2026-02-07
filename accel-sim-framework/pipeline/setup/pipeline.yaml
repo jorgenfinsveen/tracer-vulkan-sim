@@ -1,4 +1,4 @@
-name_prefix: run-20240723-1728 
+name_prefix: sim # run-minitrace
 benchmarks: 
  - crisp-artifact:render_passes_2k
  - crisp-artifact:render_passes_2k_lod0
@@ -24,7 +24,12 @@ extra_configs:
 
 aggregate: true
 
-trace_lookup: $ACCEL_SIM/pipeline/traces.yaml
+#Options for collect
+collect:
+  detailed: true
+  metric: gpu_tot_ipc
+
+trace_lookup: $ACCEL_SIM/pipeline/setup/traces.yaml
 results_dir: $ACCEL_SIM/pipeline/results
 
 config_destinations:

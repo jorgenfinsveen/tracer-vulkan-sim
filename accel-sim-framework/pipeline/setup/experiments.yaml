@@ -1,0 +1,6 @@
+more_streaming_multiprocessors:
+  params:
+    - gpgpu_n_clusters
+  results:
+    - gpu_tot_ipc
+    - gpu_tot_occupancy

@@ -46,6 +46,8 @@ IDUN_CONFIG_FILENAME = "idun.yaml"
 
 IDUN_CONFIG = os.path.join(Path(__file__).resolve().parent, IDUN_CONFIG_FILENAME)
 
+global_timestamp = ""
+
 this_directory = os.path.dirname(os.path.realpath(__file__)) + "/"
 # This function will pull the SO name out of the shared object,
 # which will have current GIT commit number attatched.
@@ -84,6 +86,7 @@ class ConfigurationSpec:
         print("Base config file = " + self.config_file)
 
     def run(self, build_handle, benchmarks, run_directory, cuda_version, simdir):
+        job_ids = []
         for dir_bench in benchmarks:
             exec_dir, data_dir, benchmark, self.command_line_args_list = dir_bench
             full_exec_dir = "" # For traces it is not necessary to have the apps built
@@ -107,9 +110,11 @@ class ConfigurationSpec:
             for argmap in self.command_line_args_list:
                 args = argmap["args"]
                 mem_usage = argmap["accel-sim-mem"]
-                appargs_run_subdir = os.path.join( benchmark.replace('/','_'),
-                                self.benchmark_args_subdirs[args] )
-                this_run_dir = os.path.join( run_directory, appargs_run_subdir, self.run_subdir )
+                appargs_run_subdir = os.path.join( 
+                    benchmark.replace('/','_'),
+                    self.benchmark_args_subdirs[args])
+                this_run_dir = os.path.join( run_directory, appargs_run_subdir, self.run_subdir.split('-')[0] )
+
                 self.setup_run_directory(full_data_dir, this_run_dir, data_dir, appargs_run_subdir)
 
                 self.text_replace_torque_sim(full_data_dir,
@@ -136,6 +141,7 @@ class ConfigurationSpec:
                         torque_out_file.seek(0)
                         torque_out = re.sub(r"[^\d]*(\d*).*", r"\1",
                             torque_out_file.read().strip())
+                        job_ids.append(torque_out)
                         print("Job " + torque_out + " queued (" +\
                             benchmark + "-" + self.benchmark_args_subdirs[args] +\
                             " " + self.run_subdir + ")")
@@ -156,10 +162,23 @@ class ConfigurationSpec:
                         day_string = now_time.strftime("%y.%m.%d-%A")
                         time_string = now_time.strftime("%H:%M:%S")
                         log_name = "sim_log.{0}".format(options.launch_name)
-                        logfile = open(this_directory +\
+                        path = this_directory + "logfiles/"+ log_name + "." + day_string + ".txt"
+                        if options.override_names:
+                            path = this_directory + "logfiles/"+ str(benchmark) + ".{0}".format(global_timestamp) + ".txt"
+                            logfile = open(path, 'a')
+                            print("%s %6s %-22s %-100s %-25s %s" %\
+                               ( time_string ,\
+                               torque_out ,\
+                               benchmark ,\
+                               self.benchmark_args_subdirs[args] ,\
+                               self.run_subdir.split('-')[0],\
+                               global_timestamp ), file=logfile)
+                            logfile.close()
+                        else :
+                            logfile = open(this_directory +\
                                        "logfiles/"+ log_name + "." +\
                                        day_string + ".txt",'a')
-                        print("%s %6s %-22s %-100s %-25s %s.%s" %\
+                            print("%s %6s %-22s %-100s %-25s %s.%s" %\
                                ( time_string ,\
                                torque_out ,\
                                benchmark ,\
@@ -167,8 +186,9 @@ class ConfigurationSpec:
                                self.run_subdir,\
                                benchmark,\
                                build_handle ), file=logfile)
-                        logfile.close()
+                            logfile.close()
             self.benchmark_args_subdirs.clear()
+        return job_ids
 
     #########################################################################################
     # Internal utility methods
@@ -287,9 +307,15 @@ class ConfigurationSpec:
             """
         slurm_name_var=benchmark + "-" + self.benchmark_args_subdirs[command_line_args] + "." +\
                                 gpgpusim_build_handle
-        slurm_job_id_var=os.getenv("SLURM_JOB_ID")
+        err_file = f'{this_run_dir}/{slurm_name_var}.e%j'
+        out_file = f'{this_run_dir}/{slurm_name_var}.o%j'
+        if options.override_names:
+            global global_timestamp
+            global_timestamp = datetime.datetime.now().strftime("%Y_%m_%d__%H_%M")
+            err_file = f'{global_timestamp}.e'
+            out_file = f'{global_timestamp}.o'
         replacement_dict = {"NAME":slurm_name_var,
-                            "NODES":"1", 
+                            "NODES":"1",
                             "GPGPUSIM_ROOT":os.getenv("GPGPUSIM_ROOT"),
                             "LIBPATH": libpath,
                             "SUBDIR":this_run_dir,
@@ -300,19 +326,32 @@ class ConfigurationSpec:
                             "QUEUE_NAME":queue_name,
                             "COMMAND_LINE":txt_args,
                             "MEM_USAGE": mem_usage,
-                            "ERR": f'{this_run_dir}/{slurm_name_var}',
-                            "OUT": f'{this_run_dir}/{slurm_name_var}'
+                            "ERR": err_file,
+                            "OUT": out_file,
+                            "UPDATE_LOGS": options.override_names,
+                            "TARGET": out_file[:-2],
+                            "PIPELINE_DIR": os.path.join(os.getenv("ACCEL_SIM"), "pipeline"),
+                            "RUNDIR": options.run_directory
                             } | idun_overrides
 
         torque_text = open(this_directory + job_template).read().strip()
         for entry in replacement_dict:
-            print(f"ENTRY: {entry} - {replacement_dict[entry]}")
             if entry == "PARTITION" and replacement_dict[entry] == "CPUQ":
                 torque_text = re.sub(r'^#SBATCH --gpus=.*\n?', '', torque_text, flags=re.MULTILINE)
             for prefix in ["REPLACE_", "IDUN_"]:
                 torque_text = re.sub(prefix + entry,
                                     str(replacement_dict[entry]),
                                     torque_text)
+        if options.override_names:
+            if os.path.exists(os.path.join(this_directory + "post.sim")):
+                os.remove(os.path.join(this_directory + "post.sim"))
+            post_text = open(this_directory + "post-template.sim").read().strip()
+            for entry in replacement_dict:
+                for prefix in ["REPLACE_", "IDUN_"]:
+                    post_text = re.sub(prefix + entry,
+                        str(replacement_dict[entry]),
+                        post_text)
+            open(os.path.join(this_directory + "post.sim"), 'w').write(post_text)
 
         open(os.path.join(this_run_dir , job_template), 'w').write(torque_text)
         exec_line = torque_text.splitlines()[-1]
@@ -441,9 +480,22 @@ print("Running Simulations with GPGPU-Sim built from \n{0}\n ".format(version_st
       "\nUsing configs: " + options.configs_list +
       "\nBenchmark: " + options.benchmark_list)
 
+job_ids = []
 for config in configurations:
     config.my_print()
-    config.run(version_string, benchmarks, options.run_directory, cuda_version, options.simulator_dir)
+    job_ids += config.run(version_string, benchmarks, options.run_directory, cuda_version, options.simulator_dir)
+
+if options.override_names:
+    dependency = "--dependency=after:"
+    exports = "--export=EXPORTED_JOB_IDS="
+    template = os.path.join(Path(__file__).resolve().parent, "post.sim")
+    for id in job_ids:
+        dependency += str(id)
+        exports += f"{id}_"
+    print(" ".join([job_submit_call, dependency, exports[:-1], template]))
+    if subprocess.call([job_submit_call, dependency, exports[:-1], template]) < 0:
+        exit("Error launching post-job.")
+
 
 if "procman" in job_submit_call and not options.no_launch:
     if options.cores == None:

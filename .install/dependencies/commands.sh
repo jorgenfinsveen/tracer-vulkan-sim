@@ -35,8 +35,8 @@ install_embree() {
 
     # Auto-source Embree env for interactive shells
     cat >/etc/profile.d/embree.sh <<'EOS'
-    if [ -f /opt/embree-$EMBREE_VERSION.x86_64.linux/embree-vars.sh ]; then
-        . /opt/embree-$EMBREE_VERSION.x86_64.linux/embree-vars.sh
+    if [ -f "$HOME/opt/embree-$EMBREE_VERSION.x86_64.linux/embree-vars.sh" ]; then
+        . "$HOME/opt/embree-$EMBREE_VERSION.x86_64.linux/embree-vars.sh"
     fi
 EOS
 }
@@ -56,7 +56,7 @@ install_software() {
     RED="\e[31m"
     NC="\e[0m"
 	
-    echo "Starting installation of SDKs. This may take a while..."
+    echo "Starting installation of SDKs. This might take an hour..."
 	echo -ne "	- Installing Embree ($EMBREE_VERSION): "; install_embree > /dev/null 2>&1 && echo -e "${GREEN}SUCCESS${NC}" || echo -e "${RED}FAILED${NC}"
 	echo -ne "	- Installing VulkanSDK ($VULKAN_VERSION): "; install_vulkan > /dev/null 2>&1 && echo -e "${GREEN}SUCCESS${NC}" || echo -e "${RED}FAILED${NC}"
 	echo -ne "	- Installing CUDA ($CUDA_VERSION): "; install_cuda > /dev/null 2>&1 && echo -e "${GREEN}SUCCESS${NC}" || echo -e "${RED}FAILED${NC}"
