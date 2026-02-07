@@ -69,5 +69,9 @@ def main():
     if ans == "y":
         subprocess.run(["bash", str(export_sh)], check=True)
 
+    run_csv_generator = input("Run csv generator for the test result? [y/N]")
+    if run_csv_generator == "y":
+        subprocess.run([sys.executable, "utility/csv_generator.py"], check=True)
+
 if __name__ == "__main__":
     main()
