@@ -45,6 +45,7 @@ def main():
     lines.append(f'mkdir -p {export_dir}\n')
 
     lines.append(f'{executable} \\')
+    lines.append('\t-A \\')
     lines.append('\t-k \\')
     lines.append('\t-R \\')
     lines.append('\t-o True \\')
