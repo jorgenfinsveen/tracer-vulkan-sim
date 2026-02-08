@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 
+export CUSTOM_SETUP_ENVIRONMENT_WAS_RUN=
+
 # Build and session management
 export ROOT="$HOME/projects/crisp_framework"
 export MESA_SIM="$ROOT/mesa-vulkan-sim"
@@ -109,3 +111,5 @@ run() {
 source $HOME/pyenv
 assert_gcc_symlink
 source_all_environments
+
+export CUSTOM_SETUP_ENVIRONMENT_WAS_RUN=1

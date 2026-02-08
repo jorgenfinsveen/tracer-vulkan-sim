@@ -2,34 +2,37 @@
 
 import os
 import yaml
+import importlib.util
 from pathlib import Path
 
+DIR_PATH: Path = Path(__file__).resolve().parent
+SIM_CONFIGS_DIR: Path = os.path.join(DIR_PATH, "configs")
+PIPELINE_CONFIG_FILE: Path = os.path.join(DIR_PATH, "setup", "pipeline.yaml")
 
-DIR_PATH = Path(__file__).resolve().parent
-SIM_CONFIGS_DIR = os.path.join(DIR_PATH, "configs")
-PIPELINE_CONFIG_FILE = os.path.join(DIR_PATH, "setup", "pipeline.yaml")
+PARSER: Path = os.path.join(DIR_PATH, "utility", "parser.py")
+spec = importlib.util.spec_from_file_location("parser", PARSER)
+parser = importlib.util.module_from_spec(spec)
+spec.loader.exec_module(parser)
 
 trace_lookup = {}
 
 def parse_pipeline_config():
-    config = {}
-    with open(PIPELINE_CONFIG_FILE, "r", encoding="utf-8") as f:
-        config = yaml.safe_load(f) or {}
-        config["results_dir"] = os.path.expandvars(config["results_dir"])
-        for dest in ["trace_lookup", "results_dir"]:
-            config[dest] = os.path.expandvars(config[dest])
-        for dest in config["config_destinations"]:
-            config["config_destinations"][dest] = os.path.expandvars(config["config_destinations"][dest])
-        for i in range(len(config["instances"])):
-            config["instances"][i] = config["instances"][i].replace("-", "_")
-        return config
+    config = parser.get_pipeline()
+    for dest in ["trace_lookup", "results_dir"]:
+        config[dest] = os.path.expandvars(config[dest])
+    for dest in config.config_destinations:
+        config.config_destinations[dest] = os.path.expandvars(config.config_destinations[dest])    
+    arr = []
+    for instance in config.instances:
+        arr.append(instance.replace("-", "_"))
+    config.instances = arr
+    return config
 
 def parse_trace_lookup(t_path):
     global trace_lookup
-    with open(t_path, "r", encoding="utf-8") as f:
-        trace_lookup = yaml.safe_load(f) or {}
-        for trace in trace_lookup:
-            trace_lookup[trace] = os.path.expandvars(trace_lookup[trace])
+    trace_lookup = parser.get_traces(t_path)
+    for trace in trace_lookup.get_all():
+        trace_lookup[trace] = os.path.expandvars(trace_lookup[trace])
 
 def prepare_instance(instance, dest):
     if not os.path.exists(os.path.join(SIM_CONFIGS_DIR, instance)):
@@ -45,17 +48,17 @@ def prepare_instance(instance, dest):
         print(f"Skipping {instance} due to missing file: trace.config")
         return False
 
-    os.makedirs(dest["gpgpusim"], exist_ok=True)
-    os.chdir(dest["gpgpusim"])
-    gpgpusim_dest = dest["gpgpusim"] + "/" + instance
+    os.makedirs(dest.gpgpusim, exist_ok=True)
+    os.chdir(dest.gpgpusim)
+    gpgpusim_dest = dest.gpgpusim + "/" + instance
     if os.path.exists(gpgpusim_dest):
         os.system(f"rm -rf {instance}")
     os.makedirs(gpgpusim_dest)
     
 
-    os.makedirs(dest["trace"], exist_ok=True)
-    os.chdir(dest["trace"])
-    trace_dest = dest["trace"] + "/" + instance
+    os.makedirs(dest.trace, exist_ok=True)
+    os.chdir(dest.trace)
+    trace_dest = dest.trace + "/" + instance
     if os.path.exists(trace_dest):
         os.system(f"rm -rf {instance}")
     os.makedirs(trace_dest)
@@ -105,23 +108,23 @@ def build_command(config, benchmark, instance=None, aggregate=False):
     cmd = []
     exec_path = os.path.expandvars("$ACCEL_SIM/util/job_launching/run_simulations.py")
     cmd.append(exec_path)
-    cmd.append(f"-l {config['launcher']}")
-    cmd.append(f"-M {config['job_mem']}")
+    cmd.append(f"-M {config.job_mem}")
+    cmd.append(f"-l {config.launcher}")
+    if config.override_names:
+        cmd.append("-o True")
     cmd.append(f"-B {benchmark}")
     if aggregate:
         c_line = f"-C "
-        extra_configs = "-".join(config["extra_configs"])
-        for inst in config["instances"]:
+        extra_configs = "-".join(config.extra_configs)
+        for inst in config.instances:
             c_line += f"{inst}-{extra_configs},"
         cmd.append(c_line[:-1])
         instance = '$(date +"%Y_%m_%d__%H_%M")'
     else:
-        cmd.append(f"-C {instance}-{'-'.join(config['extra_configs'])}")
+        cmd.append(f"-C {instance}-{'-'.join(config.extra_configs)}")
     cmd.append(f"-T {trace_lookup[benchmark.split(':')[0]]}")
-    cmd.append(f"-N {config['name_prefix']}-{instance}")
-    cmd.append(f"-r {os.path.join(config['results_dir'], 'output', config['experiment']['name'])}")
-    if config["override_names"]:
-        cmd.append("-o True")
+    cmd.append(f"-N {config.name_prefix}-{instance}")
+    cmd.append(f"-r {os.path.join(config.results_dir, 'output', config.experiment.name)}")
     return cmd
 
 
@@ -143,38 +146,41 @@ def ensure_dirs_present(dirs):
 
 
 def main():
+    custom_setup_was_run = os.getenv('CUSTOM_SETUP_ENVIRONMENT_WAS_RUN')
+    if not custom_setup_was_run or int(custom_setup_was_run) != 1:
+        path = os.path.join(DIR_PATH.parent, 'setup_environment.sh')
+        if os.path.exists(path):
+            os.system(f'source {path}')
     pipeline_config = parse_pipeline_config()
-    parse_trace_lookup(pipeline_config['trace_lookup'])
-    ensure_dirs_present([pipeline_config["results_dir"]])
+    parse_trace_lookup(pipeline_config.trace_lookup)
+    ensure_dirs_present([pipeline_config.results_dir])
     commands = []
     
-    if pipeline_config["aggregate"]:
-        for benchmark in pipeline_config["benchmarks"]:
-            for inst in pipeline_config["instances"]:
-                if not prepare_instance(inst, pipeline_config["config_destinations"]):
-                    pipeline_config["instances"].remove(inst)
+    if pipeline_config.aggregate:
+        for benchmark in pipeline_config.benchmarks:
+            for inst in pipeline_config.instances:
+                if not prepare_instance(inst, pipeline_config.config_destinations):
+                    pipeline_config.instances.remove(inst)
             commands.append(build_command(config=pipeline_config, benchmark=benchmark, aggregate=True))
     else:
-        for inst in pipeline_config["instances"]:
-            for benchmark in pipeline_config["benchmarks"]:
-                if not prepare_instance(inst, pipeline_config["config_destinations"]): continue
+        for inst in pipeline_config.instances:
+            for benchmark in pipeline_config.benchmarks:
+                if not prepare_instance(inst, pipeline_config.config_destinations): continue
                 commands.append(build_command(config=pipeline_config, instance=inst))
 
-    export_path = os.path.join(pipeline_config['results_dir'], 'launch.sh')
+    export_path = os.path.join(pipeline_config.results_dir, 'launch.sh')
     export_commands(commands, export_path)
 
-    print("\n\nPipeline creation complete")
-    print(f"Script to start simulator-instances written to: \n - {export_path}")
-
+    print(f'\n\nScript to start simulator-instances written to: \n - {export_path}')
 
     while True:
-        ans = input("\nStart instances now (y/n): ").strip() 
-        if ans.casefold() == "y".casefold():
-            os.system(f"bash {export_path}")
+        ans = input('\nStart instances now (y/n): ').strip() 
+        if ans.casefold() == 'y'.casefold():
+            os.system(f'bash {export_path}')
             break
-        elif ans.casefold() == "n".casefold():
+        elif ans.casefold() == 'n'.casefold():
             break
         else:
-            print("Invalid input, please write y or n.")
+            print('Invalid input, please write y or n.')
 
 main()
