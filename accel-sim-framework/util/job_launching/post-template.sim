@@ -14,6 +14,5 @@ if [ -f "REPLACE_PIPELINE_DIR/utility/update_logs.py" ]; then
     python3 "REPLACE_PIPELINE_DIR/utility/update_logs.py" \
         --target REPLACE_TARGET \
         --logs REPLACE_RUNDIR/../simulator_logs.yaml \
-        --pipeline REPLACE_PIPELINE_DIR/setup/pipeline.yaml \
-        --job_name REPLACE_NAME 
+        --pipeline REPLACE_PIPELINE_DIR/setup/pipeline.yaml 
 fi
