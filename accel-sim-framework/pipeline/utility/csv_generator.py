@@ -1,16 +1,27 @@
 #!/usr/bin/env python3
-import csv
-import glob
 import os
 import re
 import sys
+import csv
+import glob
+import parser
+import importlib.util
+from pathlib import Path
 from collections import defaultdict, OrderedDict
 
-import yaml
+DIR_PATH: Path = Path(__file__).resolve().parent
+PIPELINE_ROOT: Path = DIR_PATH.parent
+PIPELINE_CONFIG_FILE: Path = os.path.join(PIPELINE_ROOT, "setup", "pipeline.yaml")
 
-SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
-PIPELINE_ROOT = os.path.abspath(os.path.join(SCRIPT_DIR, ".."))
+DASH_RE = re.compile(r"^-{5,}\s*,*")
+CONFIG_LINE_RE = re.compile(r"^(?P<gpu>[^;]+);;(?P<kv>[^=]+)=(?P<val>.+)$")
 
+# PARSER: Path = os.path.join(DIR_PATH, "parser.py")
+# spec = importlib.util.spec_from_file_location("parser", PARSER)
+# parser = importlib.util.module_from_spec(spec)
+# spec.loader.exec_module(parser)
+
+pipeline = {}
 
 def pick_existing_glob(*patterns: str) -> str:
     hits = []
@@ -31,44 +42,15 @@ def pick_existing_dir(*candidates: str) -> str:
     raise FileNotFoundError(f"Could not find required directory. Tried:{tried}")
 
 
-PIPELINE_YAML = os.path.join(PIPELINE_ROOT, "setup", "pipeline.yaml")
-RESULTS_DIR = os.path.join(PIPELINE_ROOT, "results")
-SIM_LOGS_YAML = os.path.join(RESULTS_DIR, "output", "simulator_logs.yaml")
-TOTAL_DIR = os.path.join(RESULTS_DIR, "export", "total")
-EXPORT_DIR = os.path.join(RESULTS_DIR, "export")
 
-DASH_RE = re.compile(r"^-{5,}\s*,*")
-CONFIG_LINE_RE = re.compile(r"^(?P<gpu>[^;]+);;(?P<kv>[^=]+)=(?P<val>.+)$")
-
-
-def load_yaml(path: str) -> dict:
-    with open(path, "r", encoding="utf-8") as f:
-        return yaml.safe_load(f) or {}
-
-
-def get_active_experiment_and_metric(pipeline_yaml: str) -> tuple[str, str]:
-    data = load_yaml(pipeline_yaml)
-    exp = data.get("experiment") or {}
-    exp_name = exp.get("name")
-    if not exp_name:
-        raise RuntimeError(f"Missing experiment.name in {pipeline_yaml}")
-    collect = data.get("collect") or {}
-    metric = collect.get("metric")
-    if not metric:
-        raise RuntimeError(f"Missing collect.metric in {pipeline_yaml}")
-    return exp_name, metric
-
-
-def find_matching_runs(sim_logs_yaml: str, experiment_name: str):
-    data = load_yaml(sim_logs_yaml)
+def find_matching_runs(path: Path, experiment_name: str):
+    sim_logs = parser.get_simulator_logs(path)
     matches = []
-    for run_key, run_obj in data.items():
-        exp = (run_obj or {}).get("experiment") or {}
-        if exp.get("name") != experiment_name:
+    for key, log in sim_logs.items():
+        if log.experiment != experiment_name:
             continue
-        date_key = run_key[len("sim-") :] if run_key.startswith("sim-") else run_key
-        configs_list = (run_obj or {}).get("configs") or []
-        matches.append((run_key, date_key, configs_list))
+        date = key[4:] if key.startswith('sim-') else key
+        matches.append((key, date, log.configs))
     matches.sort(key=lambda x: x[1])
     return matches
 
@@ -181,8 +163,18 @@ def fmt(x):
 
 
 def main():
-    exp_name, metric = get_active_experiment_and_metric(PIPELINE_YAML)
-    runs = find_matching_runs(SIM_LOGS_YAML, exp_name)
+    global pipeline
+    pipeline = parser.get_pipeline(PIPELINE_CONFIG_FILE)
+    exp_name = pipeline.experiment.name
+    metric   = pipeline.collect.metric
+
+    results_dir = os.path.expandvars(pipeline.results_dir)
+    sim_logs_path = os.path.join(results_dir, 'output', 'simulator_logs.yaml')
+
+    export_dir = os.path.join(results_dir, 'export')
+    export_total_dir = os.path.join(export_dir, 'total')
+
+    runs = find_matching_runs(sim_logs_path, exp_name)
     if not runs:
         print(f"No runs matched experiment.name={exp_name}", file=sys.stderr)
         sys.exit(2)
@@ -191,9 +183,9 @@ def main():
     all_group_keys = OrderedDict()
 
     for _, date_key, configs_list in runs:
-        total_csv = find_total_csv_for_date(TOTAL_DIR, date_key)
+        total_csv = find_total_csv_for_date(export_total_dir, date_key)
         if not total_csv:
-            print(f"WARNING: No total CSV found for date {date_key} in {TOTAL_DIR}", file=sys.stderr)
+            print(f"WARNING: No total CSV found for date {date_key} in {export_total_dir}", file=sys.stderr)
             continue
 
         cfg_param_map = parse_configs_for_run(configs_list)
@@ -225,8 +217,10 @@ def main():
         print("No rows produced. Do the CFG names in CSV match simulator_logs configs GPU names?", file=sys.stderr)
         sys.exit(3)
 
+    
+
     for gpu, row_pairs in per_gpu_rows.items():
-        out_gpu_dir = os.path.join(EXPORT_DIR, gpu)
+        out_gpu_dir = os.path.join(export_dir, gpu)
         os.makedirs(out_gpu_dir, exist_ok=True)
         out_path = os.path.join(out_gpu_dir, f"{metric}.csv")
 
