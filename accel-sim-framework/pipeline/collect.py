@@ -2,7 +2,6 @@
 import os
 import sys
 import yaml
-import subprocess
 from pathlib import Path
 
 DIR_PATH = Path(__file__).resolve().parent
@@ -33,7 +32,7 @@ def main():
     export_dir = os.path.join(results_dir, "export", "total")
 
     export_csv = os.path.join(export_dir, f"{run_id}.csv")
-    executable = os.path.join(DIR_PATH.parent, "util", "job_launching", "get_stats.py")
+    executable = os.path.join(DIR_PATH, "util", "job_launching", "get_stats.py")
 
     benchmarks = ",".join(pipeline['benchmarks'])
     configs = ",".join(pipeline['instances'])
@@ -65,13 +64,11 @@ def main():
     os.system(f"chmod +x {export_sh}")
 
     print(f"Wrote: {export_sh}")
-    ans = input("Run it now? [y/N] ").strip().lower()
+    ans = input("Run it now? [y/N]: ").strip().lower()
     if ans == "y":
-        subprocess.run(["bash", str(export_sh)], check=True)
-
-    run_csv_generator = input("Run csv generator for the test result? [y/N]")
+        os.system(f'bash {export_sh}')
+    run_csv_generator = input("Run csv generator for the test result? [y/N]: ")
     if run_csv_generator == "y":
-        subprocess.run([sys.executable, "utility/csv_generator.py"], check=True)
-
+        os.system(f'./utility/csv_generator.py')
 if __name__ == "__main__":
     main()
