@@ -7,16 +7,20 @@
 # Todo: ... Det ville være gull verdt når vi gjør design-sweepinga!
 from __future__ import annotations
 from pathlib import Path
+import os
 import sys
 import argparse
 import yaml
+import utility.parser as ps
 
 
 #Impoter funksjoner for ploting
 from utility.plots.bar_chart import bar_chart
 
 PIPELINE_ROOT = Path(__file__).resolve().parent
-PIPELINE_YAML = PIPELINE_ROOT / "setup" / "pipeline.yaml"
+PIPELINE_YAML = os.path.join(PIPELINE_ROOT, "setup", "pipeline.yaml")
+
+pipeline = {}
 
 def find_file(root: Path, filename: str) -> Path | None:
     for p in root.rglob(filename):
@@ -24,21 +28,20 @@ def find_file(root: Path, filename: str) -> Path | None:
             return p
     return None
 
+def get_pipeline():
+    global pipeline
+    pipeline = ps.get_pipeline(PIPELINE_YAML)
+    pipeline.results_dir = os.path.expandvars(pipeline.results_dir)
+
 def load_metric_metric() -> str:
-    if not PIPELINE_YAML.exists():
-        raise SystemExit(f"Missing pipeline config: {PIPELINE_YAML}")
-
-    with PIPELINE_YAML.open() as f:
-        data = yaml.safe_load(f) or {}
-
-    collect = data.get("collect", {})
-    metric = collect.get("metric")
-    if not metric:
+    metric = pipeline.collect.metric
+    if not metric: 
         raise SystemExit("pipeline.yaml missing experiment.name")
-    return str(metric)
+    return metric
 
 def find_experiment_csvs(metric_metric: str) -> list[Path]:
-    export_root = PIPELINE_ROOT / "results" / "export"
+    export_root = Path(os.path.join(pipeline.results_dir, "export"))
+    print(export_root)
     hits = list(export_root.rglob(f"*{metric_metric}*.csv"))
     return sorted([p for p in hits if p.is_file()])
 
@@ -102,9 +105,10 @@ def menu():
     print(f"Found {len(csvs)} CSV files. Generating {plot_name} charts...")
     for csv_path in csvs:
         plot_func(str(csv_path))
-        print(f"✅ plotted: {csv_path}")
+        print(f"Plotted: {csv_path}")
 
 def main():
+    get_pipeline()
     parser = argparse.ArgumentParser()
     parser.add_argument(
         "-menu",
