@@ -2,7 +2,7 @@
 import os
 import sys
 import yaml
-import subprocess
+import utility.parser as ps
 from pathlib import Path
 
 DIR_PATH = Path(__file__).resolve().parent
@@ -13,12 +13,12 @@ pipeline = {}
 
 def parse_pipeline_config():
     global pipeline
-    with open(PIPELINE_CONFIG_FILE, "r", encoding="utf-8") as f:
-        pipeline = yaml.safe_load(f) or {}
-        for dest in ["trace_lookup", "results_dir"]:
+    pipeline = ps.get_pipeline(PIPELINE_CONFIG_FILE)
+    for dest in ["trace_lookup", "results_dir"]:
             pipeline[dest] = os.path.expandvars(pipeline[dest])
-        for dest in pipeline["config_destinations"]:
-            pipeline["config_destinations"][dest] = os.path.expandvars(pipeline["config_destinations"][dest])    
+    for dest in pipeline["config_destinations"]:
+            pipeline["config_destinations"][dest] = os.path.expandvars(pipeline["config_destinations"][dest]) 
+
 
 def main():
     if len(sys.argv) != 2:
