@@ -14,9 +14,6 @@ THIS_DIR: Path  = Path(__file__).resolve().parent
 sys.path.append(str(THIS_DIR))
 
 
-
-DEBUG = False
-
 parser = argparse.ArgumentParser(description="Parameters to pass to the script.")
 parser.add_argument("--target", required=True, help="Datetime to search for in the logs. Format: %Y_%m_%d__%H_%M")
 parser.add_argument("--logs", required=True, help="Absolute path to simulator_logs.yaml.")

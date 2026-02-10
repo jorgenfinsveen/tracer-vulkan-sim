@@ -1,37 +1,40 @@
 #!/usr/bin/env python3
 import os
-import sys
-import utility.parser as ps
-
+import argparse
 from pathlib import Path
+from datetime import datetime
+
+import utility.parser as ps
 
 DIR_PATH = Path(__file__).resolve().parent
 PIPELINE_CONFIG_FILE = os.path.join(DIR_PATH, "setup", "pipeline.yaml")
 
 pipeline = {}
 
+parser = argparse.ArgumentParser()
+parser.add_argument("--date", required=False, help="Date of the run to collect [YYYY_mm_DD__HH_MM].")
+parser.add_argument("--experiment", required=False, help="Name of an experiment to get the latest run from.")
+args = parser.parse_args()
+
 
 def parse_pipeline_config():
     global pipeline
     pipeline = ps.get_pipeline(PIPELINE_CONFIG_FILE)
-    # pipeline.trace_lookup = os.path.expandvars(pipeline.trace_lookup)
-    # pipeline.results_dir = os.path.expandvars(pipeline.results_dir)
-    # pipeline.config_destinations.gpgpusim = os.path.expandvars(pipeline.config_destinations.gpgpusim)
-    # pipeline.config_destinations.trace = os.path.expandvars(pipeline.config_destinations.trace)
-    # for dest in ["trace_lookup", "results_dir"]:
-    #         pipeline[dest] = os.path.expandvars(pipeline[dest])
-    # for dest in pipeline["config_destinations"]:
-    #         pipeline["config_destinations"][dest] = os.path.expandvars(pipeline["config_destinations"][dest]) 
-
 
 def main():
     global pipeline
-    if len(sys.argv) != 2:
-        raise SystemExit("usage: collect.py <RUN_ID>  (e.g. 2026_02_04__09_15)")
-
-    run_id = sys.argv[1].strip()
-
     pipeline = ps.get_pipeline()
+    if not args.date:
+        path = os.path.join(pipeline.results_dir, 'output', 'simulator_logs.yaml')
+        experiment = args.experiment.strip() if args.experiment else ""
+        sim_logs = ps.get_simulator_logs(path)
+        log = sim_logs.get_latest(experiment)
+        run_id = datetime.strptime(log.date, "%Y-%m-%d %H:%M").strftime("%Y_%m_%d__%H_%M")
+        substr = f"results from {experiment}" if experiment != "" else "from"
+        print(f"Latest {substr}: sim-{run_id}")
+    else:
+        run_id = args.date.strip()
+    
 
     pipeline.results_dir = os.path.expandvars(pipeline.results_dir)
     output_dir = os.path.join(pipeline.results_dir, "output", pipeline.experiment.name)
@@ -62,7 +65,7 @@ def main():
 
     lines.append('\necho "Ferdig :)"')
 
-    export_sh = os.path.join(pipeline.results_dir, f"collect_{run_id}.sh")
+    export_sh = os.path.join(pipeline.results_dir, "collect.sh")
     with open(export_sh, 'w', encoding='utf-8') as f:
         for line in lines:
             f.write(f"{line}\n")
