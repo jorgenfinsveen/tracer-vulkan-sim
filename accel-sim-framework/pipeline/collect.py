@@ -1,7 +1,8 @@
 #!/usr/bin/env python3
 import os
 import sys
-import yaml
+import utility.parser as ps
+
 from pathlib import Path
 
 DIR_PATH = Path(__file__).resolve().parent
@@ -12,30 +13,35 @@ pipeline = {}
 
 def parse_pipeline_config():
     global pipeline
-    with open(PIPELINE_CONFIG_FILE, "r", encoding="utf-8") as f:
-        pipeline = yaml.safe_load(f) or {}
-        for dest in ["trace_lookup", "results_dir"]:
-            pipeline[dest] = os.path.expandvars(pipeline[dest])
-        for dest in pipeline["config_destinations"]:
-            pipeline["config_destinations"][dest] = os.path.expandvars(pipeline["config_destinations"][dest])    
+    pipeline = ps.get_pipeline(PIPELINE_CONFIG_FILE)
+    # pipeline.trace_lookup = os.path.expandvars(pipeline.trace_lookup)
+    # pipeline.results_dir = os.path.expandvars(pipeline.results_dir)
+    # pipeline.config_destinations.gpgpusim = os.path.expandvars(pipeline.config_destinations.gpgpusim)
+    # pipeline.config_destinations.trace = os.path.expandvars(pipeline.config_destinations.trace)
+    # for dest in ["trace_lookup", "results_dir"]:
+    #         pipeline[dest] = os.path.expandvars(pipeline[dest])
+    # for dest in pipeline["config_destinations"]:
+    #         pipeline["config_destinations"][dest] = os.path.expandvars(pipeline["config_destinations"][dest]) 
+
 
 def main():
+    global pipeline
     if len(sys.argv) != 2:
         raise SystemExit("usage: collect.py <RUN_ID>  (e.g. 2026_02_04__09_15)")
 
     run_id = sys.argv[1].strip()
 
-    parse_pipeline_config()
+    pipeline = ps.get_pipeline()
 
-    results_dir = os.path.expandvars(pipeline['results_dir'])
-    output_dir = os.path.join(results_dir, "output", pipeline['experiment']['name'])
-    export_dir = os.path.join(results_dir, "export", "total")
+    pipeline.results_dir = os.path.expandvars(pipeline.results_dir)
+    output_dir = os.path.join(pipeline.results_dir, "output", pipeline.experiment.name)
+    export_dir = os.path.join(pipeline.results_dir, "export", "total")
 
     export_csv = os.path.join(export_dir, f"{run_id}.csv")
-    executable = os.path.join(DIR_PATH, "util", "job_launching", "get_stats.py")
+    executable = os.path.join(DIR_PATH.parent, "util", "job_launching", "get_stats.py")
 
-    benchmarks = ",".join(pipeline['benchmarks'])
-    configs = ",".join(pipeline['instances'])
+    benchmarks = ",".join(pipeline.benchmarks)
+    configs = ",".join(pipeline.instances)
 
     lines = []
     lines.append("#!/usr/bin/env bash")
@@ -56,7 +62,7 @@ def main():
 
     lines.append('\necho "Ferdig :)"')
 
-    export_sh = os.path.join(results_dir, f"2collect_{run_id}.sh")
+    export_sh = os.path.join(pipeline.results_dir, f"collect_{run_id}.sh")
     with open(export_sh, 'w', encoding='utf-8') as f:
         for line in lines:
             f.write(f"{line}\n")
@@ -70,5 +76,6 @@ def main():
     run_csv_generator = input("Run csv generator for the test result? [y/N]: ")
     if run_csv_generator == "y":
         os.system(f'./utility/csv_generator.py')
+
 if __name__ == "__main__":
     main()
