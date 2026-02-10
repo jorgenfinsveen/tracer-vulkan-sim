@@ -5,3 +5,118 @@
 # Todo: Det kan også være en idé å lage noe som trekker ut et gitt sett med verdier fra de forskjellige resultat-filene 
 # Todo: ... og sammenligner hvilket som oppnådde best IPC, og deretter lagrer disse tallene + konfigurasjonen som ble brukt
 # Todo: ... Det ville være gull verdt når vi gjør design-sweepinga!
+from __future__ import annotations
+from pathlib import Path
+import sys
+import argparse
+import yaml
+
+
+#Impoter funksjoner for ploting
+from utility.plots.bar_chart import bar_chart
+
+PIPELINE_ROOT = Path(__file__).resolve().parent
+PIPELINE_YAML = PIPELINE_ROOT / "setup" / "pipeline.yaml"
+
+def find_file(root: Path, filename: str) -> Path | None:
+    for p in root.rglob(filename):
+        if p.is_file():
+            return p
+    return None
+
+def load_metric_metric() -> str:
+    if not PIPELINE_YAML.exists():
+        raise SystemExit(f"Missing pipeline config: {PIPELINE_YAML}")
+
+    with PIPELINE_YAML.open() as f:
+        data = yaml.safe_load(f) or {}
+
+    collect = data.get("collect", {})
+    metric = collect.get("metric")
+    if not metric:
+        raise SystemExit("pipeline.yaml missing experiment.name")
+    return str(metric)
+
+def find_experiment_csvs(metric_metric: str) -> list[Path]:
+    export_root = PIPELINE_ROOT / "results" / "export"
+    hits = list(export_root.rglob(f"*{metric_metric}*.csv"))
+    return sorted([p for p in hits if p.is_file()])
+
+def default_run():
+    metric_metric = load_metric_metric()
+    csvs = find_experiment_csvs(metric_metric)
+    run_bar_charts_for_csvs(csvs)
+
+def run_bar_charts_for_csvs(csv_paths: list[Path]):
+    if not csv_paths:
+        print("No matching CSV files found.")
+        return
+
+    print(f"Found {len(csv_paths)} CSV files. Generating bar charts...")
+
+    for csv_path in csv_paths:
+        try:
+            bar_chart(str(csv_path))
+            print(f"plotted: {csv_path}")
+        except TypeError:
+            bar_chart(str(csv_path))
+            print(f"plotted: {csv_path}")
+
+
+def menu():
+    plots = {
+        1: ("Bar chart", bar_chart),
+    }
+
+    print("Available plot types:")
+    for k, (name, _) in plots.items():
+        print(f"{k}: {name}")
+
+    choice = input("Choose a plot type: ").strip()
+    if not choice.isdigit() or int(choice) not in plots:
+        print("Invalid choice")
+        sys.exit(1)
+
+    query = input("Experiment to match: ").strip()
+    if not query:
+        print("No input was provided.")
+        sys.exit(1)
+    if "/" in query or "\\" in query:
+        print("Please provide only a filename or prefix (no paths).")
+        sys.exit(1)
+
+    if query.lower().endswith(".csv"):
+        csv_path = find_file(PIPELINE_ROOT, query)
+        if csv_path is None:
+            print(f"Didn't find a file named: {query}")
+            sys.exit(1)
+        csvs = [csv_path]
+    else:
+        csvs = sorted([p for p in PIPELINE_ROOT.rglob(f"*{query}*.csv") if p.is_file()])
+        if not csvs:
+            print(f"No CSV files found matching: {query}")
+            sys.exit(1)
+
+    plot_name, plot_func = plots[int(choice)]
+
+    print(f"Found {len(csvs)} CSV files. Generating {plot_name} charts...")
+    for csv_path in csvs:
+        plot_func(str(csv_path))
+        print(f"✅ plotted: {csv_path}")
+
+def main():
+    parser = argparse.ArgumentParser()
+    parser.add_argument(
+        "-menu",
+        action="store_true",
+        help="launch menu"
+    )
+    args = parser.parse_args()
+    if args.menu:
+        menu()
+    else:
+        default_run()
+
+
+if __name__ == "__main__":
+    main()

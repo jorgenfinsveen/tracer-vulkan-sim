@@ -12,8 +12,8 @@ export CC_VERSION="9.4.0"
 
 # CUDA
 export CUDA_VERSION="11.7"
-export CUDA_HOME="$HOME/usr/local/cuda-$CUDA_VERSION"
-export CUDA_INSTALL_PATH="$HOME/usr/local/cuda-$CUDA_VERSION"
+export CUDA_HOME="$HOME/usr/local/cuda/cuda-$CUDA_VERSION"
+export CUDA_INSTALL_PATH="$HOME/usr/local/cuda/cuda-$CUDA_VERSION"
 
 # Embree
 export EMBREE_VERSION="3.13.5"

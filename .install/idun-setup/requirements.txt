@@ -11,3 +11,4 @@ tzdata
 PyYAML
 mako
 psutil
+matplotlib
