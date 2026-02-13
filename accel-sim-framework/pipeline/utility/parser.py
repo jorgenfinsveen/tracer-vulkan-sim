@@ -87,13 +87,16 @@ def get_outfile(path: Path) -> model.outfile.Outfile: # type: ignore
     return model.outfile.get(path)
 
 
-def iter_target_dirs(path: Path, allowed_names: Iterable[str]) -> list[Path]:
+def iter_target_dirs(path: Path, allowed_names: Iterable[str], allowed_subnames: Iterable[str]=None) -> list[Path]:
     path = assert_file_exists(path)
     allowed = set(allowed_names)
     dirs = []
     for d in path.rglob("*"):
         if d.is_dir() and d.name in allowed:
-            dirs.append(d)
+            if not allowed_subnames:
+                dirs.append(d)
+            elif any(x in allowed_subnames for x in d.parts):
+                dirs.append(d)
     return dirs
 
 

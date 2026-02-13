@@ -1,12 +1,13 @@
 name_prefix: sim # run-minitrace
 benchmarks: 
- - crisp-artifact:render_passes_2k
- - crisp-artifact:render_passes_2k_lod0
- - pipeline:minitrace
+  - crisp-artifact:render_passes_2k
+  - crisp-artifact:render_passes_2k_lod0
+  - pipeline:minitrace
 
 instances:
-  - ORIN
-  - RTX3070
+  - ORIN_1
+  - ORIN_2
+  - ORIN_3
 
 launcher: idun
 
@@ -26,11 +27,13 @@ aggregate: true
 
 #Options for collect
 collect:
+  logfiles: /cluster/home/jorgfi/crisp_results/logfiles
   detailed: true
   metric: gpu_tot_ipc
 
 trace_lookup: $ACCEL_SIM/pipeline/setup/traces.yaml
-results_dir: $ACCEL_SIM/pipeline/results
+results_dir: /cluster/home/jorgfi/crisp_results
+#results_dir: $ACCEL_SIM/pipeline/results
 
 config_destinations:
   gpgpusim: $ACCEL_SIM/gpu-simulator/gpgpu-sim/configs/custom-cfgs
