@@ -470,7 +470,7 @@ crisp-artifact:
     data_dirs: "$HOME/test/"
     execs:
         - render_passes_2k:
-          - args: 'NO_ARGS'
+         # - args: 'NO_ARGS'
           - args: 'all1'
         - render_passes_2k_lod0:
           - args: 'NO_ARGS'
