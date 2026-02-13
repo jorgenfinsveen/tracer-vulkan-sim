@@ -86,7 +86,18 @@ def safe_float(x: str):
         return None
 
 
-def group_columns(header_cols):
+def group_columns(header_cols): 
+    # Todo: Legg på et frivillig parameter som velger om man skal slå sammen kernels innenfor en benchmark eller ikke.
+    # Todo: Parameteret kan være basert på hvorvidt CPI er mål-resultatet.
+    # Todo: Hvis nei: I steden for å appende idx, append et tuppel, sub, hvor i0 er group (uten split), 
+    # Todo: ... og i1 er indeksen for den ene kernelen. Legg til ny entry i groups hvor key er group (med split) og 
+    # Todo: ... val er en liste med alle sub-tuppeler.
+    # Todo: Etter dette er gjort må main justeres for å sjekke hvorvidt det frivillige parameteret var satt, og i såfall
+    # Todo: ... ta høyde for at det skal opereres med et dict som inneholder en liste med tupler.
+    # Todo: Alle grupper med et navn som starter på den samme frasen kan slås sammen slik at vi ender opp med én samlet 
+    # Todo: ... verdi for hver av de 5 forskjellige trace-pakkene.
+    # Todo: Til slutt må bar-chart oppdateres slik at den slår sammen alle fra samme app, men gir de forskjellig farger
+    # Todo: ... i søylediagrammet.
     groups = OrderedDict()
     for idx, col in enumerate(header_cols):
         group = col.split("--", 1)[0].strip()
@@ -220,6 +231,7 @@ def main():
     
 
     for gpu, row_pairs in per_gpu_rows.items():
+        gpu = gpu.split('_')[0]
         out_gpu_dir = os.path.join(export_dir, gpu)
         os.makedirs(out_gpu_dir, exist_ok=True)
         out_path = os.path.join(out_gpu_dir, f"{metric}.csv")

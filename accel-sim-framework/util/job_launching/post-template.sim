@@ -8,10 +8,11 @@
 #SBATCH --error=err.log
 
 export GPGPUSIM_ROOT=REPLACE_GPGPUSIM_ROOT
-export ACCEL_SIM="REPLACE_PIPELINE_DIR/../"
+export ACCEL_SIM=$(dirname "REPLACE_PIPELINE_DIR")
 
 if [ -f "REPLACE_PIPELINE_DIR/utility/update_logs.py" ]; then
-    python3 "REPLACE_PIPELINE_DIR/utility/update_logs.py" \
+    cd "REPLACE_PIPELINE_DIR"
+    python3 -m "utility.update_logs" \
         --target REPLACE_TARGET \
         --logs REPLACE_RUNDIR/../simulator_logs.yaml \
         --pipeline REPLACE_PIPELINE_DIR/setup/pipeline.yaml 

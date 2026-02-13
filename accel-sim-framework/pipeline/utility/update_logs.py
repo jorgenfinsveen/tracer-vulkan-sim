@@ -5,13 +5,13 @@ import sys
 import yaml
 import time
 import argparse
-import parser as ps
+import utility.parser as ps
 
 from pathlib import Path
 from datetime import datetime
 
-THIS_DIR: Path  = Path(__file__).resolve().parent
-sys.path.append(str(THIS_DIR))
+# THIS_DIR: Path  = Path(__file__).resolve().parent
+# sys.path.append(str(THIS_DIR))
 
 
 parser = argparse.ArgumentParser(description="Parameters to pass to the script.")
@@ -62,7 +62,7 @@ def parse_experiment():
     experiments = ps.get_experiments(os.path.expandvars(pipeline.experiment.path))
 
 
-def collect_instance_stats(root, param_fields, result_fields, allowed_names: list[str]) -> tuple[list, list, dict]:
+def collect_instance_stats(root, param_fields, result_fields, allowed_names: list[str], benchmarks: list[str]) -> tuple[list, list, dict]:
     global hashes
     root = Path(root)
 
@@ -71,7 +71,10 @@ def collect_instance_stats(root, param_fields, result_fields, allowed_names: lis
     apps = []
     apps_d = {}
 
-    for d in ps.iter_target_dirs(root, allowed_names):
+    for i in range(len(benchmarks)):
+        benchmarks[i] = benchmarks[i].split(':')[1]
+
+    for d in ps.iter_target_dirs(root, allowed_names, benchmarks):
         out = ps.get_outfile(os.path.join(d, f"{args.target}.o"))
         cnf = ps.get_config(os.path.join(d, 'gpgpusim.config'))
 
@@ -83,6 +86,7 @@ def collect_instance_stats(root, param_fields, result_fields, allowed_names: lis
             hashes = out.get_commit_hashes()
 
         if not any(config in c for c in configs):
+            #entry = f"{config.split('_')[0]};"
             entry = f"{config};"
             for field in param_fields:
                 val = cnf.get_value(field)
@@ -128,6 +132,9 @@ def main():
     parse_pipeline_config()
     parse_experiment()
 
+    logfiles_dest = os.path.join(os.getenv("ACCEL_SIM"), "util", "job_launching", "logfiles")
+    os.system(f'rsync -av {logfiles_dest}/ {pipeline.collect.logfiles}/ ')  # > /dev/null 2>&1
+    
     global logs, target
     if logs is None:
         logs = ps.new_sim_log(os.path.expandvars(args.logs))
@@ -141,11 +148,12 @@ def main():
         logs.log_name = target
 
     instances      = pipeline.instances
+    benchmarks     = pipeline.benchmarks
     experiment     = pipeline.experiment.name
     param_fields    = experiments[experiment].params
     result_fields   = experiments[experiment].results
     root           = f"{os.path.expandvars(pipeline.results_dir)}/output/{experiment}"
-    configs, benchmarks, results = collect_instance_stats(root, param_fields, result_fields, instances)
+    configs, benchmarks, results = collect_instance_stats(root, param_fields, result_fields, instances, benchmarks)
 
     target.accelsim_commit = hashes['accelsim_commit']
     target.gpgpusim_commit = hashes['gpgpusim_commit']
@@ -163,5 +171,6 @@ def main():
 
     with open(os.path.expandvars(args.logs), "w", encoding="utf-8") as f:
         yaml.safe_dump(new_logs, f, sort_keys=False, allow_unicode=True)
+    
 
 main()

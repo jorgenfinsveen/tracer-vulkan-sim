@@ -192,9 +192,9 @@ for idx, app_and_args in enumerate(apps_and_args):
         if options.override_names and not options.configs_list != "" and not options.benchmark_list != "":
             path = f"{output_dir}/{jobname}.o"
             outfile = os.path.join(path) 
-        elif options.override_names:
+        elif options.override_names: # Todo: Endre slik at den kun bruker dato-delen
             all_outfiles = [os.path.join(output_dir, f) \
-                           for f in os.listdir(output_dir) if (f == f"{options.logfile}.o")] #if(re.match(r'.*\.o+',f))]
+                           for f in os.listdir(output_dir) if (f == f"{options.logfile.split('/')[-1]}.o")] #if(re.match(r'.*\.o+',f))]
             if len(all_outfiles) != 0:
                 outfile = max(all_outfiles, key=os.path.getmtime)
             else:

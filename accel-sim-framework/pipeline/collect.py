@@ -53,12 +53,12 @@ def main():
     lines.append(f'mkdir -p {export_dir}\n')
 
     lines.append(f'{executable} \\')
-    lines.append('\t-A \\')
+    #lines.append('\t-A \\')
     lines.append('\t-k \\')
     lines.append('\t-R \\')
     lines.append('\t-o True \\')
     lines.append(f'\t-C {configs} \\')
-    lines.append(f'\t-l {run_id} \\')
+    lines.append(f'\t-l {pipeline.collect.logfiles}/{run_id} \\')
     lines.append(f'\t-B {benchmarks} \\')
     lines.append(f'\t-r {output_dir} \\')
     lines.append(f'\t > {export_csv}')
@@ -69,6 +69,7 @@ def main():
     with open(export_sh, 'w', encoding='utf-8') as f:
         for line in lines:
             f.write(f"{line}\n")
+
 
     os.system(f"chmod +x {export_sh}")
 
