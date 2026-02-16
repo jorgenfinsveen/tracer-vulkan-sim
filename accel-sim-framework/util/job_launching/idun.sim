@@ -1,6 +1,6 @@
 #!/bin/bash
 #SBATCH --partition=IDUN_PARTITION
-#SBATCH --job-name=REPLACE_NAME
+#SBATCH --job-name=REPLACE_JOB
 #SBATCH --account=IDUN_ACCOUNT
 #SBATCH --nodes=IDUN_NODES
 #SBATCH --cpus-per-task=IDUN_CPUS_PER_TASK

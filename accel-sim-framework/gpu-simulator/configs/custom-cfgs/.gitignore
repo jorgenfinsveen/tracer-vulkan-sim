@@ -1,0 +1,5 @@
+# Ignore everything that is not the baseline configurations.
+# Prevents this directory to get unecessary bloated.
+TEST_*/
+ORIN_*/
+RTX3070_*/

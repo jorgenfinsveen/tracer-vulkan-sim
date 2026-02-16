@@ -1,7 +1,15 @@
-logfiles
-*.csv
-*.pickle*
+# Caching.
+__pycache__/
+
+# Various logs.
 procman/
-__pycache__
+logfiles/
+*.pickle*
 *.log
-post.sim
+*.out
+*.err
+*.txt
+
+# Runtime produce.
+*.csv
+post.*

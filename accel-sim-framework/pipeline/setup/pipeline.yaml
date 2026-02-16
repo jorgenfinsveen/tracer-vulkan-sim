@@ -8,6 +8,8 @@ instances:
   - ORIN_1
   - ORIN_2
   - ORIN_3
+  - ORIN_4
+  - ORIN_5
 
 launcher: idun
 

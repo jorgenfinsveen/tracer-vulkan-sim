@@ -13,11 +13,11 @@ TITANK:
 
 #Jetson Orin Developer Kit (Ampere)
 ORIN:
-    base_file: "/cluster/home/jorgfi/projects/crisp_framework/accel-sim-framework/gpu-simulator/gpgpu-sim/configs/custom-cfgs/ORIN/gpgpusim.config"
+    base_file: "/cluster/home/jorgfi/projects/crisp_framework/accel-sim-framework/gpu-simulator/gpgpu-sim/configs/custom-cfgs/BASELINE_ORIN/gpgpusim.config"
 
 #Ampere RTX 3070
 RTX3070:
-    base_file: "/cluster/home/jorgfi/projects/crisp_framework/accel-sim-framework/gpu-simulator/gpgpu-sim/configs/custom-cfgs/RTX3070/gpgpusim.config"
+    base_file: "/cluster/home/jorgfi/projects/crisp_framework/accel-sim-framework/gpu-simulator/gpgpu-sim/configs/custom-cfgs/BASELINE_RTX3070/gpgpusim.config"
 
 #Turing
 RTX2060:
@@ -360,20 +360,6 @@ dumb8:
 5sm:
     extra_params: '-gpgpu_dynamic_sm_count 5'
 
-TEST1:
-    base_file: "/cluster/home/jorgfi/projects/crisp_framework/accel-sim-framework/gpu-simulator/gpgpu-sim/configs/custom-cfgs/TEST1/gpgpusim.config"
-
-TEST2:
-    base_file: "/cluster/home/jorgfi/projects/crisp_framework/accel-sim-framework/gpu-simulator/gpgpu-sim/configs/custom-cfgs/TEST2/gpgpusim.config"
-
-
-TEST3:
-    base_file: "/cluster/home/jorgfi/projects/crisp_framework/accel-sim-framework/gpu-simulator/gpgpu-sim/configs/custom-cfgs/TEST3/gpgpusim.config"
-
-
-TEST4:
-    base_file: "/cluster/home/jorgfi/projects/crisp_framework/accel-sim-framework/gpu-simulator/gpgpu-sim/configs/custom-cfgs/TEST4/gpgpusim.config"
-
 
 ORIN_1:
     base_file: "/cluster/home/jorgfi/projects/crisp_framework/accel-sim-framework/gpu-simulator/gpgpu-sim/configs/custom-cfgs/ORIN_1/gpgpusim.config"
@@ -383,3 +369,13 @@ ORIN_2:
 
 ORIN_3:
     base_file: "/cluster/home/jorgfi/projects/crisp_framework/accel-sim-framework/gpu-simulator/gpgpu-sim/configs/custom-cfgs/ORIN_3/gpgpusim.config"
+
+ORIN_4:
+    base_file: "/cluster/home/jorgfi/projects/crisp_framework/accel-sim-framework/gpu-simulator/gpgpu-sim/configs/custom-cfgs/ORIN_4/gpgpusim.config"
+
+ORIN_5:
+    base_file: "/cluster/home/jorgfi/projects/crisp_framework/accel-sim-framework/gpu-simulator/gpgpu-sim/configs/custom-cfgs/ORIN_5/gpgpusim.config"
+
+
+TEST_1:
+    base_file: "/cluster/home/jorgfi/projects/crisp_framework/accel-sim-framework/gpu-simulator/gpgpu-sim/configs/custom-cfgs/TEST_1/gpgpusim.config"
