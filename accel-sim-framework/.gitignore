@@ -3,11 +3,25 @@ gpu-app-collection/
 hw_run/
 sim_run_*
 *.DS_Store*
+__pycache__/
+test/
 *.csv
 *.csv#
 4.2/
 gpucomputingsdk_4.2.9_linux.run
 util/job_launching/*.txt
-logs
-spl_vio
+logs/
+spl_vio/
 spl_vio.tar.gz
+*.log
+*.err
+*.out
+
+printf "%-11s %-8s %-43s %-8s %s\n" ID USER JOB TIME NODE && echo "" && squeue -h -u "$USER,olekd" -o "%.8i %.8u    %.40j %.8M    %N"
+
+{
+  hdr=$(printf "%-11s %-8s %-43s %-8s %s\n" ID USER JOB TIME NODE)
+  echo "$hdr"
+  printf "%*s\n" "$(( ${#hdr} + 6 ))" "" | tr ' ' '-'
+  squeue -h -u "$USER,olekd" -o "%.8i %.8u    %.40j %.8M    %N" | sort -k2,2
+}

@@ -309,12 +309,15 @@ class ConfigurationSpec:
                                 gpgpusim_build_handle
         err_file = f'{this_run_dir}/{slurm_name_var}.e%j'
         out_file = f'{this_run_dir}/{slurm_name_var}.o%j'
+
+        job_name_var = benchmark + "/" + self.benchmark_args_subdirs[command_line_args] + ":" + Path(this_run_dir).name
         if options.override_names:
             global global_timestamp
             global_timestamp = datetime.datetime.now().strftime("%Y_%m_%d__%H_%M")
             err_file = f'{global_timestamp}.e'
             out_file = f'{global_timestamp}.o'
         replacement_dict = {"NAME":slurm_name_var,
+                            "JOB":job_name_var,
                             "NODES":"1",
                             "GPGPUSIM_ROOT":os.getenv("GPGPUSIM_ROOT"),
                             "LIBPATH": libpath,

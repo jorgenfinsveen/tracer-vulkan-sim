@@ -4,8 +4,6 @@
 #SBATCH --account=IDUN_ACCOUNT
 #SBATCH --mem=32G
 #SBATCH --cpus-per-task=1
-#SBATCH --output=out.log
-#SBATCH --error=err.log
 
 export GPGPUSIM_ROOT=REPLACE_GPGPUSIM_ROOT
 export ACCEL_SIM=$(dirname "REPLACE_PIPELINE_DIR")

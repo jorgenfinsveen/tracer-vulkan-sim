@@ -1,4 +1,18 @@
-results/
+# Non-baseline configurations used for testing.
+configs/TEST_*/
+configs/ORIN_*/
+configs/RTX3070_*/
+
+# Caching.
 __pycache__/
-test
+
+# Results of the simulation.
+results/
+
+# Directory with custom scripts for testing various aspects of the pipeline.
+test/
+
+# Logfiles which are produced by slurm jobs.
 *.log
+*.err
+*.out
