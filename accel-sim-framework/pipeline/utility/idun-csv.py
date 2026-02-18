@@ -5,7 +5,6 @@ import sys
 import csv
 import glob
 import parser
-import importlib.util
 from pathlib import Path
 from collections import defaultdict, OrderedDict
 
@@ -15,33 +14,9 @@ PIPELINE_CONFIG_FILE: Path = os.path.join(PIPELINE_ROOT, "setup", "pipeline.yaml
 
 DASH_RE = re.compile(r"^-{5,}\s*,*")
 CONFIG_LINE_RE = re.compile(r"^(?P<gpu>[^;]+);;(?P<kv>[^=]+)=(?P<val>.+)$")
-
-# PARSER: Path = os.path.join(DIR_PATH, "parser.py")
-# spec = importlib.util.spec_from_file_location("parser", PARSER)
-# parser = importlib.util.module_from_spec(spec)
-# spec.loader.exec_module(parser)
+KERNEL_ID_SUFFIX_RE = re.compile(r"-\d+$")
 
 pipeline = {}
-
-def pick_existing_glob(*patterns: str) -> str:
-    hits = []
-    for pat in patterns:
-        hits.extend(glob.glob(pat))
-    hits = sorted(set([h for h in hits if os.path.isfile(h)]))
-    if hits:
-        return hits[0]
-    tried = "\n  - " + "\n  - ".join(patterns)
-    raise FileNotFoundError(f"Could not find required file. Tried:{tried}")
-
-
-def pick_existing_dir(*candidates: str) -> str:
-    for p in candidates:
-        if p and os.path.isdir(p):
-            return p
-    tried = "\n  - " + "\n  - ".join([c for c in candidates if c])
-    raise FileNotFoundError(f"Could not find required directory. Tried:{tried}")
-
-
 
 def find_matching_runs(path: Path, experiment_name: str):
     sim_logs = parser.get_simulator_logs(path)
@@ -49,11 +24,10 @@ def find_matching_runs(path: Path, experiment_name: str):
     for key, log in sim_logs.items():
         if log.experiment != experiment_name:
             continue
-        date = key[4:] if key.startswith('sim-') else key
+        date = key[4:] if key.startswith("sim-") else key
         matches.append((key, date, log.configs))
     matches.sort(key=lambda x: x[1])
     return matches
-
 
 def parse_configs_for_run(configs_list):
     out = {}
@@ -68,29 +42,7 @@ def parse_configs_for_run(configs_list):
     return out
 
 def base_gpu_name(name: str) -> str:
-    return name.split('_', 1)[0].strip()
-
-def avg_all_kernels(vals, groups_no_avg):
-    nums = []
-    for idxs in groups_no_avg.values():
-        for i in idxs:
-            if i >= len(vals):
-                continue
-            v = safe_float(vals[i])
-            if v is not None:
-                nums.append(v)
-    if not nums:
-        return None
-    return sum(nums) / len(nums)
-
-
-def find_total_csv_for_date(total_dir: str, date_key: str) -> str | None:
-    hits = sorted(glob.glob(os.path.join(total_dir, f"*{date_key}*")))
-    hits = [h for h in hits if h.lower().endswith(".csv")]
-    if not hits:
-        return None
-    return hits[-1]
-
+    return name.split("_", 1)[0].strip()
 
 def safe_float(x: str):
     x = (x or "").strip()
@@ -100,26 +52,6 @@ def safe_float(x: str):
         return float(x)
     except ValueError:
         return None
-
-
-def group_columns(header_cols): 
-    # Todo: Legg på et frivillig parameter som velger om man skal slå sammen kernels innenfor en benchmark eller ikke.
-    # Todo: Parameteret kan være basert på hvorvidt CPI er mål-resultatet.
-    # Todo: Hvis nei: I steden for å appende idx, append et tuppel, sub, hvor i0 er group (uten split), 
-    # Todo: ... og i1 er indeksen for den ene kernelen. Legg til ny entry i groups hvor key er group (med split) og 
-    # Todo: ... val er en liste med alle sub-tuppeler.
-    # Todo: Etter dette er gjort må main justeres for å sjekke hvorvidt det frivillige parameteret var satt, og i såfall
-    # Todo: ... ta høyde for at det skal opereres med et dict som inneholder en liste med tupler.
-    # Todo: Alle grupper med et navn som starter på den samme frasen kan slås sammen slik at vi ender opp med én samlet 
-    # Todo: ... verdi for hver av de 5 forskjellige trace-pakkene.
-    # Todo: Til slutt må bar-chart oppdateres slik at den slår sammen alle fra samme app, men gir de forskjellig farger
-    # Todo: ... i søylediagrammet.
-    groups = OrderedDict()
-    for idx, col in enumerate(header_cols):
-        group = col.split("--", 1)[0].strip()
-        groups.setdefault(group, []).append(idx)
-    return groups
-
 
 def avg_of_indices(vals, indices):
     nums = []
@@ -133,6 +65,62 @@ def avg_of_indices(vals, indices):
         return None
     return sum(nums) / len(nums)
 
+def trace_from_col(col: str) -> str:
+    return col.split("--", 1)[0].strip() if "--" in col else col.strip()
+
+def kernel_base_from_col(col: str) -> str:
+    after = col.split("--", 1)[1].strip() if "--" in col else col.strip()
+    return KERNEL_ID_SUFFIX_RE.sub("", after)
+
+def mesa_family(kernel_base: str) -> str:
+    if kernel_base.startswith("MESA_SHADER_VERTEX"):
+        return "MESA_SHADER_VERTEX"
+    if kernel_base.startswith("MESA_SHADER_FRAGMENT"):
+        return "MESA_SHADER_FRAGMENT"
+    if kernel_base.startswith("MESA_SHADER"):
+        parts = kernel_base.split("_")
+        return "_".join(parts[:3]) if len(parts) >= 3 else "MESA_SHADER"
+    return "MESA_OTHER"
+
+def zn2_family(kernel_base: str) -> str:
+    if "__" in kernel_base:
+        tail = kernel_base.rsplit("__", 1)[-1]
+        tail = tail.split("N__", 1)[-1]
+        if tail:
+            return f"ZN2__{tail}"
+    if "_" in kernel_base:
+        suf = kernel_base.rsplit("_", 1)[-1]
+        if suf and len(suf) <= 32:
+            return f"ZN2_{suf}"
+    return "ZN2_OTHER"
+
+def kernel_family_from_base(kernel_base: str) -> str:
+    if kernel_base.startswith("MESA_SHADER"):
+        return mesa_family(kernel_base)
+    if kernel_base.startswith("_ZN2nv"):
+        return zn2_family(kernel_base)
+    if kernel_base.startswith("_Z"):
+        return "Z_OTHER"
+    return "OTHER"
+
+def group_trace_kernel_families(header_cols):
+    groups = OrderedDict()
+    for idx, col in enumerate(header_cols):
+        if col.strip() == "AVG":
+            continue
+        t = trace_from_col(col)
+        kb = kernel_base_from_col(col)
+        fam = kernel_family_from_base(kb)
+        key = f"{t}/{fam}"
+        groups.setdefault(key, []).append(idx)
+    return groups
+
+def find_total_csv_for_date(total_dir: str, date_key: str) -> str | None:
+    hits = sorted(glob.glob(os.path.join(total_dir, f"*{date_key}*")))
+    hits = [h for h in hits if h.lower().endswith(".csv")]
+    if not hits:
+        return None
+    return hits[-1]
 
 def parse_metric_block(csv_path: str, metric: str):
     metric_line_re = re.compile(rf"^\s*{re.escape(metric)}\b")
@@ -182,28 +170,25 @@ def parse_metric_block(csv_path: str, metric: str):
 
     raise RuntimeError(f"Could not find metric block '{metric}' in {csv_path}")
 
-
 def fmt(x):
     if x is None:
         return ""
     return f"{x:.4f}"
 
-
 def main():
     global pipeline
     pipeline = parser.get_pipeline(PIPELINE_CONFIG_FILE)
     exp_name = pipeline.experiment.name
-    metric   = pipeline.collect.metric
+    metric = pipeline.collect.metric
 
     results_dir = os.path.expandvars(pipeline.results_dir)
-    sim_logs_path = os.path.join(results_dir, 'output', 'simulator_logs.yaml')
+    sim_logs_path = os.path.join(results_dir, "output", "simulator_logs.yaml")
 
-    export_dir = os.path.join(results_dir, 'export')
-    export_total_dir = os.path.join(export_dir, 'total')
+    export_dir = os.path.join(results_dir, "export")
+    export_total_dir = os.path.join(export_dir, "total")
 
     runs = find_matching_runs(sim_logs_path, exp_name)
     if not runs:
-        print(f"No runs matched experiment.name={exp_name}", file=sys.stderr)
         sys.exit(2)
 
     per_gpu_rows = defaultdict(list)
@@ -212,41 +197,37 @@ def main():
     for _, date_key, configs_list in runs:
         total_csv = find_total_csv_for_date(export_total_dir, date_key)
         if not total_csv:
-            print(f"WARNING: No total CSV found for date {date_key} in {export_total_dir}", file=sys.stderr)
             continue
 
         cfg_param_map = parse_configs_for_run(configs_list)
         header_cols, rows = parse_metric_block(total_csv, metric)
-        groups = group_columns(header_cols)
+        groups_no_avg = group_trace_kernel_families(header_cols)
 
-        groups_no_avg = OrderedDict((g, idxs) for g, idxs in groups.items() if g != "AVG")
         for g in groups_no_avg:
             all_group_keys.setdefault(g, None)
 
         for cfg_name, vals in rows.items():
             base_gpu = base_gpu_name(cfg_name)
 
-            if base_gpu not in cfg_param_map:
+            param_pair = cfg_param_map.get(cfg_name) or cfg_param_map.get(base_gpu)
+            if not param_pair:
                 continue
 
-            param_name, param_val = cfg_param_map[base_gpu]
+            param_name, param_val = param_pair
             out_row = {param_name: param_val}
 
+            bucket_vals = []
             for g, idxs in groups_no_avg.items():
                 a = avg_of_indices(vals, idxs)
                 out_row[g] = fmt(a)
+                if a is not None:
+                    bucket_vals.append(a)
 
-            kernel_avg = avg_all_kernels(vals, groups_no_avg)
-            out_row["AVG"] = fmt(kernel_avg)
-
+            out_row["AVG"] = fmt(sum(bucket_vals) / len(bucket_vals)) if bucket_vals else ""
             per_gpu_rows[base_gpu].append((param_name, out_row))
 
-
     if not per_gpu_rows:
-        print("No rows produced. Do the CFG names in CSV match simulator_logs configs GPU names?", file=sys.stderr)
         sys.exit(3)
-
-    
 
     for gpu, row_pairs in per_gpu_rows.items():
         out_gpu_dir = os.path.join(export_dir, gpu)
@@ -266,10 +247,7 @@ def main():
                     r[param_name] = ""
                 w.writerow({k: r.get(k, "") for k in fieldnames})
 
-        print(f"Wrote {out_path} ({len(row_pairs)} rows)")
-
     print(f"Done. Experiment={exp_name}, metric={metric}")
-
 
 if __name__ == "__main__":
     main()
