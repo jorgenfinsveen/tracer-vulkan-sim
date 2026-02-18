@@ -132,8 +132,8 @@ def main():
     parse_pipeline_config()
     parse_experiment()
 
-    logfiles_dest = os.path.join(os.getenv("ACCEL_SIM"), "util", "job_launching", "logfiles")
-    os.system(f'rsync -av {logfiles_dest}/ {pipeline.collect.logfiles}/ ')  # > /dev/null 2>&1
+    logfiles_src = os.path.join(os.getenv("ACCEL_SIM"), "util", "job_launching", "logfiles")
+    os.system(f'rsync -av {logfiles_src}/ {pipeline.collect.logfiles}/')  # > /dev/null 2>&1
     
     global logs, target
     if logs is None:

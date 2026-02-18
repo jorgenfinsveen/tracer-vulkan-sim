@@ -13,11 +13,11 @@ TITANK:
 
 #Jetson Orin Developer Kit (Ampere)
 ORIN:
-    base_file: "/cluster/home/jorgfi/projects/crisp_framework/accel-sim-framework/gpu-simulator/gpgpu-sim/configs/custom-cfgs/BASELINE_ORIN/gpgpusim.config"
+    base_file: "$GPGPUSIM_ROOT/configs/tested-cfgs/SM87_ORIN/gpgpusim.config"
 
 #Ampere RTX 3070
 RTX3070:
-    base_file: "/cluster/home/jorgfi/projects/crisp_framework/accel-sim-framework/gpu-simulator/gpgpu-sim/configs/custom-cfgs/BASELINE_RTX3070/gpgpusim.config"
+    base_file: "$GPGPUSIM_ROOT/configs/tested-cfgs/SM86_RTX3070/gpgpusim.config"
 
 #Turing
 RTX2060:
@@ -379,3 +379,11 @@ ORIN_5:
 
 TEST_1:
     base_file: "/cluster/home/jorgfi/projects/crisp_framework/accel-sim-framework/gpu-simulator/gpgpu-sim/configs/custom-cfgs/TEST_1/gpgpusim.config"
+
+
+BASELINE_ORIN:
+    base_file: "/cluster/home/jorgfi/projects/crisp_framework/accel-sim-framework/gpu-simulator/gpgpu-sim/configs/custom-cfgs/BASELINE_ORIN/gpgpusim.config"
+
+
+BASELINE_RTX3070:
+    base_file: "/cluster/home/jorgfi/projects/crisp_framework/accel-sim-framework/gpu-simulator/gpgpu-sim/configs/custom-cfgs/BASELINE_RTX3070/gpgpusim.config"
