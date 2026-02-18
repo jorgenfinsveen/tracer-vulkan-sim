@@ -1,25 +1,36 @@
-name_prefix: sim # run-minitrace
-benchmarks: 
-  #- crisp-artifact:render_passes_2k
-  #- crisp-artifact:render_passes_2k_lod0
-  - pipeline:minitrace
+name_prefix: sim 
+
 
 instances:
+  # - BASELINE_ORIN
+  # - BASELINE_RTX3070
   - ORIN_1
   - ORIN_2
   - ORIN_3
   - ORIN_4
   - ORIN_5
-  # - BASELINE_ORIN
-  # - BASELINE_RTX3070
 
-launcher: idun
-
-override_names: true
 
 experiment:
-  path: $ACCEL_SIM/pipeline/setup/experiments.yaml
   name: more_streaming_multiprocessors
+  path: $ACCEL_SIM/pipeline/setup/experiments.yaml
+
+
+#Options for collect
+collect:
+  detailed: true
+  metric: gpu_cpi
+
+
+launcher: idun
+override_names: true
+aggregate: true
+
+
+# For Slurm jobs. 
+# See more configuration-options in accel-sim-framework/util/job_launching/idun.yaml.
+job_mem: 32G # Default is 4G, but this turned out to be insufficient for the workloads in the artifact.
+
 
 extra_configs:
   - SASS
@@ -27,23 +38,10 @@ extra_configs:
   - fg
   - VISUAL
 
-aggregate: true
-
-#Options for collect
-collect:
-  logfiles: /cluster/projects/itea_lille-idi-epic-studenter/crisp/logfiles
-  #logfiles: $ACCEL_SIM/pipeline/results/logfiles
-  detailed: true
-  metric: gpu_cpi
 
 trace_lookup: $ACCEL_SIM/pipeline/setup/traces.yaml
-results_dir: /cluster/projects/itea_lille-idi-epic-studenter/crisp 
-#results_dir: $ACCEL_SIM/pipeline/results
+
 
 config_destinations:
   gpgpusim: $ACCEL_SIM/gpu-simulator/gpgpu-sim/configs/custom-cfgs
   trace: $ACCEL_SIM/gpu-simulator/configs/custom-cfgs
-
-# For Slurm jobs. 
-# See more configuration-options in accel-sim-framework/util/job_launching/idun.yaml.
-job_mem: 32G # Default is 4G, but this turned out to be insufficient for the workloads in the artifact.

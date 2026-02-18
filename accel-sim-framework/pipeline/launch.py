@@ -16,14 +16,14 @@ spec.loader.exec_module(parser)
 
 pipeline = {}
 traces = {}
+experiment = {}
 
 def parse_pipeline_config():
     global pipeline
     pipeline = parser.get_pipeline()
-    for dest in ["trace_lookup", "results_dir"]:
-        pipeline[dest] = os.path.expandvars(pipeline[dest])
+    pipeline.trace_lookup = Path(os.path.expandvars(pipeline.trace_lookup))
     for dest in pipeline.config_destinations:
-        pipeline.config_destinations[dest] = os.path.expandvars(pipeline.config_destinations[dest])    
+        pipeline.config_destinations[dest] = Path(os.path.expandvars(pipeline.config_destinations[dest]))    
     arr = []
     for instance in pipeline.instances:
         arr.append(instance.replace("-", "_"))
@@ -35,6 +35,12 @@ def parse_traces():
     traces = parser.get_traces(pipeline.trace_lookup)
     for trace in traces.get_all():
         traces[trace] = os.path.expandvars(traces[trace])
+
+def parse_experiment():
+    global experiment
+    experiment = parser.get_experiment(pipeline.experiment.name, pipeline.experiment.path)
+    experiment.results_dir = Path(os.path.expandvars(experiment.results_dir))
+    experiment.logfiles = Path(os.path.expandvars(experiment.logfiles))
 
 
 def prepare_instance(instance):
@@ -91,7 +97,7 @@ def prepare_instance(instance):
 
 def build_command(benchmark, instance=None, aggregate=False):
     cmd = []
-    experiment = os.path.join(pipeline.results_dir, 'output', pipeline.experiment.name)
+    experiment_dir = os.path.join(experiment.results_dir, 'output', experiment.name)
     instance = '$(date +"%Y_%m_%d__%H_%M")' if not instance else instance
     extra_configs = '-'.join(pipeline.extra_configs)
     instance_configs = ",".join(f"{i}-{extra_configs}" \
@@ -104,8 +110,8 @@ def build_command(benchmark, instance=None, aggregate=False):
     cmd.append(f"--benchmark_list {benchmark}")
     cmd.append(f"--trace_dir {traces[benchmark.split(':')[0]]}")
     cmd.append(f"--launch_name {pipeline.name_prefix}-{instance}")
-    cmd.append(f"--run_directory {experiment}")
-    cmd.append(f"--logfile_dir_dest {pipeline.collect.logfiles}")
+    cmd.append(f"--run_directory {experiment_dir}")
+    cmd.append(f"--logfile_dir_dest {experiment.logfiles}")
     cmd.append(f"--configs_list {instance_configs}")
 
     return cmd
@@ -123,7 +129,7 @@ def export_commands(commands, path):
 
 
 def ensure_dirs_present():
-    for d in [pipeline.results_dir]:
+    for d in [experiment.results_dir]:
         os.makedirs(d, exist_ok=True)
 
 
@@ -137,6 +143,7 @@ def main():
 
     parse_pipeline_config()
     parse_traces()
+    parse_experiment()
     ensure_dirs_present()
 
     commands = []
@@ -146,12 +153,12 @@ def main():
     ]
     
     if pipeline.aggregate:
-        for benchmark in pipeline.benchmarks: commands.append(build_command(benchmark, aggregate=True))
+        for benchmark in experiment.benchmarks: commands.append(build_command(benchmark, aggregate=True))
     else:
         for inst in pipeline.instances:
-            for benchmark in pipeline.benchmarks: commands.append(build_command(benchmark, instance=inst))
+            for benchmark in experiment.benchmarks: commands.append(build_command(benchmark, instance=inst))
 
-    export_path = os.path.join(pipeline.results_dir, 'launch.sh')
+    export_path = os.path.join(experiment.results_dir, 'launch.sh')
     export_commands(commands, export_path)
     os.system(f"chmod +x {export_path}")
 
