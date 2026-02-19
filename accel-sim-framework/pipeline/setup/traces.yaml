@@ -1,2 +1,3 @@
-crisp-artifact: /cluster/projects/itea_lille-idi-epic-studenter/crisp/hw_run/traces/vulkan/
+crisp-shared: /cluster/projects/itea_lille-idi-epic-studenter/crisp/hw_run/traces/vulkan/
+crisp-local: $ACCEL_SIM/pipeline/traces/traces/vulkan/
 pipeline: $ACCEL_SIM/pipeline/traces/
