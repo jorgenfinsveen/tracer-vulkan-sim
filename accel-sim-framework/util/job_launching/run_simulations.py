@@ -316,6 +316,7 @@ class ConfigurationSpec:
             global_timestamp = datetime.datetime.now().strftime("%Y_%m_%d__%H_%M")
             err_file = f'{global_timestamp}.e'
             out_file = f'{global_timestamp}.o'
+
         replacement_dict = {"NAME":slurm_name_var,
                             "JOB":job_name_var,
                             "NODES":"1",
@@ -334,7 +335,9 @@ class ConfigurationSpec:
                             "UPDATE_LOGS": options.override_names,
                             "TARGET": out_file[:-2],
                             "PIPELINE_DIR": os.path.join(os.getenv("ACCEL_SIM"), "pipeline"),
-                            "RUNDIR": options.run_directory
+                            "RUNDIR": options.run_directory,
+                            "LOGDIR_SRC": options.logfile_dir_src,
+                            "LOGDIR_DEST": options.logfile_dir_dest
                             } | idun_overrides
 
         torque_text = open(this_directory + job_template).read().strip()
@@ -354,7 +357,7 @@ class ConfigurationSpec:
                     post_text = re.sub(prefix + entry,
                         str(replacement_dict[entry]),
                         post_text)
-            open(os.path.join(this_directory + "post.sim"), 'w').write(post_text)
+            open(os.path.join(this_directory, "post.sim"), 'x').write(post_text)
 
         open(os.path.join(this_run_dir , job_template), 'w').write(torque_text)
         exec_line = torque_text.splitlines()[-1]
@@ -495,7 +498,15 @@ if options.override_names:
     for id in job_ids:
         dependency += str(id)
         exports += f"{id}_"
-    print(" ".join([job_submit_call, dependency, exports[:-1], template]))
+
+    post_text = open(os.path.join(template)).readlines()
+    post_sim_dest_dir = os.path.join(options.run_directory, ".post_sim")
+    post_sim_dest_file = os.path.join(post_sim_dest_dir, "post.sim")
+
+    os.makedirs(post_sim_dest_dir, exist_ok=True)
+    if os.path.exists(post_sim_dest_file): os.system(f"rm {post_sim_dest_file}")
+    open(post_sim_dest_file, 'x').writelines(post_text)
+
     if subprocess.call([job_submit_call, dependency, exports[:-1], template]) < 0:
         exit("Error launching post-job.")
 

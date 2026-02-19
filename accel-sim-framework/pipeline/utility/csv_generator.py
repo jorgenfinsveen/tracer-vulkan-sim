@@ -5,7 +5,6 @@ import sys
 import csv
 import glob
 import parser
-import importlib.util
 from pathlib import Path
 from collections import defaultdict, OrderedDict
 
@@ -22,6 +21,18 @@ CONFIG_LINE_RE = re.compile(r"^(?P<gpu>[^;]+);;(?P<kv>[^=]+)=(?P<val>.+)$")
 # spec.loader.exec_module(parser)
 
 pipeline = {}
+experiment = {}
+
+def parse_pipeline_config():
+    global pipeline
+    pipeline = parser.get_pipeline(PIPELINE_CONFIG_FILE)
+
+def parse_experiment():
+    global experiment
+    experiment = parser.get_experiment(pipeline.experiment.name, pipeline.experiment.path)
+    experiment.results_dir = Path(os.path.expandvars(experiment.results_dir))
+    experiment.logfiles = Path(os.path.expandvars(experiment.logfiles))
+
 
 def pick_existing_glob(*patterns: str) -> str:
     hits = []
@@ -175,19 +186,18 @@ def fmt(x):
 
 def main():
     global pipeline
-    pipeline = parser.get_pipeline(PIPELINE_CONFIG_FILE)
-    exp_name = pipeline.experiment.name
-    metric   = pipeline.collect.metric
+    parse_pipeline_config()
+    parse_experiment()
+    
+    metric = pipeline.collect.metric
+    sim_logs_path = os.path.join(experiment.results_dir, 'output', 'simulator_logs.yaml')
 
-    results_dir = os.path.expandvars(pipeline.results_dir)
-    sim_logs_path = os.path.join(results_dir, 'output', 'simulator_logs.yaml')
-
-    export_dir = os.path.join(results_dir, 'export')
+    export_dir = os.path.join(experiment.results_dir, 'export')
     export_total_dir = os.path.join(export_dir, 'total')
 
-    runs = find_matching_runs(sim_logs_path, exp_name)
+    runs = find_matching_runs(sim_logs_path, experiment.name)
     if not runs:
-        print(f"No runs matched experiment.name={exp_name}", file=sys.stderr)
+        print(f"No runs matched experiment.name={experiment.name}", file=sys.stderr)
         sys.exit(2)
 
     per_gpu_rows = defaultdict(list)
@@ -251,7 +261,7 @@ def main():
 
         print(f"Wrote {out_path} ({len(row_pairs)} rows)")
 
-    print(f"Done. Experiment={exp_name}, metric={metric}")
+    print(f"Done. Experiment={experiment.name}, metric={metric}")
 
 
 if __name__ == "__main__":

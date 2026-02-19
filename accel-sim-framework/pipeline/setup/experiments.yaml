@@ -4,3 +4,20 @@ more_streaming_multiprocessors:
   results:
     - gpu_ipc
     - gpu_cpi
+  benchmarks:
+    - crisp-shared:render_passes_2k
+  results_dir: /cluster/projects/itea_lille-idi-epic-studenter/crisp
+  logfiles: /cluster/projects/itea_lille-idi-epic-studenter/crisp/logfiles
+
+
+
+
+debugging:
+  params:
+    - gpgpu_n_clusters
+  results:
+    - gpu_cpi
+  benchmarks:
+    - pipeline:minitrace
+  results_dir: $ACCEL_SIM/pipeline/results
+  logfiles: $ACCEL_SIM/pipeline/results/logfiles

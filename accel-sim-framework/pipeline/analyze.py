@@ -5,33 +5,38 @@
 # Todo: Det kan også være en idé å lage noe som trekker ut et gitt sett med verdier fra de forskjellige resultat-filene 
 # Todo: ... og sammenligner hvilket som oppnådde best IPC, og deretter lagrer disse tallene + konfigurasjonen som ble brukt
 # Todo: ... Det ville være gull verdt når vi gjør design-sweepinga!
-from __future__ import annotations
-from pathlib import Path
 import os
 import sys
 import argparse
-import yaml
 import utility.parser as ps
 
+from pathlib import Path
+from __future__ import annotations
 
-#Impoter funksjoner for ploting
+#Importing functions for plotting
 from utility.plots.bar_chart import bar_chart
 
 PIPELINE_ROOT = Path(__file__).resolve().parent
 PIPELINE_YAML = os.path.join(PIPELINE_ROOT, "setup", "pipeline.yaml")
 
 pipeline = {}
+experiment = {}
+
+def parse_pipeline_config():
+    global pipeline
+    pipeline = ps.get_pipeline(PIPELINE_YAML)
+
+def parse_experiment():
+    global experiment
+    experiment = ps.get_experiment(pipeline.experiment.name, pipeline.experiment.path)
+    experiment.results_dir = Path(os.path.expandvars(experiment.results_dir))
+    experiment.logfiles = Path(os.path.expandvars(experiment.logfiles))
 
 def find_file(root: Path, filename: str) -> Path | None:
     for p in root.rglob(filename):
         if p.is_file():
             return p
     return None
-
-def get_pipeline():
-    global pipeline
-    pipeline = ps.get_pipeline(PIPELINE_YAML)
-    pipeline.results_dir = os.path.expandvars(pipeline.results_dir)
 
 def load_metric_metric() -> str:
     metric = pipeline.collect.metric
@@ -40,7 +45,7 @@ def load_metric_metric() -> str:
     return metric
 
 def find_experiment_csvs(metric_metric: str) -> list[Path]:
-    export_root = Path(os.path.join(pipeline.results_dir, "export"))
+    export_root = Path(os.path.join(experiment.results_dir, "export"))
     print(export_root)
     hits = list(export_root.rglob(f"*{metric_metric}*.csv"))
     return sorted([p for p in hits if p.is_file()])
@@ -108,7 +113,8 @@ def menu():
         print(f"Plotted: {csv_path}")
 
 def main():
-    get_pipeline()
+    parse_pipeline_config()
+    parse_experiment()
     parser = argparse.ArgumentParser()
     parser.add_argument(
         "-menu",

@@ -214,10 +214,15 @@ def parse_run_simulations_options():
                   help="Specify the core limit when using procman. If nothing is specified, all the cores"\
                        " on the local node will be used.")
     parser.add_option("-a", "--accelwattch_HW", dest="accelwattch_HW", action="store_true",
-                      help="Enable passing hw_perf_bench_name for accelwattch hw and hybrid runs to config file.")
+                  help="Enable passing hw_perf_bench_name for accelwattch hw and hybrid runs to config file.")
     parser.add_option("-o", "--override_names", dest="override_names", default="false",
-                      help="Override default names of output-files and use date-time instead.")
-
+                  help="Override default names of output-files and use date-time instead.")
+    parser.add_option("--logfile_dir_src", dest="logfile_dir_src", default=None,
+                  help="Source path to the logfiles. By default this would be the logfiles in" +\
+                       " $ACCEL_SIM/util/job_launching/logfiles.")
+    parser.add_option("--logfile_dir_dest", dest="logfile_dir_dest", default="",
+                  help="Destination path to copy the logfiles to.")
+    
     (options, args) = parser.parse_args()
     # Parser seems to leave some whitespace on the options, getting rid of it
     if options.trace_dir != "":
@@ -228,9 +233,17 @@ def parse_run_simulations_options():
     options.run_directory = options.run_directory.strip()
     options.simulator_dir = options.simulator_dir.strip()
     options.launch_name = options.launch_name.strip()
+    options.override_names = (options.override_names != "false")
     if options.job_mem != None:
         options.job_mem = options.job_mem.strip()
-    options.override_names = (options.override_names != "false")
+
+    if options.logfile_dir_src == None:
+        options.logfile_dir_src = os.path.join(os.getenv("ACCEL_SIM"), "util", "job_launching", "logfiles")
+    else:
+        options.logfile_dir_src = options.logfile_dir_src.strip()
+    
+    options.logfile_dir_dest = options.logfile_dir_dest.strip()
+        
     return (options, args)
 
 # After collection, spew out the tables
