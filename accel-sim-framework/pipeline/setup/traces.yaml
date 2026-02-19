@@ -1,2 +1,2 @@
-crisp-artifact: $ACCEL_SIM/hw_run/traces/vulkan/
+crisp-artifact: /cluster/projects/itea_lille-idi-epic-studenter/crisp/hw_run/traces/vulkan/
 pipeline: $ACCEL_SIM/pipeline/traces/

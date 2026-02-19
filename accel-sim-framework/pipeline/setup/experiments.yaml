@@ -21,4 +21,3 @@ debugging:
     - pipeline:minitrace
   results_dir: $ACCEL_SIM/pipeline/results 
   logfiles: $ACCEL_SIM/pipeline/results/logfiles
-
