@@ -38,9 +38,6 @@ class Pipeline:
     def _expand_experiments(self) -> bool:
         return self._obj.expand_experiments()
     
-    def get_apps(self) -> list[str]:
-        return self._obj.get_apps()
-    
     def get_configs(self) -> list[str]:
         return self._obj.get_configs()
     
@@ -59,9 +56,6 @@ def get(pipeline: dict, path: Path=None) -> Pipeline:
 
     def expand_experiments(self):
         pass
-
-    def get_apps(self):
-        return list(self.benchmarks)
     
     def get_configs(self):
         return list(self.instances)

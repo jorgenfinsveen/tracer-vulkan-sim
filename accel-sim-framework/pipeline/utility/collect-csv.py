@@ -5,6 +5,7 @@ import sys
 import csv
 import glob
 import parser
+import yaml
 from pathlib import Path
 from collections import defaultdict, OrderedDict
 
@@ -175,13 +176,23 @@ def fmt(x):
         return ""
     return f"{x:.4f}"
 
+def load_experiment_cfg(pipeline_obj):
+    exp_name = pipeline_obj.experiment.name
+    exp_file = os.path.expandvars(pipeline_obj.experiment.path)
+    with open(exp_file, "r", encoding="utf-8") as f:
+        all_exps = yaml.safe_load(f) or {}
+    if exp_name not in all_exps:
+        raise KeyError(f"Experiment '{exp_name}' not found in {exp_file}. Available: {', '.join(all_exps.keys())}")
+    return all_exps[exp_name], exp_name
+
 def main():
     global pipeline
     pipeline = parser.get_pipeline(PIPELINE_CONFIG_FILE)
-    exp_name = pipeline.experiment.name
+
+    exp_cfg, exp_name = load_experiment_cfg(pipeline)
     metric = pipeline.collect.metric
 
-    results_dir = os.path.expandvars(pipeline.results_dir)
+    results_dir = os.path.expandvars(exp_cfg["results_dir"])
     sim_logs_path = os.path.join(results_dir, "output", "simulator_logs.yaml")
 
     export_dir = os.path.join(results_dir, "export")
@@ -232,7 +243,7 @@ def main():
     for gpu, row_pairs in per_gpu_rows.items():
         out_gpu_dir = os.path.join(export_dir, gpu)
         os.makedirs(out_gpu_dir, exist_ok=True)
-        out_path = os.path.join(out_gpu_dir, f"{metric}.csv")
+        out_path = os.path.join(out_gpu_dir, f"{exp_name}.csv")
 
         param_names = [p for (p, _) in row_pairs]
         param_name = max(set(param_names), key=param_names.count)

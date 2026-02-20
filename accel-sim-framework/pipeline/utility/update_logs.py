@@ -30,7 +30,7 @@ target = {}
 pipeline = {}
 '''Dictionary of the contents of pipeline.yaml'''
 
-experiments = {}
+experiment = {}
 
 hashes = {}
 
@@ -58,8 +58,10 @@ def parse_pipeline_config():
     
 
 def parse_experiment():
-    global experiments
-    experiments = ps.get_experiments(os.path.expandvars(pipeline.experiment.path))
+    global experiment
+    experiment = ps.get_experiment(pipeline.experiment.name, pipeline.experiment.path)
+    experiment.results_dir = Path(os.path.expandvars(experiment.results_dir))
+    experiment.logfiles = Path(os.path.expandvars(experiment.logfiles))
 
 
 def collect_instance_stats(root, param_fields, result_fields, allowed_names: list[str], benchmarks: list[str]) -> tuple[list, list, dict]:
@@ -131,9 +133,6 @@ def main():
     parse_sim_logs()
     parse_pipeline_config()
     parse_experiment()
-
-    logfiles_dest = os.path.join(os.getenv("ACCEL_SIM"), "util", "job_launching", "logfiles")
-    os.system(f'rsync -av {logfiles_dest}/ {pipeline.collect.logfiles}/ ')  # > /dev/null 2>&1
     
     global logs, target
     if logs is None:
@@ -148,16 +147,15 @@ def main():
         logs.log_name = target
 
     instances      = pipeline.instances
-    benchmarks     = pipeline.benchmarks
-    experiment     = pipeline.experiment.name
-    param_fields    = experiments[experiment].params
-    result_fields   = experiments[experiment].results
-    root           = f"{os.path.expandvars(pipeline.results_dir)}/output/{experiment}"
+    benchmarks     = experiment.benchmarks
+    param_fields    = experiment.params
+    result_fields   = experiment.results
+    root           = f"{os.path.expandvars(experiment.results_dir)}/output/{experiment.name}"
     configs, benchmarks, results = collect_instance_stats(root, param_fields, result_fields, instances, benchmarks)
 
     target.accelsim_commit = hashes['accelsim_commit']
     target.gpgpusim_commit = hashes['gpgpusim_commit']
-    target.experiment      = experiment
+    target.experiment      = experiment.name
     target.date            = datetime.strptime(args.target, "%Y_%m_%d__%H_%M").strftime("%Y-%m-%d %H:%M")
     target.configs          = configs
     target.benchmarks      = benchmarks

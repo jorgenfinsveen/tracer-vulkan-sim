@@ -42,7 +42,6 @@ def get_pipeline(path: Path="") -> model.pipeline.Pipeline:     # type: ignore
         pl = yaml.safe_load(f) or {}
         return model.pipeline.get(pl, path)
     
-
 def get_experiments(path: Path="") -> model.experiment.Experiments: # type: ignore
     if path == "": 
         path = get_pipeline().experiment.path
@@ -52,6 +51,17 @@ def get_experiments(path: Path="") -> model.experiment.Experiments: # type: igno
     with open(path, 'r', encoding='utf-8') as f:
         exp = yaml.safe_load(f) or {}
         return model.experiment.get(exp, path)
+    
+def get_experiment(name: str, path: Path="") -> model.experiment.Experiment: # type: ignore
+    if path == "": 
+        path = get_pipeline().experiment.path
+
+    path = assert_file_exists(path)
+
+    with open(path, 'r', encoding='utf-8') as f:
+        exps = yaml.safe_load(f) or {}
+        exps = model.experiment.get(exps, path)
+        return model.experiment.get_experiment(exps, name.strip())
 
 
 def get_traces(path: Path="") -> model.traces.Traces: # type: ignore
