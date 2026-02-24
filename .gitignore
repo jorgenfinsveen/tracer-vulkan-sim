@@ -1,0 +1,4 @@
+*.DS_Store*
+__pycache__/
+crisp_results/
+crisp_results

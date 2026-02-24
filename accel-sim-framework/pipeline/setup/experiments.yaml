@@ -9,7 +9,20 @@ more_streaming_multiprocessors:
   results_dir: /cluster/projects/itea_lille-idi-epic-studenter/crisp
   logfiles: /cluster/projects/itea_lille-idi-epic-studenter/crisp/logfiles
 
-
+clusters_vs_cpi:
+  params:
+    - gpgpu_n_clusters
+  results:
+    - gpu_cpi
+    - gpu_tot_cpi
+  benchmarks:
+    - crisp-shared-extended:render_passes_2k
+    - crisp-shared-extended:klt_tracker
+    - crisp-shared-extended:vpi_sample_03_harris_corners
+    - crisp-shared-extended:vpi_sample_11_fisheye
+    - crisp-shared-extended:vpi_sample_12_optflow_lk_refined
+  results_dir: /cluster/projects/itea_lille-idi-epic-studenter/crisp
+  logfiles: /cluster/projects/itea_lille-idi-epic-studenter/crisp/logfiles
 
 
 debugging:
