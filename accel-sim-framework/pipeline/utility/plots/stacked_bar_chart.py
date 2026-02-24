@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+from __future__ import annotations
 
 from pathlib import Path
 import pandas as pd
@@ -6,6 +7,13 @@ import matplotlib
 matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 import numpy as np
+import utility.parser as ps
+
+PIPELINE_ROOT = Path(__file__).resolve().parent.parent
+PIPELINE_YAML = PIPELINE_ROOT.parent / "setup" / "pipeline.yaml"
+
+pipeline = {}
+experiment = {}
 
 # Method for grouping data
 # df is the csv file as a input
@@ -37,6 +45,15 @@ def compute_avg_data(data_list):
 # The function fetches all unic benchmark based on a csv file
 # df is the csv file object pass as a parameter.
 def fetch_benchmarks(df):
+    #benchmark_list = []
+    #for col_name in df.columns[1:]:
+        #if col_name == "AVG":
+           # continue
+       # name_split = col_name.split("/")
+      #  name = name_split[0] + "/" + name_split[1]
+       # benchmark_list.append(name)
+    #return set(benchmark_list)
+
     benchmark_list = []
     for col_name in df.columns[1:]:
         if col_name == "AVG":
@@ -92,7 +109,23 @@ def compute_avg_data_list(df, len_config, benchmarks):
         avg_data_list.append(row_out)
     return avg_data_list
 
+def get_gpu_name(csv_path: str) -> str:
+    gpu_name = Path(csv_path).parent.name
+    return gpu_name
 
+def get_benchmark_name():
+    global pipeline
+    pipeline = ps.get_pipeline(PIPELINE_YAML)
+    exp_name = pipeline.experiment.name
+
+    global experiment
+    experiment = ps.get_experiment(pipeline.experiment.name)
+    benchmark = experiment.benchmarks[0]
+
+    if ":" in benchmark:
+        benchmark_name = benchmark.split(":")[1].strip()
+        return benchmark_name
+    return benchmark.strip()
 
 
 def staked_bar_chart(csv_path: str) -> None:
@@ -100,28 +133,39 @@ def staked_bar_chart(csv_path: str) -> None:
     df = pd.read_csv(csv_path)
 
     benchmarks = sorted(fetch_benchmarks(df))
-    configs = get_config_metric(df)
+    configs = sorted(get_config_metric(df))
     len_benchmarks = len(benchmarks)
     len_config = len(configs)
 
     x_benchmarks, x_configs = gorup_benchmakr_with_configs(benchmarks, configs)
-    x_labels = [f"{b}\n{c}" for b, c in zip(x_benchmarks, x_configs)]
+    #x_labels = [f"{b}\n{c}" for b, c in zip(x_benchmarks, x_configs)]
+    x_labels = configs
+
     x_pos = np.arange(len(x_labels))
 
     avg_data_list = compute_avg_data_list(df, len_config, benchmarks)
     y_render, y_compute = group_y_data(len_config, len_benchmarks, avg_data_list)
 
+    gpu_name = get_gpu_name(csv_path)
+    benchmark_name = get_benchmark_name()
+
     plt.bar(x_pos, y_render, label="render")
     plt.bar(x_pos, y_compute, bottom=y_render, label="compute")
-    plt.xticks(x_pos, x_labels, rotation=90)
-    plt.legend(title=get_config_metric_name(df))
+    plt.xticks(x_pos, x_labels)
+    plt.legend()
+    plt.title(f"Average render and compute time for {gpu_name}\n {benchmark_name}")
     plt.tight_layout()
     plt.grid(True)
+    plt.savefig(csv_path.with_suffix("").parent / f"{csv_path.stem}_stacked_bar_chart.png", dpi=300, bbox_inches="tight")
+    #plt.savefig("test_plot.png")
     plt.savefig("test_plot.png")
     plt.close()
 
 def main():
-    #staked_bar_chart("/cluster/home/olekd/projects/crisp_framework/accel-sim-framework/pipeline/results/export/RTX3070/more_streaming_multiprocessors.csv")
+    csv_dir= "/cluster/home/olekd/projects/crisp_framework/accel-sim-framework/pipeline/results/export/RTX3070/more_streaming_multiprocessors.csv"
+    print("Result dir: ", get_result_dir(csv_dir))
+    #staked_bar_chart(csv_dir)
+
     
 
 
