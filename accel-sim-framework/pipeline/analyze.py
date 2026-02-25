@@ -16,7 +16,7 @@ import utility.parser as ps
 
 #Importing functions for plotting
 from utility.plots.bar_chart import bar_chart
-from utility.plots.stacked_bar_chart import staked_bar_chart
+from utility.plots.stacked_bar_chart import stacked_bar_chart
 
 PIPELINE_ROOT = Path(__file__).resolve().parent
 PIPELINE_YAML = os.path.join(PIPELINE_ROOT, "setup", "pipeline.yaml")
@@ -86,10 +86,10 @@ def run_stacked_bar_charts_for_csvs(csv_paths: list[Path]):
 
     for csv_path in csv_paths:
         try:
-            staked_bar_chart(str(csv_path))
+            stacked_bar_chart(str(csv_path))
             print(f"plotted: {csv_path}")
         except TypeError:
-            staked_bar_chart(str(csv_path))
+            stacked_bar_chart(str(csv_path))
             print(f"plotted: {csv_path}")
 
 
