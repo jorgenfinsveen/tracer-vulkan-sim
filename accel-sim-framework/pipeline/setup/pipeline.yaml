@@ -1,9 +1,14 @@
-name_prefix: sim 
+name_prefix: sim
 
 
 instances:
+<<<<<<< HEAD
   - BASELINE_ORIN
   - BASELINE_RTX3070
+=======
+  # - BASELINE_ORIN
+  # - BASELINE_RTX3070
+>>>>>>> main
   - ORIN_1
   - ORIN_2
   - ORIN_3
@@ -33,7 +38,7 @@ override_names: true
 aggregate: true
 
 
-# For Slurm jobs. 
+# For Slurm jobs.
 # See more configuration-options in accel-sim-framework/util/job_launching/idun.yaml.
 job_mem: 64G # Default is 4G, but this turned out to be insufficient for the workloads in the artifact.
 
