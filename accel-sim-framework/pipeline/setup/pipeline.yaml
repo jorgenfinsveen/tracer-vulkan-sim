@@ -2,8 +2,6 @@ name_prefix: sim
 
 
 instances:
-  # - BASELINE_ORIN
-  # - BASELINE_RTX3070
   - ORIN_1
   - ORIN_2
   - ORIN_3
@@ -14,6 +12,7 @@ instances:
   - RTX3070_3
   - RTX3070_4
   - RTX3070_5
+  
 
 
 experiment:
