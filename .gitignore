@@ -1,4 +1,14 @@
+*.tmp
+*.swp
+*.env
 *.DS_Store*
+*.code-workspace
+crisp_results
+
+venv/
+.venv/
+.idea/
+.cache/
+.vscode/
 __pycache__/
 crisp_results/
-crisp_results
