@@ -40,7 +40,7 @@ endif
 
 # Detect CUDA Runtime Version 
 CUDA_VERSION_STRING:=$(shell $(CUDA_INSTALL_PATH)/bin/nvcc --version | awk '/release/ {print $$5;}' | sed 's/,//')
-CUDART_VERSION:=$(shell echo $(CUDA_VERSION_STRING) | sed 's/\./ /' | awk '{printf("%02u%02u", 10*int($$1), 10*$$2);}')
+CUDART_VERSION:=$(shell echo 11070)
 
 # Detect GCC Version 
 CC_VERSION := $(shell echo 9.4.0)

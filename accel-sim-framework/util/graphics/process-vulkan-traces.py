@@ -1,10 +1,11 @@
 #! /usr/bin/python3
 import os
 
-app = 'instancing_4k'
+app = 'materials'
 
 cwd = os.getcwd() + "/"
-file = "./{0}.traceg".format(app)
+#file = "./{0}.traceg".format(app)
+file = "/home/jorgenfinsveen/projects/Vulkan-Samples/traces.traceg"
 # file = "/scratch/tgrogers-disk01/a/pan251/gtraces/materials_4k.traceg"
 folder = cwd + "../../hw_run/traces/vulkan-has-write/{0}/NO_ARGS/traces/".format(app)
 

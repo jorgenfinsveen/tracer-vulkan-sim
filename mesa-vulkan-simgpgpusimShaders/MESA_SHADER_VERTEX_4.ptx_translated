@@ -1,0 +1,1651 @@
+.version 2.0
+.target sm_10, map_f64_to_f32
+
+// shader: MESA_SHADER_VERTEX
+// inputs: 0
+// outputs: 0
+// uniforms: 0
+// ubos: 1
+// shared: 0
+// decl_function main (0 params)
+.entry MESA_SHADER_VERTEX_func4_main () {
+	.reg .b64 %inColor;
+	rt_alloc_mem %inColor, 12, 1, VERT_ATTRIB_GENERIC3_xyz; // decl_var shader_in INTERP_MODE_NONE vec3 inColor (VERT_ATTRIB_GENERIC3_xyz, 0, 0)
+	.reg .b64 %inUV;
+	rt_alloc_mem %inUV, 8, 1, VERT_ATTRIB_GENERIC2_xy; // decl_var shader_in INTERP_MODE_NONE vec2 inUV (VERT_ATTRIB_GENERIC2_xy, 0, 0)
+	.reg .b64 %inPos;
+	rt_alloc_mem %inPos, 12, 1, VERT_ATTRIB_GENERIC0_xyz; // decl_var shader_in INTERP_MODE_NONE vec3 inPos (VERT_ATTRIB_GENERIC0_xyz, 0, 0)
+	.reg .b64 %inNormal;
+	rt_alloc_mem %inNormal, 12, 1, VERT_ATTRIB_GENERIC1_xyz; // decl_var shader_in INTERP_MODE_NONE vec3 inNormal (VERT_ATTRIB_GENERIC1_xyz, 0, 0)
+	.reg .b64 %field0;
+	rt_alloc_mem %field0, 16, 2, VARYING_SLOT_POS_xyzw; // decl_var shader_out INTERP_MODE_NONE vec4 .field0 (VARYING_SLOT_POS_xyzw, 0, 0)
+	.reg .b64 %outColor;
+	rt_alloc_mem %outColor, 4, 2, VARYING_SLOT_VAR1_x; // decl_var shader_out INTERP_MODE_NONE float outColor (VARYING_SLOT_VAR1_x, 0, 0)
+	.reg .b64 %outColor0;
+	rt_alloc_mem %outColor0, 4, 2, VARYING_SLOT_VAR1_y; // decl_var shader_out INTERP_MODE_NONE float outColor@0 (VARYING_SLOT_VAR1_y, 0, 0)
+	.reg .b64 %outColor1;
+	rt_alloc_mem %outColor1, 4, 2, VARYING_SLOT_VAR1_z; // decl_var shader_out INTERP_MODE_NONE float outColor@1 (VARYING_SLOT_VAR1_z, 0, 0)
+	.reg .b64 %outUV;
+	rt_alloc_mem %outUV, 4, 2, VARYING_SLOT_VAR2_x; // decl_var shader_out INTERP_MODE_NONE float outUV (VARYING_SLOT_VAR2_x, 0, 0)
+	.reg .b64 %outUV2;
+	rt_alloc_mem %outUV2, 4, 2, VARYING_SLOT_VAR2_y; // decl_var shader_out INTERP_MODE_NONE float outUV@2 (VARYING_SLOT_VAR2_y, 0, 0)
+	.reg .b64 %outNormal;
+	rt_alloc_mem %outNormal, 4, 2, VARYING_SLOT_VAR0_x; // decl_var shader_out INTERP_MODE_NONE float outNormal (VARYING_SLOT_VAR0_x, 0, 0)
+	.reg .b64 %outNormal3;
+	rt_alloc_mem %outNormal3, 4, 2, VARYING_SLOT_VAR0_y; // decl_var shader_out INTERP_MODE_NONE float outNormal@3 (VARYING_SLOT_VAR0_y, 0, 0)
+	.reg .b64 %outNormal4;
+	rt_alloc_mem %outNormal4, 4, 2, VARYING_SLOT_VAR0_z; // decl_var shader_out INTERP_MODE_NONE float outNormal@4 (VARYING_SLOT_VAR0_z, 0, 0)
+	.reg .b64 %outLightVec;
+	rt_alloc_mem %outLightVec, 4, 2, VARYING_SLOT_VAR4_x; // decl_var shader_out INTERP_MODE_NONE float outLightVec (VARYING_SLOT_VAR4_x, 0, 0)
+	.reg .b64 %outLightVec5;
+	rt_alloc_mem %outLightVec5, 4, 2, VARYING_SLOT_VAR4_y; // decl_var shader_out INTERP_MODE_NONE float outLightVec@5 (VARYING_SLOT_VAR4_y, 0, 0)
+	.reg .b64 %outLightVec6;
+	rt_alloc_mem %outLightVec6, 4, 2, VARYING_SLOT_VAR4_z; // decl_var shader_out INTERP_MODE_NONE float outLightVec@6 (VARYING_SLOT_VAR4_z, 0, 0)
+	.reg .b64 %outViewVec;
+	rt_alloc_mem %outViewVec, 4, 2, VARYING_SLOT_VAR3_x; // decl_var shader_out INTERP_MODE_NONE float outViewVec (VARYING_SLOT_VAR3_x, 0, 0)
+	.reg .b64 %outViewVec7;
+	rt_alloc_mem %outViewVec7, 4, 2, VARYING_SLOT_VAR3_y; // decl_var shader_out INTERP_MODE_NONE float outViewVec@7 (VARYING_SLOT_VAR3_y, 0, 0)
+	.reg .b64 %outViewVec8;
+	rt_alloc_mem %outViewVec8, 4, 2, VARYING_SLOT_VAR3_z; // decl_var shader_out INTERP_MODE_NONE float outViewVec@8 (VARYING_SLOT_VAR3_z, 0, 0)
+	.reg .b64 %outNormal9;
+	rt_alloc_mem %outNormal9, 12, 2, VARYING_SLOT_VAR0_xyz; // decl_var shader_out INTERP_MODE_NONE vec3 outNormal@9 (VARYING_SLOT_VAR0_xyz, 0, 0)
+	.reg .b64 %outColor10;
+	rt_alloc_mem %outColor10, 12, 2, VARYING_SLOT_VAR1_xyz; // decl_var shader_out INTERP_MODE_NONE vec3 outColor@10 (VARYING_SLOT_VAR1_xyz, 0, 0)
+	.reg .b64 %outUV11;
+	rt_alloc_mem %outUV11, 8, 2, VARYING_SLOT_VAR2_xy; // decl_var shader_out INTERP_MODE_NONE vec2 outUV@11 (VARYING_SLOT_VAR2_xy, 0, 0)
+	.reg .b64 %outViewVec12;
+	rt_alloc_mem %outViewVec12, 12, 2, VARYING_SLOT_VAR3_xyz; // decl_var shader_out INTERP_MODE_NONE vec3 outViewVec@12 (VARYING_SLOT_VAR3_xyz, 0, 0)
+	.reg .b64 %outLightVec13;
+	rt_alloc_mem %outLightVec13, 12, 2, VARYING_SLOT_VAR4_xyz; // decl_var shader_out INTERP_MODE_NONE vec3 outLightVec@13 (VARYING_SLOT_VAR4_xyz, 0, 0)
+	.reg .b64 %outfield0_temp;
+	rt_alloc_mem %outfield0_temp, 16, 8, UNDEFINED; // decl_var  INTERP_MODE_NONE vec4 out@.field0-temp ((null), 0, 0)
+	.reg .b64 %outoutColor_temp;
+	rt_alloc_mem %outoutColor_temp, 4, 8, UNDEFINED; // decl_var  INTERP_MODE_NONE float out@outColor-temp ((null), 0, 0)
+	.reg .b64 %outoutColor_temp14;
+	rt_alloc_mem %outoutColor_temp14, 4, 8, UNDEFINED; // decl_var  INTERP_MODE_NONE float out@outColor-temp@14 ((null), 0, 0)
+	.reg .b64 %outoutColor_temp15;
+	rt_alloc_mem %outoutColor_temp15, 4, 8, UNDEFINED; // decl_var  INTERP_MODE_NONE float out@outColor-temp@15 ((null), 0, 0)
+	.reg .b64 %outoutUV_temp;
+	rt_alloc_mem %outoutUV_temp, 4, 8, UNDEFINED; // decl_var  INTERP_MODE_NONE float out@outUV-temp ((null), 0, 0)
+	.reg .b64 %outoutUV_temp16;
+	rt_alloc_mem %outoutUV_temp16, 4, 8, UNDEFINED; // decl_var  INTERP_MODE_NONE float out@outUV-temp@16 ((null), 0, 0)
+	.reg .b64 %outoutNormal_temp;
+	rt_alloc_mem %outoutNormal_temp, 4, 8, UNDEFINED; // decl_var  INTERP_MODE_NONE float out@outNormal-temp ((null), 0, 0)
+	.reg .b64 %outoutNormal_temp17;
+	rt_alloc_mem %outoutNormal_temp17, 4, 8, UNDEFINED; // decl_var  INTERP_MODE_NONE float out@outNormal-temp@17 ((null), 0, 0)
+	.reg .b64 %outoutNormal_temp18;
+	rt_alloc_mem %outoutNormal_temp18, 4, 8, UNDEFINED; // decl_var  INTERP_MODE_NONE float out@outNormal-temp@18 ((null), 0, 0)
+	.reg .b64 %outoutLightVec_temp;
+	rt_alloc_mem %outoutLightVec_temp, 4, 8, UNDEFINED; // decl_var  INTERP_MODE_NONE float out@outLightVec-temp ((null), 0, 0)
+	.reg .b64 %outoutLightVec_temp19;
+	rt_alloc_mem %outoutLightVec_temp19, 4, 8, UNDEFINED; // decl_var  INTERP_MODE_NONE float out@outLightVec-temp@19 ((null), 0, 0)
+	.reg .b64 %outoutLightVec_temp20;
+	rt_alloc_mem %outoutLightVec_temp20, 4, 8, UNDEFINED; // decl_var  INTERP_MODE_NONE float out@outLightVec-temp@20 ((null), 0, 0)
+	.reg .b64 %outoutViewVec_temp;
+	rt_alloc_mem %outoutViewVec_temp, 4, 8, UNDEFINED; // decl_var  INTERP_MODE_NONE float out@outViewVec-temp ((null), 0, 0)
+	.reg .b64 %outoutViewVec_temp21;
+	rt_alloc_mem %outoutViewVec_temp21, 4, 8, UNDEFINED; // decl_var  INTERP_MODE_NONE float out@outViewVec-temp@21 ((null), 0, 0)
+	.reg .b64 %outoutViewVec_temp22;
+	rt_alloc_mem %outoutViewVec_temp22, 4, 8, UNDEFINED; // decl_var  INTERP_MODE_NONE float out@outViewVec-temp@22 ((null), 0, 0)
+	.reg .b64 %outoutNormal_temp23;
+	rt_alloc_mem %outoutNormal_temp23, 12, 8, UNDEFINED; // decl_var  INTERP_MODE_NONE vec3 out@outNormal-temp@23 ((null), 0, 0)
+	.reg .b64 %outoutColor_temp24;
+	rt_alloc_mem %outoutColor_temp24, 12, 8, UNDEFINED; // decl_var  INTERP_MODE_NONE vec3 out@outColor-temp@24 ((null), 0, 0)
+	.reg .b64 %outoutUV_temp25;
+	rt_alloc_mem %outoutUV_temp25, 8, 8, UNDEFINED; // decl_var  INTERP_MODE_NONE vec2 out@outUV-temp@25 ((null), 0, 0)
+	.reg .b64 %outoutViewVec_temp26;
+	rt_alloc_mem %outoutViewVec_temp26, 12, 8, UNDEFINED; // decl_var  INTERP_MODE_NONE vec3 out@outViewVec-temp@26 ((null), 0, 0)
+	.reg .b64 %outoutLightVec_temp27;
+	rt_alloc_mem %outoutLightVec_temp27, 12, 8, UNDEFINED; // decl_var  INTERP_MODE_NONE vec3 out@outLightVec-temp@27 ((null), 0, 0)
+
+
+	.reg .u64 %temp_u64;
+	.reg .u32 %temp_u32;
+	.reg .f32 %temp_f32;
+	.reg .pred %temp_pred;
+	.reg .f32 %const1_f32;
+	mov.f32 %const1_f32, 0F3f800000;
+
+	.reg .f32 %const0_f32;
+	mov.f32 %const0_f32, 0F00000000;
+
+	.reg .u32 %const0_u32;
+	mov.u32 %const0_u32, 0;
+
+	.reg .u16 %const1_u16;
+	mov.u16 %const1_u16, 1;
+
+	// start_block block_0:
+	// preds: 
+	.reg .f32 %ssa_298;
+	mov.f32 %ssa_298, 0F000000ff; // vec1 32 ssa_298 = undefined
+	.reg .b32 %ssa_298_bits;
+	mov.f32 %ssa_298_bits, 0F000000ff;
+
+	.reg .f32 %ssa_297;
+	mov.f32 %ssa_297, 0F000000ff; // vec1 32 ssa_297 = undefined
+	.reg .b32 %ssa_297_bits;
+	mov.f32 %ssa_297_bits, 0F000000ff;
+
+	.reg .f32 %ssa_294;
+	mov.f32 %ssa_294, 0F000000ff; // vec1 32 ssa_294 = undefined
+	.reg .b32 %ssa_294_bits;
+	mov.f32 %ssa_294_bits, 0F000000ff;
+
+	.reg .f32 %ssa_293;
+	mov.f32 %ssa_293, 0F000000ff; // vec1 32 ssa_293 = undefined
+	.reg .b32 %ssa_293_bits;
+	mov.f32 %ssa_293_bits, 0F000000ff;
+
+	.reg .f32 %ssa_290;
+	mov.f32 %ssa_290, 0F000000ff; // vec1 32 ssa_290 = undefined
+	.reg .b32 %ssa_290_bits;
+	mov.f32 %ssa_290_bits, 0F000000ff;
+
+	.reg .f32 %ssa_289;
+	mov.f32 %ssa_289, 0F000000ff; // vec1 32 ssa_289 = undefined
+	.reg .b32 %ssa_289_bits;
+	mov.f32 %ssa_289_bits, 0F000000ff;
+
+	.reg .f32 %ssa_286;
+	mov.f32 %ssa_286, 0F000000ff; // vec1 32 ssa_286 = undefined
+	.reg .b32 %ssa_286_bits;
+	mov.f32 %ssa_286_bits, 0F000000ff;
+
+	.reg .f32 %ssa_285;
+	mov.f32 %ssa_285, 0F000000ff; // vec1 32 ssa_285 = undefined
+	.reg .b32 %ssa_285_bits;
+	mov.f32 %ssa_285_bits, 0F000000ff;
+
+	.reg .f32 %ssa_282;
+	mov.f32 %ssa_282, 0F000000ff; // vec1 32 ssa_282 = undefined
+	.reg .b32 %ssa_282_bits;
+	mov.f32 %ssa_282_bits, 0F000000ff;
+
+	.reg .f32 %ssa_281;
+	mov.f32 %ssa_281, 0F000000ff; // vec1 32 ssa_281 = undefined
+	.reg .b32 %ssa_281_bits;
+	mov.f32 %ssa_281_bits, 0F000000ff;
+
+	.reg .f32 %ssa_278;
+	mov.f32 %ssa_278, 0F000000ff; // vec1 32 ssa_278 = undefined
+	.reg .b32 %ssa_278_bits;
+	mov.f32 %ssa_278_bits, 0F000000ff;
+
+	.reg .f32 %ssa_277;
+	mov.f32 %ssa_277, 0F000000ff; // vec1 32 ssa_277 = undefined
+	.reg .b32 %ssa_277_bits;
+	mov.f32 %ssa_277_bits, 0F000000ff;
+
+	.reg .f32 %ssa_274;
+	mov.f32 %ssa_274, 0F000000ff; // vec1 32 ssa_274 = undefined
+	.reg .b32 %ssa_274_bits;
+	mov.f32 %ssa_274_bits, 0F000000ff;
+
+	.reg .f32 %ssa_273;
+	mov.f32 %ssa_273, 0F000000ff; // vec1 32 ssa_273 = undefined
+	.reg .b32 %ssa_273_bits;
+	mov.f32 %ssa_273_bits, 0F000000ff;
+
+	.reg .f32 %ssa_270;
+	mov.f32 %ssa_270, 0F000000ff; // vec1 32 ssa_270 = undefined
+	.reg .b32 %ssa_270_bits;
+	mov.f32 %ssa_270_bits, 0F000000ff;
+
+	.reg .f32 %ssa_269;
+	mov.f32 %ssa_269, 0F000000ff; // vec1 32 ssa_269 = undefined
+	.reg .b32 %ssa_269_bits;
+	mov.f32 %ssa_269_bits, 0F000000ff;
+
+	.reg .f32 %ssa_266;
+	mov.f32 %ssa_266, 0F000000ff; // vec1 32 ssa_266 = undefined
+	.reg .b32 %ssa_266_bits;
+	mov.f32 %ssa_266_bits, 0F000000ff;
+
+	.reg .f32 %ssa_265;
+	mov.f32 %ssa_265, 0F000000ff; // vec1 32 ssa_265 = undefined
+	.reg .b32 %ssa_265_bits;
+	mov.f32 %ssa_265_bits, 0F000000ff;
+
+	.reg .f32 %ssa_262;
+	mov.f32 %ssa_262, 0F000000ff; // vec1 32 ssa_262 = undefined
+	.reg .b32 %ssa_262_bits;
+	mov.f32 %ssa_262_bits, 0F000000ff;
+
+	.reg .f32 %ssa_259;
+	mov.f32 %ssa_259, 0F000000ff; // vec1 32 ssa_259 = undefined
+	.reg .b32 %ssa_259_bits;
+	mov.f32 %ssa_259_bits, 0F000000ff;
+
+	.reg .f32 %ssa_256;
+	mov.f32 %ssa_256, 0F000000ff; // vec1 32 ssa_256 = undefined
+	.reg .b32 %ssa_256_bits;
+	mov.f32 %ssa_256_bits, 0F000000ff;
+
+	.reg .f32 %ssa_255;
+	mov.f32 %ssa_255, 0F000000ff; // vec1 32 ssa_255 = undefined
+	.reg .b32 %ssa_255_bits;
+	mov.f32 %ssa_255_bits, 0F000000ff;
+
+	.reg .f32 %ssa_252;
+	mov.f32 %ssa_252, 0F000000ff; // vec1 32 ssa_252 = undefined
+	.reg .b32 %ssa_252_bits;
+	mov.f32 %ssa_252_bits, 0F000000ff;
+
+	.reg .f32 %ssa_251;
+	mov.f32 %ssa_251, 0F000000ff; // vec1 32 ssa_251 = undefined
+	.reg .b32 %ssa_251_bits;
+	mov.f32 %ssa_251_bits, 0F000000ff;
+
+	.reg .f32 %ssa_248;
+	mov.f32 %ssa_248, 0F000000ff; // vec1 32 ssa_248 = undefined
+	.reg .b32 %ssa_248_bits;
+	mov.f32 %ssa_248_bits, 0F000000ff;
+
+	.reg .f32 %ssa_247;
+	mov.f32 %ssa_247, 0F000000ff; // vec1 32 ssa_247 = undefined
+	.reg .b32 %ssa_247_bits;
+	mov.f32 %ssa_247_bits, 0F000000ff;
+
+	.reg .b64 %ssa_0;
+	mov.b64 %ssa_0, %inColor; // vec1 32 ssa_0 = deref_var &inColor (shader_in vec3) 
+
+	.reg .f32 %ssa_1_0;
+	.reg .f32 %ssa_1_1;
+	.reg .f32 %ssa_1_2;
+	.reg .f32 %ssa_1_3;
+	ld.global.f32 %ssa_1_0, [%ssa_0 + 0];
+	ld.global.f32 %ssa_1_1, [%ssa_0 + 4];
+	ld.global.f32 %ssa_1_2, [%ssa_0 + 8];
+// vec3 32 ssa_1 = intrinsic load_deref (%ssa_0) (0) /* access=0 */
+
+
+	.reg .b64 %ssa_2;
+	mov.b64 %ssa_2, %inUV; // vec1 32 ssa_2 = deref_var &inUV (shader_in vec2) 
+
+	.reg .f32 %ssa_3_0;
+	.reg .f32 %ssa_3_1;
+	ld.global.f32 %ssa_3_0, [%ssa_2 + 0];
+	ld.global.f32 %ssa_3_1, [%ssa_2 + 4];
+// vec2 32 ssa_3 = intrinsic load_deref (%ssa_2) (0) /* access=0 */
+
+
+	.reg .f32 %ssa_4;
+	mov.f32 %ssa_4, 0F00000000; // vec1 32 ssa_4 = load_const (0x00000000 /* 0.000000 */)
+	.reg .b32 %ssa_4_bits;
+	mov.f32 %ssa_4_bits, 0F00000000;
+
+	.reg .b64 %ssa_5;
+	load_vulkan_descriptor %ssa_5, 0, 0, 6; // vec4 32 ssa_5 = intrinsic vulkan_resource_index (%ssa_4) (0, 0, 6) /* desc_set=0 */ /* binding=0 */ /* desc_type=UBO */
+
+	.reg .b64 %ssa_6;
+	mov.b64 %ssa_6, %ssa_5; // vec4 32 ssa_6 = intrinsic load_vulkan_descriptor (%ssa_5) (6) /* desc_type=UBO */
+
+	.reg .b64 %ssa_7;
+	mov.b64 %ssa_7, %ssa_6; // vec4 32 ssa_7 = deref_cast (UBO *)ssa_6 (ubo UBO)  /* ptr_stride=0, align_mul=0, align_offset=0 */
+
+	.reg .b64 %ssa_8;
+	add.u64 %ssa_8, %ssa_7, 0; // vec4 32 ssa_8 = deref_struct &ssa_7->field0 (ubo mat4x16a0B) /* &((UBO *)ssa_6)->field0 */
+
+	.reg .b64 %ssa_9;
+	add.u64 %ssa_9, %ssa_8, 0; // vec4 32 ssa_9 = deref_array &(*ssa_8)[0] (ubo vec4) /* &((UBO *)ssa_6)->field0[0] */
+
+	.reg .f32 %ssa_10_0;
+	.reg .f32 %ssa_10_1;
+	.reg .f32 %ssa_10_2;
+	.reg .f32 %ssa_10_3;
+	ld.global.f32 %ssa_10_0, [%ssa_9 + 0];
+	ld.global.f32 %ssa_10_1, [%ssa_9 + 4];
+	ld.global.f32 %ssa_10_2, [%ssa_9 + 8];
+	ld.global.f32 %ssa_10_3, [%ssa_9 + 12];
+// vec4 32 ssa_10 = intrinsic load_deref (%ssa_9) (0) /* access=0 */
+
+
+	.reg .f32 %ssa_11;
+	mov.f32 %ssa_11, 0F00000001; // vec1 32 ssa_11 = load_const (0x00000001 /* 0.000000 */)
+	.reg .b32 %ssa_11_bits;
+	mov.f32 %ssa_11_bits, 0F00000001;
+
+	.reg .b64 %ssa_12;
+	add.u64 %ssa_12, %ssa_8, 16; // vec4 32 ssa_12 = deref_array &(*ssa_8)[1] (ubo vec4) /* &((UBO *)ssa_6)->field0[1] */
+
+	.reg .f32 %ssa_13_0;
+	.reg .f32 %ssa_13_1;
+	.reg .f32 %ssa_13_2;
+	.reg .f32 %ssa_13_3;
+	ld.global.f32 %ssa_13_0, [%ssa_12 + 0];
+	ld.global.f32 %ssa_13_1, [%ssa_12 + 4];
+	ld.global.f32 %ssa_13_2, [%ssa_12 + 8];
+	ld.global.f32 %ssa_13_3, [%ssa_12 + 12];
+// vec4 32 ssa_13 = intrinsic load_deref (%ssa_12) (0) /* access=0 */
+
+
+	.reg .f32 %ssa_14;
+	mov.f32 %ssa_14, 0F00000002; // vec1 32 ssa_14 = load_const (0x00000002 /* 0.000000 */)
+	.reg .b32 %ssa_14_bits;
+	mov.f32 %ssa_14_bits, 0F00000002;
+
+	.reg .b64 %ssa_15;
+	add.u64 %ssa_15, %ssa_8, 32; // vec4 32 ssa_15 = deref_array &(*ssa_8)[2] (ubo vec4) /* &((UBO *)ssa_6)->field0[2] */
+
+	.reg .f32 %ssa_16_0;
+	.reg .f32 %ssa_16_1;
+	.reg .f32 %ssa_16_2;
+	.reg .f32 %ssa_16_3;
+	ld.global.f32 %ssa_16_0, [%ssa_15 + 0];
+	ld.global.f32 %ssa_16_1, [%ssa_15 + 4];
+	ld.global.f32 %ssa_16_2, [%ssa_15 + 8];
+	ld.global.f32 %ssa_16_3, [%ssa_15 + 12];
+// vec4 32 ssa_16 = intrinsic load_deref (%ssa_15) (0) /* access=0 */
+
+
+	.reg .f32 %ssa_17;
+	mov.f32 %ssa_17, 0F00000003; // vec1 32 ssa_17 = load_const (0x00000003 /* 0.000000 */)
+	.reg .b32 %ssa_17_bits;
+	mov.f32 %ssa_17_bits, 0F00000003;
+
+	.reg .b64 %ssa_18;
+	add.u64 %ssa_18, %ssa_8, 48; // vec4 32 ssa_18 = deref_array &(*ssa_8)[3] (ubo vec4) /* &((UBO *)ssa_6)->field0[3] */
+
+	.reg .f32 %ssa_19_0;
+	.reg .f32 %ssa_19_1;
+	.reg .f32 %ssa_19_2;
+	.reg .f32 %ssa_19_3;
+	ld.global.f32 %ssa_19_0, [%ssa_18 + 0];
+	ld.global.f32 %ssa_19_1, [%ssa_18 + 4];
+	ld.global.f32 %ssa_19_2, [%ssa_18 + 8];
+	ld.global.f32 %ssa_19_3, [%ssa_18 + 12];
+// vec4 32 ssa_19 = intrinsic load_deref (%ssa_18) (0) /* access=0 */
+
+
+	.reg .b64 %ssa_20;
+	add.u64 %ssa_20, %ssa_7, 64; // vec4 32 ssa_20 = deref_struct &ssa_7->field1 (ubo mat4x16a0B) /* &((UBO *)ssa_6)->field1 */
+
+	.reg .b64 %ssa_21;
+	add.u64 %ssa_21, %ssa_20, 0; // vec4 32 ssa_21 = deref_array &(*ssa_20)[0] (ubo vec4) /* &((UBO *)ssa_6)->field1[0] */
+
+	.reg .f32 %ssa_22_0;
+	.reg .f32 %ssa_22_1;
+	.reg .f32 %ssa_22_2;
+	.reg .f32 %ssa_22_3;
+	ld.global.f32 %ssa_22_0, [%ssa_21 + 0];
+	ld.global.f32 %ssa_22_1, [%ssa_21 + 4];
+	ld.global.f32 %ssa_22_2, [%ssa_21 + 8];
+	ld.global.f32 %ssa_22_3, [%ssa_21 + 12];
+// vec4 32 ssa_22 = intrinsic load_deref (%ssa_21) (0) /* access=0 */
+
+
+	.reg .b64 %ssa_23;
+	add.u64 %ssa_23, %ssa_20, 16; // vec4 32 ssa_23 = deref_array &(*ssa_20)[1] (ubo vec4) /* &((UBO *)ssa_6)->field1[1] */
+
+	.reg .f32 %ssa_24_0;
+	.reg .f32 %ssa_24_1;
+	.reg .f32 %ssa_24_2;
+	.reg .f32 %ssa_24_3;
+	ld.global.f32 %ssa_24_0, [%ssa_23 + 0];
+	ld.global.f32 %ssa_24_1, [%ssa_23 + 4];
+	ld.global.f32 %ssa_24_2, [%ssa_23 + 8];
+	ld.global.f32 %ssa_24_3, [%ssa_23 + 12];
+// vec4 32 ssa_24 = intrinsic load_deref (%ssa_23) (0) /* access=0 */
+
+
+	.reg .b64 %ssa_25;
+	add.u64 %ssa_25, %ssa_20, 32; // vec4 32 ssa_25 = deref_array &(*ssa_20)[2] (ubo vec4) /* &((UBO *)ssa_6)->field1[2] */
+
+	.reg .f32 %ssa_26_0;
+	.reg .f32 %ssa_26_1;
+	.reg .f32 %ssa_26_2;
+	.reg .f32 %ssa_26_3;
+	ld.global.f32 %ssa_26_0, [%ssa_25 + 0];
+	ld.global.f32 %ssa_26_1, [%ssa_25 + 4];
+	ld.global.f32 %ssa_26_2, [%ssa_25 + 8];
+	ld.global.f32 %ssa_26_3, [%ssa_25 + 12];
+// vec4 32 ssa_26 = intrinsic load_deref (%ssa_25) (0) /* access=0 */
+
+
+	.reg .b64 %ssa_27;
+	add.u64 %ssa_27, %ssa_20, 48; // vec4 32 ssa_27 = deref_array &(*ssa_20)[3] (ubo vec4) /* &((UBO *)ssa_6)->field1[3] */
+
+	.reg .f32 %ssa_28_0;
+	.reg .f32 %ssa_28_1;
+	.reg .f32 %ssa_28_2;
+	.reg .f32 %ssa_28_3;
+	ld.global.f32 %ssa_28_0, [%ssa_27 + 0];
+	ld.global.f32 %ssa_28_1, [%ssa_27 + 4];
+	ld.global.f32 %ssa_28_2, [%ssa_27 + 8];
+	ld.global.f32 %ssa_28_3, [%ssa_27 + 12];
+// vec4 32 ssa_28 = intrinsic load_deref (%ssa_27) (0) /* access=0 */
+
+
+	.reg .f32 %ssa_29;
+	mul.f32 %ssa_29, %ssa_19_0, %ssa_22_3; // vec1 32 ssa_29 = fmul ssa_19.x, ssa_22.w
+
+	.reg .f32 %ssa_30;
+	mul.f32 %ssa_30, %ssa_19_1, %ssa_22_3; // vec1 32 ssa_30 = fmul ssa_19.y, ssa_22.w
+
+	.reg .f32 %ssa_31;
+	mul.f32 %ssa_31, %ssa_19_2, %ssa_22_3; // vec1 32 ssa_31 = fmul ssa_19.z, ssa_22.w
+
+	.reg .f32 %ssa_32;
+	mul.f32 %ssa_32, %ssa_19_3, %ssa_22_3; // vec1 32 ssa_32 = fmul ssa_19.w, ssa_22.w
+
+	.reg .f32 %ssa_33;
+	mul.f32 %ssa_33, %ssa_16_0, %ssa_22_2; // vec1 32 ssa_33 = fmul ssa_16.x, ssa_22.z
+
+	.reg .f32 %ssa_34;
+	mul.f32 %ssa_34, %ssa_16_1, %ssa_22_2; // vec1 32 ssa_34 = fmul ssa_16.y, ssa_22.z
+
+	.reg .f32 %ssa_35;
+	mul.f32 %ssa_35, %ssa_16_2, %ssa_22_2; // vec1 32 ssa_35 = fmul ssa_16.z, ssa_22.z
+
+	.reg .f32 %ssa_36;
+	mul.f32 %ssa_36, %ssa_16_3, %ssa_22_2; // vec1 32 ssa_36 = fmul ssa_16.w, ssa_22.z
+
+	.reg .f32 %ssa_37;
+	add.f32 %ssa_37, %ssa_29, %ssa_33;	// vec1 32 ssa_37 = fadd ssa_29, ssa_33
+
+	.reg .f32 %ssa_38;
+	add.f32 %ssa_38, %ssa_30, %ssa_34;	// vec1 32 ssa_38 = fadd ssa_30, ssa_34
+
+	.reg .f32 %ssa_39;
+	add.f32 %ssa_39, %ssa_31, %ssa_35;	// vec1 32 ssa_39 = fadd ssa_31, ssa_35
+
+	.reg .f32 %ssa_40;
+	add.f32 %ssa_40, %ssa_32, %ssa_36;	// vec1 32 ssa_40 = fadd ssa_32, ssa_36
+
+	.reg .f32 %ssa_41;
+	mul.f32 %ssa_41, %ssa_13_0, %ssa_22_1; // vec1 32 ssa_41 = fmul ssa_13.x, ssa_22.y
+
+	.reg .f32 %ssa_42;
+	mul.f32 %ssa_42, %ssa_13_1, %ssa_22_1; // vec1 32 ssa_42 = fmul ssa_13.y, ssa_22.y
+
+	.reg .f32 %ssa_43;
+	mul.f32 %ssa_43, %ssa_13_2, %ssa_22_1; // vec1 32 ssa_43 = fmul ssa_13.z, ssa_22.y
+
+	.reg .f32 %ssa_44;
+	mul.f32 %ssa_44, %ssa_13_3, %ssa_22_1; // vec1 32 ssa_44 = fmul ssa_13.w, ssa_22.y
+
+	.reg .f32 %ssa_45;
+	add.f32 %ssa_45, %ssa_37, %ssa_41;	// vec1 32 ssa_45 = fadd ssa_37, ssa_41
+
+	.reg .f32 %ssa_46;
+	add.f32 %ssa_46, %ssa_38, %ssa_42;	// vec1 32 ssa_46 = fadd ssa_38, ssa_42
+
+	.reg .f32 %ssa_47;
+	add.f32 %ssa_47, %ssa_39, %ssa_43;	// vec1 32 ssa_47 = fadd ssa_39, ssa_43
+
+	.reg .f32 %ssa_48;
+	add.f32 %ssa_48, %ssa_40, %ssa_44;	// vec1 32 ssa_48 = fadd ssa_40, ssa_44
+
+	.reg .f32 %ssa_49;
+	mul.f32 %ssa_49, %ssa_10_0, %ssa_22_0; // vec1 32 ssa_49 = fmul ssa_10.x, ssa_22.x
+
+	.reg .f32 %ssa_50;
+	mul.f32 %ssa_50, %ssa_10_1, %ssa_22_0; // vec1 32 ssa_50 = fmul ssa_10.y, ssa_22.x
+
+	.reg .f32 %ssa_51;
+	mul.f32 %ssa_51, %ssa_10_2, %ssa_22_0; // vec1 32 ssa_51 = fmul ssa_10.z, ssa_22.x
+
+	.reg .f32 %ssa_52;
+	mul.f32 %ssa_52, %ssa_10_3, %ssa_22_0; // vec1 32 ssa_52 = fmul ssa_10.w, ssa_22.x
+
+	.reg .f32 %ssa_53;
+	add.f32 %ssa_53, %ssa_45, %ssa_49;	// vec1 32 ssa_53 = fadd ssa_45, ssa_49
+
+	.reg .f32 %ssa_54;
+	add.f32 %ssa_54, %ssa_46, %ssa_50;	// vec1 32 ssa_54 = fadd ssa_46, ssa_50
+
+	.reg .f32 %ssa_55;
+	add.f32 %ssa_55, %ssa_47, %ssa_51;	// vec1 32 ssa_55 = fadd ssa_47, ssa_51
+
+	.reg .f32 %ssa_56;
+	add.f32 %ssa_56, %ssa_48, %ssa_52;	// vec1 32 ssa_56 = fadd ssa_48, ssa_52
+
+	.reg .f32 %ssa_57;
+	mul.f32 %ssa_57, %ssa_19_0, %ssa_24_3; // vec1 32 ssa_57 = fmul ssa_19.x, ssa_24.w
+
+	.reg .f32 %ssa_58;
+	mul.f32 %ssa_58, %ssa_19_1, %ssa_24_3; // vec1 32 ssa_58 = fmul ssa_19.y, ssa_24.w
+
+	.reg .f32 %ssa_59;
+	mul.f32 %ssa_59, %ssa_19_2, %ssa_24_3; // vec1 32 ssa_59 = fmul ssa_19.z, ssa_24.w
+
+	.reg .f32 %ssa_60;
+	mul.f32 %ssa_60, %ssa_19_3, %ssa_24_3; // vec1 32 ssa_60 = fmul ssa_19.w, ssa_24.w
+
+	.reg .f32 %ssa_61;
+	mul.f32 %ssa_61, %ssa_16_0, %ssa_24_2; // vec1 32 ssa_61 = fmul ssa_16.x, ssa_24.z
+
+	.reg .f32 %ssa_62;
+	mul.f32 %ssa_62, %ssa_16_1, %ssa_24_2; // vec1 32 ssa_62 = fmul ssa_16.y, ssa_24.z
+
+	.reg .f32 %ssa_63;
+	mul.f32 %ssa_63, %ssa_16_2, %ssa_24_2; // vec1 32 ssa_63 = fmul ssa_16.z, ssa_24.z
+
+	.reg .f32 %ssa_64;
+	mul.f32 %ssa_64, %ssa_16_3, %ssa_24_2; // vec1 32 ssa_64 = fmul ssa_16.w, ssa_24.z
+
+	.reg .f32 %ssa_65;
+	add.f32 %ssa_65, %ssa_57, %ssa_61;	// vec1 32 ssa_65 = fadd ssa_57, ssa_61
+
+	.reg .f32 %ssa_66;
+	add.f32 %ssa_66, %ssa_58, %ssa_62;	// vec1 32 ssa_66 = fadd ssa_58, ssa_62
+
+	.reg .f32 %ssa_67;
+	add.f32 %ssa_67, %ssa_59, %ssa_63;	// vec1 32 ssa_67 = fadd ssa_59, ssa_63
+
+	.reg .f32 %ssa_68;
+	add.f32 %ssa_68, %ssa_60, %ssa_64;	// vec1 32 ssa_68 = fadd ssa_60, ssa_64
+
+	.reg .f32 %ssa_69;
+	mul.f32 %ssa_69, %ssa_13_0, %ssa_24_1; // vec1 32 ssa_69 = fmul ssa_13.x, ssa_24.y
+
+	.reg .f32 %ssa_70;
+	mul.f32 %ssa_70, %ssa_13_1, %ssa_24_1; // vec1 32 ssa_70 = fmul ssa_13.y, ssa_24.y
+
+	.reg .f32 %ssa_71;
+	mul.f32 %ssa_71, %ssa_13_2, %ssa_24_1; // vec1 32 ssa_71 = fmul ssa_13.z, ssa_24.y
+
+	.reg .f32 %ssa_72;
+	mul.f32 %ssa_72, %ssa_13_3, %ssa_24_1; // vec1 32 ssa_72 = fmul ssa_13.w, ssa_24.y
+
+	.reg .f32 %ssa_73;
+	add.f32 %ssa_73, %ssa_65, %ssa_69;	// vec1 32 ssa_73 = fadd ssa_65, ssa_69
+
+	.reg .f32 %ssa_74;
+	add.f32 %ssa_74, %ssa_66, %ssa_70;	// vec1 32 ssa_74 = fadd ssa_66, ssa_70
+
+	.reg .f32 %ssa_75;
+	add.f32 %ssa_75, %ssa_67, %ssa_71;	// vec1 32 ssa_75 = fadd ssa_67, ssa_71
+
+	.reg .f32 %ssa_76;
+	add.f32 %ssa_76, %ssa_68, %ssa_72;	// vec1 32 ssa_76 = fadd ssa_68, ssa_72
+
+	.reg .f32 %ssa_77;
+	mul.f32 %ssa_77, %ssa_10_0, %ssa_24_0; // vec1 32 ssa_77 = fmul ssa_10.x, ssa_24.x
+
+	.reg .f32 %ssa_78;
+	mul.f32 %ssa_78, %ssa_10_1, %ssa_24_0; // vec1 32 ssa_78 = fmul ssa_10.y, ssa_24.x
+
+	.reg .f32 %ssa_79;
+	mul.f32 %ssa_79, %ssa_10_2, %ssa_24_0; // vec1 32 ssa_79 = fmul ssa_10.z, ssa_24.x
+
+	.reg .f32 %ssa_80;
+	mul.f32 %ssa_80, %ssa_10_3, %ssa_24_0; // vec1 32 ssa_80 = fmul ssa_10.w, ssa_24.x
+
+	.reg .f32 %ssa_81;
+	add.f32 %ssa_81, %ssa_73, %ssa_77;	// vec1 32 ssa_81 = fadd ssa_73, ssa_77
+
+	.reg .f32 %ssa_82;
+	add.f32 %ssa_82, %ssa_74, %ssa_78;	// vec1 32 ssa_82 = fadd ssa_74, ssa_78
+
+	.reg .f32 %ssa_83;
+	add.f32 %ssa_83, %ssa_75, %ssa_79;	// vec1 32 ssa_83 = fadd ssa_75, ssa_79
+
+	.reg .f32 %ssa_84;
+	add.f32 %ssa_84, %ssa_76, %ssa_80;	// vec1 32 ssa_84 = fadd ssa_76, ssa_80
+
+	.reg .f32 %ssa_85;
+	mul.f32 %ssa_85, %ssa_19_0, %ssa_26_3; // vec1 32 ssa_85 = fmul ssa_19.x, ssa_26.w
+
+	.reg .f32 %ssa_86;
+	mul.f32 %ssa_86, %ssa_19_1, %ssa_26_3; // vec1 32 ssa_86 = fmul ssa_19.y, ssa_26.w
+
+	.reg .f32 %ssa_87;
+	mul.f32 %ssa_87, %ssa_19_2, %ssa_26_3; // vec1 32 ssa_87 = fmul ssa_19.z, ssa_26.w
+
+	.reg .f32 %ssa_88;
+	mul.f32 %ssa_88, %ssa_19_3, %ssa_26_3; // vec1 32 ssa_88 = fmul ssa_19.w, ssa_26.w
+
+	.reg .f32 %ssa_89;
+	mul.f32 %ssa_89, %ssa_16_0, %ssa_26_2; // vec1 32 ssa_89 = fmul ssa_16.x, ssa_26.z
+
+	.reg .f32 %ssa_90;
+	mul.f32 %ssa_90, %ssa_16_1, %ssa_26_2; // vec1 32 ssa_90 = fmul ssa_16.y, ssa_26.z
+
+	.reg .f32 %ssa_91;
+	mul.f32 %ssa_91, %ssa_16_2, %ssa_26_2; // vec1 32 ssa_91 = fmul ssa_16.z, ssa_26.z
+
+	.reg .f32 %ssa_92;
+	mul.f32 %ssa_92, %ssa_16_3, %ssa_26_2; // vec1 32 ssa_92 = fmul ssa_16.w, ssa_26.z
+
+	.reg .f32 %ssa_93;
+	add.f32 %ssa_93, %ssa_85, %ssa_89;	// vec1 32 ssa_93 = fadd ssa_85, ssa_89
+
+	.reg .f32 %ssa_94;
+	add.f32 %ssa_94, %ssa_86, %ssa_90;	// vec1 32 ssa_94 = fadd ssa_86, ssa_90
+
+	.reg .f32 %ssa_95;
+	add.f32 %ssa_95, %ssa_87, %ssa_91;	// vec1 32 ssa_95 = fadd ssa_87, ssa_91
+
+	.reg .f32 %ssa_96;
+	add.f32 %ssa_96, %ssa_88, %ssa_92;	// vec1 32 ssa_96 = fadd ssa_88, ssa_92
+
+	.reg .f32 %ssa_97;
+	mul.f32 %ssa_97, %ssa_13_0, %ssa_26_1; // vec1 32 ssa_97 = fmul ssa_13.x, ssa_26.y
+
+	.reg .f32 %ssa_98;
+	mul.f32 %ssa_98, %ssa_13_1, %ssa_26_1; // vec1 32 ssa_98 = fmul ssa_13.y, ssa_26.y
+
+	.reg .f32 %ssa_99;
+	mul.f32 %ssa_99, %ssa_13_2, %ssa_26_1; // vec1 32 ssa_99 = fmul ssa_13.z, ssa_26.y
+
+	.reg .f32 %ssa_100;
+	mul.f32 %ssa_100, %ssa_13_3, %ssa_26_1; // vec1 32 ssa_100 = fmul ssa_13.w, ssa_26.y
+
+	.reg .f32 %ssa_101;
+	add.f32 %ssa_101, %ssa_93, %ssa_97;	// vec1 32 ssa_101 = fadd ssa_93, ssa_97
+
+	.reg .f32 %ssa_102;
+	add.f32 %ssa_102, %ssa_94, %ssa_98;	// vec1 32 ssa_102 = fadd ssa_94, ssa_98
+
+	.reg .f32 %ssa_103;
+	add.f32 %ssa_103, %ssa_95, %ssa_99;	// vec1 32 ssa_103 = fadd ssa_95, ssa_99
+
+	.reg .f32 %ssa_104;
+	add.f32 %ssa_104, %ssa_96, %ssa_100;	// vec1 32 ssa_104 = fadd ssa_96, ssa_100
+
+	.reg .f32 %ssa_105;
+	mul.f32 %ssa_105, %ssa_10_0, %ssa_26_0; // vec1 32 ssa_105 = fmul ssa_10.x, ssa_26.x
+
+	.reg .f32 %ssa_106;
+	mul.f32 %ssa_106, %ssa_10_1, %ssa_26_0; // vec1 32 ssa_106 = fmul ssa_10.y, ssa_26.x
+
+	.reg .f32 %ssa_107;
+	mul.f32 %ssa_107, %ssa_10_2, %ssa_26_0; // vec1 32 ssa_107 = fmul ssa_10.z, ssa_26.x
+
+	.reg .f32 %ssa_108;
+	mul.f32 %ssa_108, %ssa_10_3, %ssa_26_0; // vec1 32 ssa_108 = fmul ssa_10.w, ssa_26.x
+
+	.reg .f32 %ssa_109;
+	add.f32 %ssa_109, %ssa_101, %ssa_105;	// vec1 32 ssa_109 = fadd ssa_101, ssa_105
+
+	.reg .f32 %ssa_110;
+	add.f32 %ssa_110, %ssa_102, %ssa_106;	// vec1 32 ssa_110 = fadd ssa_102, ssa_106
+
+	.reg .f32 %ssa_111;
+	add.f32 %ssa_111, %ssa_103, %ssa_107;	// vec1 32 ssa_111 = fadd ssa_103, ssa_107
+
+	.reg .f32 %ssa_112;
+	add.f32 %ssa_112, %ssa_104, %ssa_108;	// vec1 32 ssa_112 = fadd ssa_104, ssa_108
+
+	.reg .f32 %ssa_113;
+	mul.f32 %ssa_113, %ssa_19_0, %ssa_28_3; // vec1 32 ssa_113 = fmul ssa_19.x, ssa_28.w
+
+	.reg .f32 %ssa_114;
+	mul.f32 %ssa_114, %ssa_19_1, %ssa_28_3; // vec1 32 ssa_114 = fmul ssa_19.y, ssa_28.w
+
+	.reg .f32 %ssa_115;
+	mul.f32 %ssa_115, %ssa_19_2, %ssa_28_3; // vec1 32 ssa_115 = fmul ssa_19.z, ssa_28.w
+
+	.reg .f32 %ssa_116;
+	mul.f32 %ssa_116, %ssa_19_3, %ssa_28_3; // vec1 32 ssa_116 = fmul ssa_19.w, ssa_28.w
+
+	.reg .f32 %ssa_117;
+	mul.f32 %ssa_117, %ssa_16_0, %ssa_28_2; // vec1 32 ssa_117 = fmul ssa_16.x, ssa_28.z
+
+	.reg .f32 %ssa_118;
+	mul.f32 %ssa_118, %ssa_16_1, %ssa_28_2; // vec1 32 ssa_118 = fmul ssa_16.y, ssa_28.z
+
+	.reg .f32 %ssa_119;
+	mul.f32 %ssa_119, %ssa_16_2, %ssa_28_2; // vec1 32 ssa_119 = fmul ssa_16.z, ssa_28.z
+
+	.reg .f32 %ssa_120;
+	mul.f32 %ssa_120, %ssa_16_3, %ssa_28_2; // vec1 32 ssa_120 = fmul ssa_16.w, ssa_28.z
+
+	.reg .f32 %ssa_121;
+	add.f32 %ssa_121, %ssa_113, %ssa_117;	// vec1 32 ssa_121 = fadd ssa_113, ssa_117
+
+	.reg .f32 %ssa_122;
+	add.f32 %ssa_122, %ssa_114, %ssa_118;	// vec1 32 ssa_122 = fadd ssa_114, ssa_118
+
+	.reg .f32 %ssa_123;
+	add.f32 %ssa_123, %ssa_115, %ssa_119;	// vec1 32 ssa_123 = fadd ssa_115, ssa_119
+
+	.reg .f32 %ssa_124;
+	add.f32 %ssa_124, %ssa_116, %ssa_120;	// vec1 32 ssa_124 = fadd ssa_116, ssa_120
+
+	.reg .f32 %ssa_125;
+	mul.f32 %ssa_125, %ssa_13_0, %ssa_28_1; // vec1 32 ssa_125 = fmul ssa_13.x, ssa_28.y
+
+	.reg .f32 %ssa_126;
+	mul.f32 %ssa_126, %ssa_13_1, %ssa_28_1; // vec1 32 ssa_126 = fmul ssa_13.y, ssa_28.y
+
+	.reg .f32 %ssa_127;
+	mul.f32 %ssa_127, %ssa_13_2, %ssa_28_1; // vec1 32 ssa_127 = fmul ssa_13.z, ssa_28.y
+
+	.reg .f32 %ssa_128;
+	mul.f32 %ssa_128, %ssa_13_3, %ssa_28_1; // vec1 32 ssa_128 = fmul ssa_13.w, ssa_28.y
+
+	.reg .f32 %ssa_129;
+	add.f32 %ssa_129, %ssa_121, %ssa_125;	// vec1 32 ssa_129 = fadd ssa_121, ssa_125
+
+	.reg .f32 %ssa_130;
+	add.f32 %ssa_130, %ssa_122, %ssa_126;	// vec1 32 ssa_130 = fadd ssa_122, ssa_126
+
+	.reg .f32 %ssa_131;
+	add.f32 %ssa_131, %ssa_123, %ssa_127;	// vec1 32 ssa_131 = fadd ssa_123, ssa_127
+
+	.reg .f32 %ssa_132;
+	add.f32 %ssa_132, %ssa_124, %ssa_128;	// vec1 32 ssa_132 = fadd ssa_124, ssa_128
+
+	.reg .f32 %ssa_133;
+	mul.f32 %ssa_133, %ssa_10_0, %ssa_28_0; // vec1 32 ssa_133 = fmul ssa_10.x, ssa_28.x
+
+	.reg .f32 %ssa_134;
+	mul.f32 %ssa_134, %ssa_10_1, %ssa_28_0; // vec1 32 ssa_134 = fmul ssa_10.y, ssa_28.x
+
+	.reg .f32 %ssa_135;
+	mul.f32 %ssa_135, %ssa_10_2, %ssa_28_0; // vec1 32 ssa_135 = fmul ssa_10.z, ssa_28.x
+
+	.reg .f32 %ssa_136;
+	mul.f32 %ssa_136, %ssa_10_3, %ssa_28_0; // vec1 32 ssa_136 = fmul ssa_10.w, ssa_28.x
+
+	.reg .f32 %ssa_137;
+	add.f32 %ssa_137, %ssa_129, %ssa_133;	// vec1 32 ssa_137 = fadd ssa_129, ssa_133
+
+	.reg .f32 %ssa_138;
+	add.f32 %ssa_138, %ssa_130, %ssa_134;	// vec1 32 ssa_138 = fadd ssa_130, ssa_134
+
+	.reg .f32 %ssa_139;
+	add.f32 %ssa_139, %ssa_131, %ssa_135;	// vec1 32 ssa_139 = fadd ssa_131, ssa_135
+
+	.reg .f32 %ssa_140;
+	add.f32 %ssa_140, %ssa_132, %ssa_136;	// vec1 32 ssa_140 = fadd ssa_132, ssa_136
+
+	.reg .b64 %ssa_141;
+	mov.b64 %ssa_141, %inPos; // vec1 32 ssa_141 = deref_var &inPos (shader_in vec3) 
+
+	.reg .f32 %ssa_142_0;
+	.reg .f32 %ssa_142_1;
+	.reg .f32 %ssa_142_2;
+	.reg .f32 %ssa_142_3;
+	ld.global.f32 %ssa_142_0, [%ssa_141 + 0];
+	ld.global.f32 %ssa_142_1, [%ssa_141 + 4];
+	ld.global.f32 %ssa_142_2, [%ssa_141 + 8];
+// vec3 32 ssa_142 = intrinsic load_deref (%ssa_141) (0) /* access=0 */
+
+
+	.reg .f32 %ssa_143;
+	mul.f32 %ssa_143, %ssa_109, %ssa_142_2; // vec1 32 ssa_143 = fmul ssa_109, ssa_142.z
+
+	.reg .f32 %ssa_144;
+	mul.f32 %ssa_144, %ssa_110, %ssa_142_2; // vec1 32 ssa_144 = fmul ssa_110, ssa_142.z
+
+	.reg .f32 %ssa_145;
+	mul.f32 %ssa_145, %ssa_111, %ssa_142_2; // vec1 32 ssa_145 = fmul ssa_111, ssa_142.z
+
+	.reg .f32 %ssa_146;
+	mul.f32 %ssa_146, %ssa_112, %ssa_142_2; // vec1 32 ssa_146 = fmul ssa_112, ssa_142.z
+
+	.reg .f32 %ssa_147;
+	add.f32 %ssa_147, %ssa_137, %ssa_143;	// vec1 32 ssa_147 = fadd ssa_137, ssa_143
+
+	.reg .f32 %ssa_148;
+	add.f32 %ssa_148, %ssa_138, %ssa_144;	// vec1 32 ssa_148 = fadd ssa_138, ssa_144
+
+	.reg .f32 %ssa_149;
+	add.f32 %ssa_149, %ssa_139, %ssa_145;	// vec1 32 ssa_149 = fadd ssa_139, ssa_145
+
+	.reg .f32 %ssa_150;
+	add.f32 %ssa_150, %ssa_140, %ssa_146;	// vec1 32 ssa_150 = fadd ssa_140, ssa_146
+
+	.reg .f32 %ssa_151;
+	mul.f32 %ssa_151, %ssa_81, %ssa_142_1; // vec1 32 ssa_151 = fmul ssa_81, ssa_142.y
+
+	.reg .f32 %ssa_152;
+	mul.f32 %ssa_152, %ssa_82, %ssa_142_1; // vec1 32 ssa_152 = fmul ssa_82, ssa_142.y
+
+	.reg .f32 %ssa_153;
+	mul.f32 %ssa_153, %ssa_83, %ssa_142_1; // vec1 32 ssa_153 = fmul ssa_83, ssa_142.y
+
+	.reg .f32 %ssa_154;
+	mul.f32 %ssa_154, %ssa_84, %ssa_142_1; // vec1 32 ssa_154 = fmul ssa_84, ssa_142.y
+
+	.reg .f32 %ssa_155;
+	add.f32 %ssa_155, %ssa_147, %ssa_151;	// vec1 32 ssa_155 = fadd ssa_147, ssa_151
+
+	.reg .f32 %ssa_156;
+	add.f32 %ssa_156, %ssa_148, %ssa_152;	// vec1 32 ssa_156 = fadd ssa_148, ssa_152
+
+	.reg .f32 %ssa_157;
+	add.f32 %ssa_157, %ssa_149, %ssa_153;	// vec1 32 ssa_157 = fadd ssa_149, ssa_153
+
+	.reg .f32 %ssa_158;
+	add.f32 %ssa_158, %ssa_150, %ssa_154;	// vec1 32 ssa_158 = fadd ssa_150, ssa_154
+
+	.reg .f32 %ssa_159;
+	mul.f32 %ssa_159, %ssa_53, %ssa_142_0; // vec1 32 ssa_159 = fmul ssa_53, ssa_142.x
+
+	.reg .f32 %ssa_160;
+	mul.f32 %ssa_160, %ssa_54, %ssa_142_0; // vec1 32 ssa_160 = fmul ssa_54, ssa_142.x
+
+	.reg .f32 %ssa_161;
+	mul.f32 %ssa_161, %ssa_55, %ssa_142_0; // vec1 32 ssa_161 = fmul ssa_55, ssa_142.x
+
+	.reg .f32 %ssa_162;
+	mul.f32 %ssa_162, %ssa_56, %ssa_142_0; // vec1 32 ssa_162 = fmul ssa_56, ssa_142.x
+
+	.reg .f32 %ssa_163;
+	add.f32 %ssa_163, %ssa_155, %ssa_159;	// vec1 32 ssa_163 = fadd ssa_155, ssa_159
+
+	.reg .f32 %ssa_164;
+	add.f32 %ssa_164, %ssa_156, %ssa_160;	// vec1 32 ssa_164 = fadd ssa_156, ssa_160
+
+	.reg .f32 %ssa_165;
+	add.f32 %ssa_165, %ssa_157, %ssa_161;	// vec1 32 ssa_165 = fadd ssa_157, ssa_161
+
+	.reg .f32 %ssa_166;
+	add.f32 %ssa_166, %ssa_158, %ssa_162;	// vec1 32 ssa_166 = fadd ssa_158, ssa_162
+
+	.reg .f32 %ssa_167;
+	mul.f32 %ssa_167, %ssa_26_0, %ssa_142_2; // vec1 32 ssa_167 = fmul ssa_26.x, ssa_142.z
+
+	.reg .f32 %ssa_168;
+	mul.f32 %ssa_168, %ssa_26_1, %ssa_142_2; // vec1 32 ssa_168 = fmul ssa_26.y, ssa_142.z
+
+	.reg .f32 %ssa_169;
+	mul.f32 %ssa_169, %ssa_26_2, %ssa_142_2; // vec1 32 ssa_169 = fmul ssa_26.z, ssa_142.z
+
+	.reg .f32 %ssa_170;
+	add.f32 %ssa_170, %ssa_28_0, %ssa_167; // vec1 32 ssa_170 = fadd ssa_28.x, ssa_167
+
+	.reg .f32 %ssa_171;
+	add.f32 %ssa_171, %ssa_28_1, %ssa_168; // vec1 32 ssa_171 = fadd ssa_28.y, ssa_168
+
+	.reg .f32 %ssa_172;
+	add.f32 %ssa_172, %ssa_28_2, %ssa_169; // vec1 32 ssa_172 = fadd ssa_28.z, ssa_169
+
+	.reg .f32 %ssa_173;
+	mul.f32 %ssa_173, %ssa_24_0, %ssa_142_1; // vec1 32 ssa_173 = fmul ssa_24.x, ssa_142.y
+
+	.reg .f32 %ssa_174;
+	mul.f32 %ssa_174, %ssa_24_1, %ssa_142_1; // vec1 32 ssa_174 = fmul ssa_24.y, ssa_142.y
+
+	.reg .f32 %ssa_175;
+	mul.f32 %ssa_175, %ssa_24_2, %ssa_142_1; // vec1 32 ssa_175 = fmul ssa_24.z, ssa_142.y
+
+	.reg .f32 %ssa_176;
+	add.f32 %ssa_176, %ssa_170, %ssa_173;	// vec1 32 ssa_176 = fadd ssa_170, ssa_173
+
+	.reg .f32 %ssa_177;
+	add.f32 %ssa_177, %ssa_171, %ssa_174;	// vec1 32 ssa_177 = fadd ssa_171, ssa_174
+
+	.reg .f32 %ssa_178;
+	add.f32 %ssa_178, %ssa_172, %ssa_175;	// vec1 32 ssa_178 = fadd ssa_172, ssa_175
+
+	.reg .f32 %ssa_179;
+	mul.f32 %ssa_179, %ssa_22_0, %ssa_142_0; // vec1 32 ssa_179 = fmul ssa_22.x, ssa_142.x
+
+	.reg .f32 %ssa_180;
+	mul.f32 %ssa_180, %ssa_22_1, %ssa_142_0; // vec1 32 ssa_180 = fmul ssa_22.y, ssa_142.x
+
+	.reg .f32 %ssa_181;
+	mul.f32 %ssa_181, %ssa_22_2, %ssa_142_0; // vec1 32 ssa_181 = fmul ssa_22.z, ssa_142.x
+
+	.reg .f32 %ssa_182;
+	add.f32 %ssa_182, %ssa_176, %ssa_179;	// vec1 32 ssa_182 = fadd ssa_176, ssa_179
+
+	.reg .f32 %ssa_183;
+	add.f32 %ssa_183, %ssa_177, %ssa_180;	// vec1 32 ssa_183 = fadd ssa_177, ssa_180
+
+	.reg .f32 %ssa_184;
+	add.f32 %ssa_184, %ssa_178, %ssa_181;	// vec1 32 ssa_184 = fadd ssa_178, ssa_181
+
+	.reg .b64 %ssa_185;
+	mov.b64 %ssa_185, %inNormal; // vec1 32 ssa_185 = deref_var &inNormal (shader_in vec3) 
+
+	.reg .f32 %ssa_186_0;
+	.reg .f32 %ssa_186_1;
+	.reg .f32 %ssa_186_2;
+	.reg .f32 %ssa_186_3;
+	ld.global.f32 %ssa_186_0, [%ssa_185 + 0];
+	ld.global.f32 %ssa_186_1, [%ssa_185 + 4];
+	ld.global.f32 %ssa_186_2, [%ssa_185 + 8];
+// vec3 32 ssa_186 = intrinsic load_deref (%ssa_185) (0) /* access=0 */
+
+
+	.reg .f32 %ssa_187;
+	mul.f32 %ssa_187, %ssa_26_0, %ssa_186_2; // vec1 32 ssa_187 = fmul ssa_26.x, ssa_186.z
+
+	.reg .f32 %ssa_188;
+	mul.f32 %ssa_188, %ssa_26_1, %ssa_186_2; // vec1 32 ssa_188 = fmul ssa_26.y, ssa_186.z
+
+	.reg .f32 %ssa_189;
+	mul.f32 %ssa_189, %ssa_26_2, %ssa_186_2; // vec1 32 ssa_189 = fmul ssa_26.z, ssa_186.z
+
+	.reg .f32 %ssa_190;
+	mul.f32 %ssa_190, %ssa_24_0, %ssa_186_1; // vec1 32 ssa_190 = fmul ssa_24.x, ssa_186.y
+
+	.reg .f32 %ssa_191;
+	mul.f32 %ssa_191, %ssa_24_1, %ssa_186_1; // vec1 32 ssa_191 = fmul ssa_24.y, ssa_186.y
+
+	.reg .f32 %ssa_192;
+	mul.f32 %ssa_192, %ssa_24_2, %ssa_186_1; // vec1 32 ssa_192 = fmul ssa_24.z, ssa_186.y
+
+	.reg .f32 %ssa_193;
+	add.f32 %ssa_193, %ssa_187, %ssa_190;	// vec1 32 ssa_193 = fadd ssa_187, ssa_190
+
+	.reg .f32 %ssa_194;
+	add.f32 %ssa_194, %ssa_188, %ssa_191;	// vec1 32 ssa_194 = fadd ssa_188, ssa_191
+
+	.reg .f32 %ssa_195;
+	add.f32 %ssa_195, %ssa_189, %ssa_192;	// vec1 32 ssa_195 = fadd ssa_189, ssa_192
+
+	.reg .f32 %ssa_196;
+	mul.f32 %ssa_196, %ssa_22_0, %ssa_186_0; // vec1 32 ssa_196 = fmul ssa_22.x, ssa_186.x
+
+	.reg .f32 %ssa_197;
+	mul.f32 %ssa_197, %ssa_22_1, %ssa_186_0; // vec1 32 ssa_197 = fmul ssa_22.y, ssa_186.x
+
+	.reg .f32 %ssa_198;
+	mul.f32 %ssa_198, %ssa_22_2, %ssa_186_0; // vec1 32 ssa_198 = fmul ssa_22.z, ssa_186.x
+
+	.reg .f32 %ssa_199;
+	add.f32 %ssa_199, %ssa_193, %ssa_196;	// vec1 32 ssa_199 = fadd ssa_193, ssa_196
+
+	.reg .f32 %ssa_200;
+	add.f32 %ssa_200, %ssa_194, %ssa_197;	// vec1 32 ssa_200 = fadd ssa_194, ssa_197
+
+	.reg .f32 %ssa_201;
+	add.f32 %ssa_201, %ssa_195, %ssa_198;	// vec1 32 ssa_201 = fadd ssa_195, ssa_198
+
+	.reg .b64 %ssa_202;
+	add.u64 %ssa_202, %ssa_7, 128; // vec4 32 ssa_202 = deref_struct &ssa_7->field2 (ubo vec4) /* &((UBO *)ssa_6)->field2 */
+
+	.reg .f32 %ssa_203_0;
+	.reg .f32 %ssa_203_1;
+	.reg .f32 %ssa_203_2;
+	.reg .f32 %ssa_203_3;
+	ld.global.f32 %ssa_203_0, [%ssa_202 + 0];
+	ld.global.f32 %ssa_203_1, [%ssa_202 + 4];
+	ld.global.f32 %ssa_203_2, [%ssa_202 + 8];
+	ld.global.f32 %ssa_203_3, [%ssa_202 + 12];
+// vec4 32 ssa_203 = intrinsic load_deref (%ssa_202) (0) /* access=0 */
+
+
+	.reg .f32 %ssa_204;
+	mul.f32 %ssa_204, %ssa_26_0, %ssa_203_2; // vec1 32 ssa_204 = fmul ssa_26.x, ssa_203.z
+
+	.reg .f32 %ssa_205;
+	mul.f32 %ssa_205, %ssa_26_1, %ssa_203_2; // vec1 32 ssa_205 = fmul ssa_26.y, ssa_203.z
+
+	.reg .f32 %ssa_206;
+	mul.f32 %ssa_206, %ssa_26_2, %ssa_203_2; // vec1 32 ssa_206 = fmul ssa_26.z, ssa_203.z
+
+	.reg .f32 %ssa_207;
+	mul.f32 %ssa_207, %ssa_24_0, %ssa_203_1; // vec1 32 ssa_207 = fmul ssa_24.x, ssa_203.y
+
+	.reg .f32 %ssa_208;
+	mul.f32 %ssa_208, %ssa_24_1, %ssa_203_1; // vec1 32 ssa_208 = fmul ssa_24.y, ssa_203.y
+
+	.reg .f32 %ssa_209;
+	mul.f32 %ssa_209, %ssa_24_2, %ssa_203_1; // vec1 32 ssa_209 = fmul ssa_24.z, ssa_203.y
+
+	.reg .f32 %ssa_210;
+	add.f32 %ssa_210, %ssa_204, %ssa_207;	// vec1 32 ssa_210 = fadd ssa_204, ssa_207
+
+	.reg .f32 %ssa_211;
+	add.f32 %ssa_211, %ssa_205, %ssa_208;	// vec1 32 ssa_211 = fadd ssa_205, ssa_208
+
+	.reg .f32 %ssa_212;
+	add.f32 %ssa_212, %ssa_206, %ssa_209;	// vec1 32 ssa_212 = fadd ssa_206, ssa_209
+
+	.reg .f32 %ssa_213;
+	mul.f32 %ssa_213, %ssa_22_0, %ssa_203_0; // vec1 32 ssa_213 = fmul ssa_22.x, ssa_203.x
+
+	.reg .f32 %ssa_214;
+	mul.f32 %ssa_214, %ssa_22_1, %ssa_203_0; // vec1 32 ssa_214 = fmul ssa_22.y, ssa_203.x
+
+	.reg .f32 %ssa_215;
+	mul.f32 %ssa_215, %ssa_22_2, %ssa_203_0; // vec1 32 ssa_215 = fmul ssa_22.z, ssa_203.x
+
+	.reg .f32 %ssa_216;
+	add.f32 %ssa_216, %ssa_210, %ssa_213;	// vec1 32 ssa_216 = fadd ssa_210, ssa_213
+
+	.reg .f32 %ssa_217;
+	add.f32 %ssa_217, %ssa_211, %ssa_214;	// vec1 32 ssa_217 = fadd ssa_211, ssa_214
+
+	.reg .f32 %ssa_218;
+	add.f32 %ssa_218, %ssa_212, %ssa_215;	// vec1 32 ssa_218 = fadd ssa_212, ssa_215
+
+	.reg .f32 %ssa_219;
+	neg.f32 %ssa_219, %ssa_182;	// vec1 32 ssa_219 = fneg ssa_182
+
+	.reg .f32 %ssa_220;
+	add.f32 %ssa_220, %ssa_216, %ssa_219;	// vec1 32 ssa_220 = fadd ssa_216, ssa_219
+
+	.reg .f32 %ssa_221;
+	neg.f32 %ssa_221, %ssa_183;	// vec1 32 ssa_221 = fneg ssa_183
+
+	.reg .f32 %ssa_222;
+	add.f32 %ssa_222, %ssa_217, %ssa_221;	// vec1 32 ssa_222 = fadd ssa_217, ssa_221
+
+	.reg .f32 %ssa_223;
+	neg.f32 %ssa_223, %ssa_184;	// vec1 32 ssa_223 = fneg ssa_184
+
+	.reg .f32 %ssa_224;
+	add.f32 %ssa_224, %ssa_218, %ssa_223;	// vec1 32 ssa_224 = fadd ssa_218, ssa_223
+
+	.reg .b64 %ssa_225;
+	mov.b64 %ssa_225, %outoutColor_temp; // vec1 32 ssa_225 = deref_var &out@outColor-temp (function_temp float) 
+
+	.reg .f32 %ssa_226;
+	mov.f32 %ssa_226, %ssa_1_0; // vec1 32 ssa_226 = mov ssa_1.x
+
+	.reg .b64 %ssa_246;
+	mov.b64 %ssa_246, %outoutColor_temp24; // vec1 32 ssa_246 = deref_var &out@outColor-temp@24 (function_temp vec3) 
+
+	.reg .u32 %ssa_249_0;
+	.reg .u32 %ssa_249_1;
+	.reg .u32 %ssa_249_2;
+	.reg .u32 %ssa_249_3;
+	mov.u32 %ssa_249_0, %ssa_226;
+	mov.u32 %ssa_249_1, %ssa_247_bits;
+	mov.u32 %ssa_249_2, %ssa_248_bits; // vec3 32 ssa_249 = vec3 ssa_226, ssa_247, ssa_248
+
+	.reg .b64 %ssa_227;
+	mov.b64 %ssa_227, %outoutColor_temp14; // vec1 32 ssa_227 = deref_var &out@outColor-temp@14 (function_temp float) 
+
+	.reg .f32 %ssa_228;
+	mov.f32 %ssa_228, %ssa_1_1; // vec1 32 ssa_228 = mov ssa_1.y
+
+	.reg .b64 %ssa_250;
+	mov.b64 %ssa_250, %outoutColor_temp24; // vec1 32 ssa_250 = deref_var &out@outColor-temp@24 (function_temp vec3) 
+
+	.reg .f32 %ssa_253_0;
+	.reg .f32 %ssa_253_1;
+	.reg .f32 %ssa_253_2;
+	.reg .f32 %ssa_253_3;
+	mov.f32 %ssa_253_0, %ssa_251;
+	mov.f32 %ssa_253_1, %ssa_228;
+	mov.f32 %ssa_253_2, %ssa_252; // vec3 32 ssa_253 = vec3 ssa_251, ssa_228, ssa_252
+
+	.reg .b64 %ssa_229;
+	mov.b64 %ssa_229, %outoutColor_temp15; // vec1 32 ssa_229 = deref_var &out@outColor-temp@15 (function_temp float) 
+
+	.reg .f32 %ssa_230;
+	mov.f32 %ssa_230, %ssa_1_2; // vec1 32 ssa_230 = mov ssa_1.z
+
+	.reg .b64 %ssa_254;
+	mov.b64 %ssa_254, %outoutColor_temp24; // vec1 32 ssa_254 = deref_var &out@outColor-temp@24 (function_temp vec3) 
+
+	.reg .f32 %ssa_257_0;
+	.reg .f32 %ssa_257_1;
+	.reg .f32 %ssa_257_2;
+	.reg .f32 %ssa_257_3;
+	mov.f32 %ssa_257_0, %ssa_255;
+	mov.f32 %ssa_257_1, %ssa_256;
+	mov.f32 %ssa_257_2, %ssa_230; // vec3 32 ssa_257 = vec3 ssa_255, ssa_256, ssa_230
+
+	.reg .u32 %ssa_315;
+	mov.u32 %ssa_315, %ssa_249_0; // vec1 32 ssa_315 = mov ssa_249.x
+
+	.reg .u32 %ssa_316;
+	mov.u32 %ssa_316, %ssa_253_1; // vec1 32 ssa_316 = mov ssa_253.y
+
+	.reg .u32 %ssa_317;
+	mov.u32 %ssa_317, %ssa_257_2; // vec1 32 ssa_317 = mov ssa_257.z
+
+	.reg .u32 %ssa_318_0;
+	.reg .u32 %ssa_318_1;
+	.reg .u32 %ssa_318_2;
+	.reg .u32 %ssa_318_3;
+	mov.u32 %ssa_318_0, %ssa_315;
+	mov.u32 %ssa_318_1, %ssa_316;
+	mov.u32 %ssa_318_2, %ssa_317; // vec3 32 ssa_318 = vec3 ssa_315, ssa_316, ssa_317
+
+	st.global.u32 [%ssa_254 + 0], %ssa_318_0;
+	st.global.u32 [%ssa_254 + 4], %ssa_318_1;
+	st.global.u32 [%ssa_254 + 8], %ssa_318_2;
+// intrinsic store_deref (%ssa_254, %ssa_318) (7, 0) /* wrmask=xyz */ /* access=0 */
+
+
+	.reg .b64 %ssa_231;
+	mov.b64 %ssa_231, %outoutUV_temp; // vec1 32 ssa_231 = deref_var &out@outUV-temp (function_temp float) 
+
+	.reg .f32 %ssa_232;
+	mov.f32 %ssa_232, %ssa_3_0; // vec1 32 ssa_232 = mov ssa_3.x
+
+	.reg .b64 %ssa_258;
+	mov.b64 %ssa_258, %outoutUV_temp25; // vec1 32 ssa_258 = deref_var &out@outUV-temp@25 (function_temp vec2) 
+
+	.reg .u32 %ssa_260_0;
+	.reg .u32 %ssa_260_1;
+	mov.u32 %ssa_260_0, %ssa_232;
+	mov.u32 %ssa_260_1, %ssa_259_bits; // vec2 32 ssa_260 = vec2 ssa_232, ssa_259
+
+	.reg .b64 %ssa_233;
+	mov.b64 %ssa_233, %outoutUV_temp16; // vec1 32 ssa_233 = deref_var &out@outUV-temp@16 (function_temp float) 
+
+	.reg .f32 %ssa_234;
+	mov.f32 %ssa_234, %ssa_3_1; // vec1 32 ssa_234 = mov ssa_3.y
+
+	.reg .b64 %ssa_261;
+	mov.b64 %ssa_261, %outoutUV_temp25; // vec1 32 ssa_261 = deref_var &out@outUV-temp@25 (function_temp vec2) 
+
+	.reg .f32 %ssa_263_0;
+	.reg .f32 %ssa_263_1;
+	mov.f32 %ssa_263_0, %ssa_262;
+	mov.f32 %ssa_263_1, %ssa_234; // vec2 32 ssa_263 = vec2 ssa_262, ssa_234
+
+	.reg .u32 %ssa_312;
+	mov.u32 %ssa_312, %ssa_260_0; // vec1 32 ssa_312 = mov ssa_260.x
+
+	.reg .u32 %ssa_313;
+	mov.u32 %ssa_313, %ssa_263_1; // vec1 32 ssa_313 = mov ssa_263.y
+
+	.reg .u32 %ssa_314_0;
+	.reg .u32 %ssa_314_1;
+	mov.u32 %ssa_314_0, %ssa_312;
+	mov.u32 %ssa_314_1, %ssa_313; // vec2 32 ssa_314 = vec2 ssa_312, ssa_313
+
+	st.global.u32 [%ssa_261 + 0], %ssa_314_0;
+	st.global.u32 [%ssa_261 + 4], %ssa_314_1;
+// intrinsic store_deref (%ssa_261, %ssa_314) (3, 0) /* wrmask=xy */ /* access=0 */
+
+
+	.reg .b64 %ssa_235;
+	mov.b64 %ssa_235, %outoutNormal_temp; // vec1 32 ssa_235 = deref_var &out@outNormal-temp (function_temp float) 
+
+	.reg .b64 %ssa_264;
+	mov.b64 %ssa_264, %outoutNormal_temp23; // vec1 32 ssa_264 = deref_var &out@outNormal-temp@23 (function_temp vec3) 
+
+	.reg .f32 %ssa_267_0;
+	.reg .f32 %ssa_267_1;
+	.reg .f32 %ssa_267_2;
+	.reg .f32 %ssa_267_3;
+	mov.f32 %ssa_267_0, %ssa_199;
+	mov.f32 %ssa_267_1, %ssa_265;
+	mov.f32 %ssa_267_2, %ssa_266; // vec3 32 ssa_267 = vec3 ssa_199, ssa_265, ssa_266
+
+	.reg .b64 %ssa_236;
+	mov.b64 %ssa_236, %outoutNormal_temp17; // vec1 32 ssa_236 = deref_var &out@outNormal-temp@17 (function_temp float) 
+
+	.reg .b64 %ssa_268;
+	mov.b64 %ssa_268, %outoutNormal_temp23; // vec1 32 ssa_268 = deref_var &out@outNormal-temp@23 (function_temp vec3) 
+
+	.reg .f32 %ssa_271_0;
+	.reg .f32 %ssa_271_1;
+	.reg .f32 %ssa_271_2;
+	.reg .f32 %ssa_271_3;
+	mov.f32 %ssa_271_0, %ssa_269;
+	mov.f32 %ssa_271_1, %ssa_200;
+	mov.f32 %ssa_271_2, %ssa_270; // vec3 32 ssa_271 = vec3 ssa_269, ssa_200, ssa_270
+
+	.reg .b64 %ssa_237;
+	mov.b64 %ssa_237, %outoutNormal_temp18; // vec1 32 ssa_237 = deref_var &out@outNormal-temp@18 (function_temp float) 
+
+	.reg .b64 %ssa_272;
+	mov.b64 %ssa_272, %outoutNormal_temp23; // vec1 32 ssa_272 = deref_var &out@outNormal-temp@23 (function_temp vec3) 
+
+	.reg .f32 %ssa_275_0;
+	.reg .f32 %ssa_275_1;
+	.reg .f32 %ssa_275_2;
+	.reg .f32 %ssa_275_3;
+	mov.f32 %ssa_275_0, %ssa_273;
+	mov.f32 %ssa_275_1, %ssa_274;
+	mov.f32 %ssa_275_2, %ssa_201; // vec3 32 ssa_275 = vec3 ssa_273, ssa_274, ssa_201
+
+	.reg .u32 %ssa_308;
+	mov.u32 %ssa_308, %ssa_267_0; // vec1 32 ssa_308 = mov ssa_267.x
+
+	.reg .u32 %ssa_309;
+	mov.u32 %ssa_309, %ssa_271_1; // vec1 32 ssa_309 = mov ssa_271.y
+
+	.reg .u32 %ssa_310;
+	mov.u32 %ssa_310, %ssa_275_2; // vec1 32 ssa_310 = mov ssa_275.z
+
+	.reg .u32 %ssa_311_0;
+	.reg .u32 %ssa_311_1;
+	.reg .u32 %ssa_311_2;
+	.reg .u32 %ssa_311_3;
+	mov.u32 %ssa_311_0, %ssa_308;
+	mov.u32 %ssa_311_1, %ssa_309;
+	mov.u32 %ssa_311_2, %ssa_310; // vec3 32 ssa_311 = vec3 ssa_308, ssa_309, ssa_310
+
+	st.global.u32 [%ssa_272 + 0], %ssa_311_0;
+	st.global.u32 [%ssa_272 + 4], %ssa_311_1;
+	st.global.u32 [%ssa_272 + 8], %ssa_311_2;
+// intrinsic store_deref (%ssa_272, %ssa_311) (7, 0) /* wrmask=xyz */ /* access=0 */
+
+
+	.reg .b64 %ssa_238;
+	mov.b64 %ssa_238, %outoutLightVec_temp; // vec1 32 ssa_238 = deref_var &out@outLightVec-temp (function_temp float) 
+
+	.reg .b64 %ssa_276;
+	mov.b64 %ssa_276, %outoutLightVec_temp27; // vec1 32 ssa_276 = deref_var &out@outLightVec-temp@27 (function_temp vec3) 
+
+	.reg .f32 %ssa_279_0;
+	.reg .f32 %ssa_279_1;
+	.reg .f32 %ssa_279_2;
+	.reg .f32 %ssa_279_3;
+	mov.f32 %ssa_279_0, %ssa_220;
+	mov.f32 %ssa_279_1, %ssa_277;
+	mov.f32 %ssa_279_2, %ssa_278; // vec3 32 ssa_279 = vec3 ssa_220, ssa_277, ssa_278
+
+	.reg .b64 %ssa_239;
+	mov.b64 %ssa_239, %outoutLightVec_temp19; // vec1 32 ssa_239 = deref_var &out@outLightVec-temp@19 (function_temp float) 
+
+	.reg .b64 %ssa_280;
+	mov.b64 %ssa_280, %outoutLightVec_temp27; // vec1 32 ssa_280 = deref_var &out@outLightVec-temp@27 (function_temp vec3) 
+
+	.reg .f32 %ssa_283_0;
+	.reg .f32 %ssa_283_1;
+	.reg .f32 %ssa_283_2;
+	.reg .f32 %ssa_283_3;
+	mov.f32 %ssa_283_0, %ssa_281;
+	mov.f32 %ssa_283_1, %ssa_222;
+	mov.f32 %ssa_283_2, %ssa_282; // vec3 32 ssa_283 = vec3 ssa_281, ssa_222, ssa_282
+
+	.reg .b64 %ssa_240;
+	mov.b64 %ssa_240, %outoutLightVec_temp20; // vec1 32 ssa_240 = deref_var &out@outLightVec-temp@20 (function_temp float) 
+
+	.reg .b64 %ssa_284;
+	mov.b64 %ssa_284, %outoutLightVec_temp27; // vec1 32 ssa_284 = deref_var &out@outLightVec-temp@27 (function_temp vec3) 
+
+	.reg .f32 %ssa_287_0;
+	.reg .f32 %ssa_287_1;
+	.reg .f32 %ssa_287_2;
+	.reg .f32 %ssa_287_3;
+	mov.f32 %ssa_287_0, %ssa_285;
+	mov.f32 %ssa_287_1, %ssa_286;
+	mov.f32 %ssa_287_2, %ssa_224; // vec3 32 ssa_287 = vec3 ssa_285, ssa_286, ssa_224
+
+	.reg .u32 %ssa_304;
+	mov.u32 %ssa_304, %ssa_279_0; // vec1 32 ssa_304 = mov ssa_279.x
+
+	.reg .u32 %ssa_305;
+	mov.u32 %ssa_305, %ssa_283_1; // vec1 32 ssa_305 = mov ssa_283.y
+
+	.reg .u32 %ssa_306;
+	mov.u32 %ssa_306, %ssa_287_2; // vec1 32 ssa_306 = mov ssa_287.z
+
+	.reg .u32 %ssa_307_0;
+	.reg .u32 %ssa_307_1;
+	.reg .u32 %ssa_307_2;
+	.reg .u32 %ssa_307_3;
+	mov.u32 %ssa_307_0, %ssa_304;
+	mov.u32 %ssa_307_1, %ssa_305;
+	mov.u32 %ssa_307_2, %ssa_306; // vec3 32 ssa_307 = vec3 ssa_304, ssa_305, ssa_306
+
+	st.global.u32 [%ssa_284 + 0], %ssa_307_0;
+	st.global.u32 [%ssa_284 + 4], %ssa_307_1;
+	st.global.u32 [%ssa_284 + 8], %ssa_307_2;
+// intrinsic store_deref (%ssa_284, %ssa_307) (7, 0) /* wrmask=xyz */ /* access=0 */
+
+
+	.reg .b64 %ssa_241;
+	mov.b64 %ssa_241, %outoutViewVec_temp; // vec1 32 ssa_241 = deref_var &out@outViewVec-temp (function_temp float) 
+
+	.reg .b64 %ssa_288;
+	mov.b64 %ssa_288, %outoutViewVec_temp26; // vec1 32 ssa_288 = deref_var &out@outViewVec-temp@26 (function_temp vec3) 
+
+	.reg .f32 %ssa_291_0;
+	.reg .f32 %ssa_291_1;
+	.reg .f32 %ssa_291_2;
+	.reg .f32 %ssa_291_3;
+	mov.f32 %ssa_291_0, %ssa_219;
+	mov.f32 %ssa_291_1, %ssa_289;
+	mov.f32 %ssa_291_2, %ssa_290; // vec3 32 ssa_291 = vec3 ssa_219, ssa_289, ssa_290
+
+	.reg .b64 %ssa_242;
+	mov.b64 %ssa_242, %outoutViewVec_temp21; // vec1 32 ssa_242 = deref_var &out@outViewVec-temp@21 (function_temp float) 
+
+	.reg .b64 %ssa_292;
+	mov.b64 %ssa_292, %outoutViewVec_temp26; // vec1 32 ssa_292 = deref_var &out@outViewVec-temp@26 (function_temp vec3) 
+
+	.reg .f32 %ssa_295_0;
+	.reg .f32 %ssa_295_1;
+	.reg .f32 %ssa_295_2;
+	.reg .f32 %ssa_295_3;
+	mov.f32 %ssa_295_0, %ssa_293;
+	mov.f32 %ssa_295_1, %ssa_221;
+	mov.f32 %ssa_295_2, %ssa_294; // vec3 32 ssa_295 = vec3 ssa_293, ssa_221, ssa_294
+
+	.reg .b64 %ssa_243;
+	mov.b64 %ssa_243, %outoutViewVec_temp22; // vec1 32 ssa_243 = deref_var &out@outViewVec-temp@22 (function_temp float) 
+
+	.reg .b64 %ssa_296;
+	mov.b64 %ssa_296, %outoutViewVec_temp26; // vec1 32 ssa_296 = deref_var &out@outViewVec-temp@26 (function_temp vec3) 
+
+	.reg .f32 %ssa_299_0;
+	.reg .f32 %ssa_299_1;
+	.reg .f32 %ssa_299_2;
+	.reg .f32 %ssa_299_3;
+	mov.f32 %ssa_299_0, %ssa_297;
+	mov.f32 %ssa_299_1, %ssa_298;
+	mov.f32 %ssa_299_2, %ssa_223; // vec3 32 ssa_299 = vec3 ssa_297, ssa_298, ssa_223
+
+	.reg .u32 %ssa_300;
+	mov.u32 %ssa_300, %ssa_291_0; // vec1 32 ssa_300 = mov ssa_291.x
+
+	.reg .u32 %ssa_301;
+	mov.u32 %ssa_301, %ssa_295_1; // vec1 32 ssa_301 = mov ssa_295.y
+
+	.reg .u32 %ssa_302;
+	mov.u32 %ssa_302, %ssa_299_2; // vec1 32 ssa_302 = mov ssa_299.z
+
+	.reg .u32 %ssa_303_0;
+	.reg .u32 %ssa_303_1;
+	.reg .u32 %ssa_303_2;
+	.reg .u32 %ssa_303_3;
+	mov.u32 %ssa_303_0, %ssa_300;
+	mov.u32 %ssa_303_1, %ssa_301;
+	mov.u32 %ssa_303_2, %ssa_302; // vec3 32 ssa_303 = vec3 ssa_300, ssa_301, ssa_302
+
+	st.global.u32 [%ssa_296 + 0], %ssa_303_0;
+	st.global.u32 [%ssa_296 + 4], %ssa_303_1;
+	st.global.u32 [%ssa_296 + 8], %ssa_303_2;
+// intrinsic store_deref (%ssa_296, %ssa_303) (7, 0) /* wrmask=xyz */ /* access=0 */
+
+
+	.reg .b64 %ssa_244;
+	mov.b64 %ssa_244, %outfield0_temp; // vec1 32 ssa_244 = deref_var &out@.field0-temp (function_temp vec4) 
+
+	.reg .f32 %ssa_245_0;
+	.reg .f32 %ssa_245_1;
+	.reg .f32 %ssa_245_2;
+	.reg .f32 %ssa_245_3;
+	mov.f32 %ssa_245_0, %ssa_163;
+	mov.f32 %ssa_245_1, %ssa_164;
+	mov.f32 %ssa_245_2, %ssa_165;
+	mov.f32 %ssa_245_3, %ssa_166; // vec4 32 ssa_245 = vec4 ssa_163, ssa_164, ssa_165, ssa_166
+
+	st.global.f32 [%ssa_244 + 0], %ssa_245_0;
+	st.global.f32 [%ssa_244 + 4], %ssa_245_1;
+	st.global.f32 [%ssa_244 + 8], %ssa_245_2;
+	st.global.f32 [%ssa_244 + 12], %ssa_245_3;
+// intrinsic store_deref (%ssa_244, %ssa_245) (15, 0) /* wrmask=xyzw */ /* access=0 */
+
+
+	.reg .b64 %ssa_319;
+	mov.b64 %ssa_319, %outfield0_temp; // vec1 32 ssa_319 = deref_var &out@.field0-temp (function_temp vec4) 
+
+	.reg .b64 %ssa_320;
+	mov.b64 %ssa_320, %field0; // vec1 32 ssa_320 = deref_var &.field0 (shader_out vec4) 
+
+	.reg .f32 %ssa_359_0;
+	.reg .f32 %ssa_359_1;
+	.reg .f32 %ssa_359_2;
+	.reg .f32 %ssa_359_3;
+	ld.global.f32 %ssa_359_0, [%ssa_319 + 0];
+	ld.global.f32 %ssa_359_1, [%ssa_319 + 4];
+	ld.global.f32 %ssa_359_2, [%ssa_319 + 8];
+	ld.global.f32 %ssa_359_3, [%ssa_319 + 12];
+// vec4 32 ssa_359 = intrinsic load_deref (%ssa_319) (0) /* access=0 */
+
+
+	st.global.f32 [%ssa_320 + 0], %ssa_359_0;
+	st.global.f32 [%ssa_320 + 4], %ssa_359_1;
+	st.global.f32 [%ssa_320 + 8], %ssa_359_2;
+	st.global.f32 [%ssa_320 + 12], %ssa_359_3;
+// intrinsic store_deref (%ssa_320, %ssa_359) (15, 0) /* wrmask=xyzw */ /* access=0 */
+
+
+	.reg .b64 %ssa_321;
+	mov.b64 %ssa_321, %outoutColor_temp; // vec1 32 ssa_321 = deref_var &out@outColor-temp (function_temp float) 
+
+	.reg .b64 %ssa_322;
+	mov.b64 %ssa_322, %outColor; // vec1 32 ssa_322 = deref_var &outColor (shader_out float) 
+
+	.reg  .f32 %ssa_360;
+	ld.global.f32 %ssa_360, [%ssa_321]; // vec1 32 ssa_360 = intrinsic load_deref (%ssa_321) (0) /* access=0 */
+
+	st.global.f32 [%ssa_322], %ssa_360; // intrinsic store_deref (%ssa_322, %ssa_360) (1, 0) /* wrmask=x */ /* access=0 */
+
+	.reg .b64 %ssa_323;
+	mov.b64 %ssa_323, %outoutColor_temp14; // vec1 32 ssa_323 = deref_var &out@outColor-temp@14 (function_temp float) 
+
+	.reg .b64 %ssa_324;
+	mov.b64 %ssa_324, %outColor0; // vec1 32 ssa_324 = deref_var &outColor@0 (shader_out float) 
+
+	.reg  .f32 %ssa_361;
+	ld.global.f32 %ssa_361, [%ssa_323]; // vec1 32 ssa_361 = intrinsic load_deref (%ssa_323) (0) /* access=0 */
+
+	st.global.f32 [%ssa_324], %ssa_361; // intrinsic store_deref (%ssa_324, %ssa_361) (1, 0) /* wrmask=x */ /* access=0 */
+
+	.reg .b64 %ssa_325;
+	mov.b64 %ssa_325, %outoutColor_temp15; // vec1 32 ssa_325 = deref_var &out@outColor-temp@15 (function_temp float) 
+
+	.reg .b64 %ssa_326;
+	mov.b64 %ssa_326, %outColor1; // vec1 32 ssa_326 = deref_var &outColor@1 (shader_out float) 
+
+	.reg  .f32 %ssa_362;
+	ld.global.f32 %ssa_362, [%ssa_325]; // vec1 32 ssa_362 = intrinsic load_deref (%ssa_325) (0) /* access=0 */
+
+	st.global.f32 [%ssa_326], %ssa_362; // intrinsic store_deref (%ssa_326, %ssa_362) (1, 0) /* wrmask=x */ /* access=0 */
+
+	.reg .b64 %ssa_327;
+	mov.b64 %ssa_327, %outoutUV_temp; // vec1 32 ssa_327 = deref_var &out@outUV-temp (function_temp float) 
+
+	.reg .b64 %ssa_328;
+	mov.b64 %ssa_328, %outUV; // vec1 32 ssa_328 = deref_var &outUV (shader_out float) 
+
+	.reg  .f32 %ssa_363;
+	ld.global.f32 %ssa_363, [%ssa_327]; // vec1 32 ssa_363 = intrinsic load_deref (%ssa_327) (0) /* access=0 */
+
+	st.global.f32 [%ssa_328], %ssa_363; // intrinsic store_deref (%ssa_328, %ssa_363) (1, 0) /* wrmask=x */ /* access=0 */
+
+	.reg .b64 %ssa_329;
+	mov.b64 %ssa_329, %outoutUV_temp16; // vec1 32 ssa_329 = deref_var &out@outUV-temp@16 (function_temp float) 
+
+	.reg .b64 %ssa_330;
+	mov.b64 %ssa_330, %outUV2; // vec1 32 ssa_330 = deref_var &outUV@2 (shader_out float) 
+
+	.reg  .f32 %ssa_364;
+	ld.global.f32 %ssa_364, [%ssa_329]; // vec1 32 ssa_364 = intrinsic load_deref (%ssa_329) (0) /* access=0 */
+
+	st.global.f32 [%ssa_330], %ssa_364; // intrinsic store_deref (%ssa_330, %ssa_364) (1, 0) /* wrmask=x */ /* access=0 */
+
+	.reg .b64 %ssa_331;
+	mov.b64 %ssa_331, %outoutNormal_temp; // vec1 32 ssa_331 = deref_var &out@outNormal-temp (function_temp float) 
+
+	.reg .b64 %ssa_332;
+	mov.b64 %ssa_332, %outNormal; // vec1 32 ssa_332 = deref_var &outNormal (shader_out float) 
+
+	.reg  .f32 %ssa_365;
+	ld.global.f32 %ssa_365, [%ssa_331]; // vec1 32 ssa_365 = intrinsic load_deref (%ssa_331) (0) /* access=0 */
+
+	st.global.f32 [%ssa_332], %ssa_365; // intrinsic store_deref (%ssa_332, %ssa_365) (1, 0) /* wrmask=x */ /* access=0 */
+
+	.reg .b64 %ssa_333;
+	mov.b64 %ssa_333, %outoutNormal_temp17; // vec1 32 ssa_333 = deref_var &out@outNormal-temp@17 (function_temp float) 
+
+	.reg .b64 %ssa_334;
+	mov.b64 %ssa_334, %outNormal3; // vec1 32 ssa_334 = deref_var &outNormal@3 (shader_out float) 
+
+	.reg  .f32 %ssa_366;
+	ld.global.f32 %ssa_366, [%ssa_333]; // vec1 32 ssa_366 = intrinsic load_deref (%ssa_333) (0) /* access=0 */
+
+	st.global.f32 [%ssa_334], %ssa_366; // intrinsic store_deref (%ssa_334, %ssa_366) (1, 0) /* wrmask=x */ /* access=0 */
+
+	.reg .b64 %ssa_335;
+	mov.b64 %ssa_335, %outoutNormal_temp18; // vec1 32 ssa_335 = deref_var &out@outNormal-temp@18 (function_temp float) 
+
+	.reg .b64 %ssa_336;
+	mov.b64 %ssa_336, %outNormal4; // vec1 32 ssa_336 = deref_var &outNormal@4 (shader_out float) 
+
+	.reg  .f32 %ssa_367;
+	ld.global.f32 %ssa_367, [%ssa_335]; // vec1 32 ssa_367 = intrinsic load_deref (%ssa_335) (0) /* access=0 */
+
+	st.global.f32 [%ssa_336], %ssa_367; // intrinsic store_deref (%ssa_336, %ssa_367) (1, 0) /* wrmask=x */ /* access=0 */
+
+	.reg .b64 %ssa_337;
+	mov.b64 %ssa_337, %outoutLightVec_temp; // vec1 32 ssa_337 = deref_var &out@outLightVec-temp (function_temp float) 
+
+	.reg .b64 %ssa_338;
+	mov.b64 %ssa_338, %outLightVec; // vec1 32 ssa_338 = deref_var &outLightVec (shader_out float) 
+
+	.reg  .f32 %ssa_368;
+	ld.global.f32 %ssa_368, [%ssa_337]; // vec1 32 ssa_368 = intrinsic load_deref (%ssa_337) (0) /* access=0 */
+
+	st.global.f32 [%ssa_338], %ssa_368; // intrinsic store_deref (%ssa_338, %ssa_368) (1, 0) /* wrmask=x */ /* access=0 */
+
+	.reg .b64 %ssa_339;
+	mov.b64 %ssa_339, %outoutLightVec_temp19; // vec1 32 ssa_339 = deref_var &out@outLightVec-temp@19 (function_temp float) 
+
+	.reg .b64 %ssa_340;
+	mov.b64 %ssa_340, %outLightVec5; // vec1 32 ssa_340 = deref_var &outLightVec@5 (shader_out float) 
+
+	.reg  .f32 %ssa_369;
+	ld.global.f32 %ssa_369, [%ssa_339]; // vec1 32 ssa_369 = intrinsic load_deref (%ssa_339) (0) /* access=0 */
+
+	st.global.f32 [%ssa_340], %ssa_369; // intrinsic store_deref (%ssa_340, %ssa_369) (1, 0) /* wrmask=x */ /* access=0 */
+
+	.reg .b64 %ssa_341;
+	mov.b64 %ssa_341, %outoutLightVec_temp20; // vec1 32 ssa_341 = deref_var &out@outLightVec-temp@20 (function_temp float) 
+
+	.reg .b64 %ssa_342;
+	mov.b64 %ssa_342, %outLightVec6; // vec1 32 ssa_342 = deref_var &outLightVec@6 (shader_out float) 
+
+	.reg  .f32 %ssa_370;
+	ld.global.f32 %ssa_370, [%ssa_341]; // vec1 32 ssa_370 = intrinsic load_deref (%ssa_341) (0) /* access=0 */
+
+	st.global.f32 [%ssa_342], %ssa_370; // intrinsic store_deref (%ssa_342, %ssa_370) (1, 0) /* wrmask=x */ /* access=0 */
+
+	.reg .b64 %ssa_343;
+	mov.b64 %ssa_343, %outoutViewVec_temp; // vec1 32 ssa_343 = deref_var &out@outViewVec-temp (function_temp float) 
+
+	.reg .b64 %ssa_344;
+	mov.b64 %ssa_344, %outViewVec; // vec1 32 ssa_344 = deref_var &outViewVec (shader_out float) 
+
+	.reg  .f32 %ssa_371;
+	ld.global.f32 %ssa_371, [%ssa_343]; // vec1 32 ssa_371 = intrinsic load_deref (%ssa_343) (0) /* access=0 */
+
+	st.global.f32 [%ssa_344], %ssa_371; // intrinsic store_deref (%ssa_344, %ssa_371) (1, 0) /* wrmask=x */ /* access=0 */
+
+	.reg .b64 %ssa_345;
+	mov.b64 %ssa_345, %outoutViewVec_temp21; // vec1 32 ssa_345 = deref_var &out@outViewVec-temp@21 (function_temp float) 
+
+	.reg .b64 %ssa_346;
+	mov.b64 %ssa_346, %outViewVec7; // vec1 32 ssa_346 = deref_var &outViewVec@7 (shader_out float) 
+
+	.reg  .f32 %ssa_372;
+	ld.global.f32 %ssa_372, [%ssa_345]; // vec1 32 ssa_372 = intrinsic load_deref (%ssa_345) (0) /* access=0 */
+
+	st.global.f32 [%ssa_346], %ssa_372; // intrinsic store_deref (%ssa_346, %ssa_372) (1, 0) /* wrmask=x */ /* access=0 */
+
+	.reg .b64 %ssa_347;
+	mov.b64 %ssa_347, %outoutViewVec_temp22; // vec1 32 ssa_347 = deref_var &out@outViewVec-temp@22 (function_temp float) 
+
+	.reg .b64 %ssa_348;
+	mov.b64 %ssa_348, %outViewVec8; // vec1 32 ssa_348 = deref_var &outViewVec@8 (shader_out float) 
+
+	.reg  .f32 %ssa_373;
+	ld.global.f32 %ssa_373, [%ssa_347]; // vec1 32 ssa_373 = intrinsic load_deref (%ssa_347) (0) /* access=0 */
+
+	st.global.f32 [%ssa_348], %ssa_373; // intrinsic store_deref (%ssa_348, %ssa_373) (1, 0) /* wrmask=x */ /* access=0 */
+
+	.reg .b64 %ssa_349;
+	mov.b64 %ssa_349, %outoutNormal_temp23; // vec1 32 ssa_349 = deref_var &out@outNormal-temp@23 (function_temp vec3) 
+
+	.reg .b64 %ssa_350;
+	mov.b64 %ssa_350, %outNormal9; // vec1 32 ssa_350 = deref_var &outNormal@9 (shader_out vec3) 
+
+	.reg .f32 %ssa_374_0;
+	.reg .f32 %ssa_374_1;
+	.reg .f32 %ssa_374_2;
+	.reg .f32 %ssa_374_3;
+	ld.global.f32 %ssa_374_0, [%ssa_349 + 0];
+	ld.global.f32 %ssa_374_1, [%ssa_349 + 4];
+	ld.global.f32 %ssa_374_2, [%ssa_349 + 8];
+// vec3 32 ssa_374 = intrinsic load_deref (%ssa_349) (0) /* access=0 */
+
+
+	st.global.f32 [%ssa_350 + 0], %ssa_374_0;
+	st.global.f32 [%ssa_350 + 4], %ssa_374_1;
+	st.global.f32 [%ssa_350 + 8], %ssa_374_2;
+// intrinsic store_deref (%ssa_350, %ssa_374) (7, 0) /* wrmask=xyz */ /* access=0 */
+
+
+	.reg .b64 %ssa_351;
+	mov.b64 %ssa_351, %outoutColor_temp24; // vec1 32 ssa_351 = deref_var &out@outColor-temp@24 (function_temp vec3) 
+
+	.reg .b64 %ssa_352;
+	mov.b64 %ssa_352, %outColor10; // vec1 32 ssa_352 = deref_var &outColor@10 (shader_out vec3) 
+
+	.reg .f32 %ssa_375_0;
+	.reg .f32 %ssa_375_1;
+	.reg .f32 %ssa_375_2;
+	.reg .f32 %ssa_375_3;
+	ld.global.f32 %ssa_375_0, [%ssa_351 + 0];
+	ld.global.f32 %ssa_375_1, [%ssa_351 + 4];
+	ld.global.f32 %ssa_375_2, [%ssa_351 + 8];
+// vec3 32 ssa_375 = intrinsic load_deref (%ssa_351) (0) /* access=0 */
+
+
+	st.global.f32 [%ssa_352 + 0], %ssa_375_0;
+	st.global.f32 [%ssa_352 + 4], %ssa_375_1;
+	st.global.f32 [%ssa_352 + 8], %ssa_375_2;
+// intrinsic store_deref (%ssa_352, %ssa_375) (7, 0) /* wrmask=xyz */ /* access=0 */
+
+
+	.reg .b64 %ssa_353;
+	mov.b64 %ssa_353, %outoutUV_temp25; // vec1 32 ssa_353 = deref_var &out@outUV-temp@25 (function_temp vec2) 
+
+	.reg .b64 %ssa_354;
+	mov.b64 %ssa_354, %outUV11; // vec1 32 ssa_354 = deref_var &outUV@11 (shader_out vec2) 
+
+	.reg .f32 %ssa_376_0;
+	.reg .f32 %ssa_376_1;
+	ld.global.f32 %ssa_376_0, [%ssa_353 + 0];
+	ld.global.f32 %ssa_376_1, [%ssa_353 + 4];
+// vec2 32 ssa_376 = intrinsic load_deref (%ssa_353) (0) /* access=0 */
+
+
+	st.global.f32 [%ssa_354 + 0], %ssa_376_0;
+	st.global.f32 [%ssa_354 + 4], %ssa_376_1;
+// intrinsic store_deref (%ssa_354, %ssa_376) (3, 0) /* wrmask=xy */ /* access=0 */
+
+
+	.reg .b64 %ssa_355;
+	mov.b64 %ssa_355, %outoutViewVec_temp26; // vec1 32 ssa_355 = deref_var &out@outViewVec-temp@26 (function_temp vec3) 
+
+	.reg .b64 %ssa_356;
+	mov.b64 %ssa_356, %outViewVec12; // vec1 32 ssa_356 = deref_var &outViewVec@12 (shader_out vec3) 
+
+	.reg .f32 %ssa_377_0;
+	.reg .f32 %ssa_377_1;
+	.reg .f32 %ssa_377_2;
+	.reg .f32 %ssa_377_3;
+	ld.global.f32 %ssa_377_0, [%ssa_355 + 0];
+	ld.global.f32 %ssa_377_1, [%ssa_355 + 4];
+	ld.global.f32 %ssa_377_2, [%ssa_355 + 8];
+// vec3 32 ssa_377 = intrinsic load_deref (%ssa_355) (0) /* access=0 */
+
+
+	st.global.f32 [%ssa_356 + 0], %ssa_377_0;
+	st.global.f32 [%ssa_356 + 4], %ssa_377_1;
+	st.global.f32 [%ssa_356 + 8], %ssa_377_2;
+// intrinsic store_deref (%ssa_356, %ssa_377) (7, 0) /* wrmask=xyz */ /* access=0 */
+
+
+	.reg .b64 %ssa_357;
+	mov.b64 %ssa_357, %outoutLightVec_temp27; // vec1 32 ssa_357 = deref_var &out@outLightVec-temp@27 (function_temp vec3) 
+
+	.reg .b64 %ssa_358;
+	mov.b64 %ssa_358, %outLightVec13; // vec1 32 ssa_358 = deref_var &outLightVec@13 (shader_out vec3) 
+
+	.reg .f32 %ssa_378_0;
+	.reg .f32 %ssa_378_1;
+	.reg .f32 %ssa_378_2;
+	.reg .f32 %ssa_378_3;
+	ld.global.f32 %ssa_378_0, [%ssa_357 + 0];
+	ld.global.f32 %ssa_378_1, [%ssa_357 + 4];
+	ld.global.f32 %ssa_378_2, [%ssa_357 + 8];
+// vec3 32 ssa_378 = intrinsic load_deref (%ssa_357) (0) /* access=0 */
+
+
+	st.global.f32 [%ssa_358 + 0], %ssa_378_0;
+	st.global.f32 [%ssa_358 + 4], %ssa_378_1;
+	st.global.f32 [%ssa_358 + 8], %ssa_378_2;
+// intrinsic store_deref (%ssa_358, %ssa_378) (7, 0) /* wrmask=xyz */ /* access=0 */
+
+
+	// succs: block_1 
+	// end_block block_0:
+	// block block_1:
+	shader_exit:
+	ret ;
+}

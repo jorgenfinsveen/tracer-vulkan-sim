@@ -4,6 +4,7 @@ export CUSTOM_SETUP_ENVIRONMENT_WAS_RUN=
 
 # Build and session management
 export ROOT="$HOME/projects/crisp_framework"
+export VULKAN_SIM="$ROOT/vulkan-sim"
 export MESA_SIM="$ROOT/mesa-vulkan-sim"
 export ACCEL_SIM="$ROOT/accel-sim-framework"
 export ACCELSIM_ROOT="$ACCEL_SIM"
@@ -11,9 +12,10 @@ export VK_ICD_FILENAMES="$MESA_SIM/lib/share/vulkan/icd.d/lvp_icd.x86_64.json"
 export CC_VERSION="9.4.0"
 
 # CUDA
-export CUDA_VERSION="11.7"
-export CUDA_HOME="$HOME/usr/local/cuda/cuda-$CUDA_VERSION"
-export CUDA_INSTALL_PATH="$HOME/usr/local/cuda/cuda-$CUDA_VERSION"
+export CUDA_VERSON="11.7"
+export CUDART_VERSION="11070"
+export CUDA_HOME="$HOME/usr/local/bin/cuda"
+export CUDA_INSTALL_PATH="$HOME/usr/local/bin/cuda"
 
 # Embree
 export EMBREE_VERSION="3.13.5"
@@ -26,8 +28,8 @@ export VULKAN_VERSION="1.3.296.0"
 export VULKAN_SDK="$HOME/opt/vulkansdk/current/x86_64"
 
 # Paths
-export PATH="$VULKAN_SDK/bin:$CUDA_HOME/bin:${PATH:+$PATH}"
-export LD_LIBRARY_PATH="${LD_LIBRARY_PATH:+$LD_LIBRARY_PATH:}$EMBREE_ROOT/lib:$CUDA_HOME/lib64:$VULKAN_SDK/lib"
+export PATH="$VULKAN_SDK/bin:$CUDA_HOME/bin:$PATH"
+export LD_LIBRARY_PATH="$EMBREE_ROOT/lib:$CUDA_HOME/lib64:$VULKAN_SDK/lib:$LD_LIBRARY_PATH"
 
 
 # Sources
@@ -89,7 +91,7 @@ assert_gcc_symlink() {
 # Setup simulator
 set_sim() {
 	cd $ACCEL_SIM
-    source $HOME/pyenv
+    #source $HOME/pyenv
 	assert_gcc_symlink
 	source_all_environments
 	./run.sh
@@ -108,7 +110,7 @@ run() {
 }
 
 # Python environment
-source $HOME/pyenv
+#source $HOME/pyenv
 assert_gcc_symlink
 source_all_environments
 

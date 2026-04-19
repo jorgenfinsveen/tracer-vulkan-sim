@@ -1,0 +1,108 @@
+.version 2.0
+.target sm_10, map_f64_to_f32
+
+// shader: MESA_SHADER_FRAGMENT
+// inputs: 0
+// outputs: 0
+// uniforms: 0
+// shared: 0
+// decl_function main (0 params)
+.entry MESA_SHADER_FRAGMENT_func1_main () {
+	.reg .b64 %inColor;
+	rt_alloc_mem %inColor, 16, 1, VARYING_SLOT_VAR1_xyzw; // decl_var shader_in INTERP_MODE_NONE vec4 inColor (VARYING_SLOT_VAR1_xyzw, 0, 0)
+	.reg .b64 %fontSampler;
+	load_vulkan_descriptor %fontSampler, 0, 0; // decl_var uniform INTERP_MODE_NONE restrict sampler2D fontSampler (~0, 0, 0)
+	.reg .b64 %inUV;
+	rt_alloc_mem %inUV, 8, 1, VARYING_SLOT_VAR0_xy; // decl_var shader_in INTERP_MODE_NONE vec2 inUV (VARYING_SLOT_VAR0_xy, 0, 0)
+	.reg .b64 %outColor;
+	rt_alloc_mem %outColor, 16, 2, FRAG_RESULT_DATA0_xyzw; // decl_var shader_out INTERP_MODE_NONE vec4 outColor (FRAG_RESULT_DATA0_xyzw, 0, 0)
+
+
+	.reg .u64 %temp_u64;
+	.reg .u32 %temp_u32;
+	.reg .f32 %temp_f32;
+	.reg .pred %temp_pred;
+	.reg .f32 %const1_f32;
+	mov.f32 %const1_f32, 0F3f800000;
+
+	.reg .f32 %const0_f32;
+	mov.f32 %const0_f32, 0F00000000;
+
+	.reg .u32 %const0_u32;
+	mov.u32 %const0_u32, 0;
+
+	.reg .u16 %const1_u16;
+	mov.u16 %const1_u16, 1;
+
+	// start_block block_0:
+	// preds: 
+	.reg .b64 %ssa_0;
+	mov.b64 %ssa_0, %inColor; // vec1 32 ssa_0 = deref_var &inColor (shader_in vec4) 
+
+	.reg .f32 %ssa_1_0;
+	.reg .f32 %ssa_1_1;
+	.reg .f32 %ssa_1_2;
+	.reg .f32 %ssa_1_3;
+	ld.global.f32 %ssa_1_0, [%ssa_0 + 0];
+	ld.global.f32 %ssa_1_1, [%ssa_0 + 4];
+	ld.global.f32 %ssa_1_2, [%ssa_0 + 8];
+	ld.global.f32 %ssa_1_3, [%ssa_0 + 12];
+// vec4 32 ssa_1 = intrinsic load_deref (%ssa_0) (0) /* access=0 */
+
+
+	.reg .b64 %ssa_2;
+	mov.b64 %ssa_2, %fontSampler; // vec1 32 ssa_2 = deref_var &fontSampler (uniform sampler2D) 
+
+	.reg .b64 %ssa_3;
+	mov.b64 %ssa_3, %inUV; // vec1 32 ssa_3 = deref_var &inUV (shader_in vec2) 
+
+	.reg .f32 %ssa_4_0;
+	.reg .f32 %ssa_4_1;
+	ld.global.f32 %ssa_4_0, [%ssa_3 + 0];
+	ld.global.f32 %ssa_4_1, [%ssa_3 + 4];
+// vec2 32 ssa_4 = intrinsic load_deref (%ssa_3) (0) /* access=0 */
+
+
+	.reg .f32 %ssa_5_0;
+	.reg .f32 %ssa_5_1;
+	.reg .f32 %ssa_5_2;
+	.reg .f32 %ssa_5_3;
+	tex.2d.v4.f32.f32 %ssa_5_0, %ssa_5_1, %ssa_5_2, %ssa_5_3, %ssa_2, %ssa_2, %ssa_4_0, %ssa_4_1, 0; // vec4 32 ssa_5 = (float)tex ssa_2 (texture_deref), ssa_2 (sampler_deref), ssa_4 (coord)
+
+	.reg .f32 %ssa_6;
+	mul.f32 %ssa_6, %ssa_1_0, %ssa_5_0; // vec1 32 ssa_6 = fmul ssa_1.x, ssa_5.x
+
+	.reg .f32 %ssa_7;
+	mul.f32 %ssa_7, %ssa_1_1, %ssa_5_1; // vec1 32 ssa_7 = fmul ssa_1.y, ssa_5.y
+
+	.reg .f32 %ssa_8;
+	mul.f32 %ssa_8, %ssa_1_2, %ssa_5_2; // vec1 32 ssa_8 = fmul ssa_1.z, ssa_5.z
+
+	.reg .f32 %ssa_9;
+	mul.f32 %ssa_9, %ssa_1_3, %ssa_5_3; // vec1 32 ssa_9 = fmul ssa_1.w, ssa_5.w
+
+	.reg .b64 %ssa_10;
+	mov.b64 %ssa_10, %outColor; // vec1 32 ssa_10 = deref_var &outColor (shader_out vec4) 
+
+	.reg .f32 %ssa_11_0;
+	.reg .f32 %ssa_11_1;
+	.reg .f32 %ssa_11_2;
+	.reg .f32 %ssa_11_3;
+	mov.f32 %ssa_11_0, %ssa_6;
+	mov.f32 %ssa_11_1, %ssa_7;
+	mov.f32 %ssa_11_2, %ssa_8;
+	mov.f32 %ssa_11_3, %ssa_9; // vec4 32 ssa_11 = vec4 ssa_6, ssa_7, ssa_8, ssa_9
+
+	st.global.f32 [%ssa_10 + 0], %ssa_11_0;
+	st.global.f32 [%ssa_10 + 4], %ssa_11_1;
+	st.global.f32 [%ssa_10 + 8], %ssa_11_2;
+	st.global.f32 [%ssa_10 + 12], %ssa_11_3;
+// intrinsic store_deref (%ssa_10, %ssa_11) (15, 0) /* wrmask=xyzw */ /* access=0 */
+
+
+	// succs: block_1 
+	// end_block block_0:
+	// block block_1:
+	shader_exit:
+	ret ;
+}
