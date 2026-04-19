@@ -3,15 +3,15 @@
 install_dependencies() {
 	local DEPENDENCIES_LIST="$1/packages.txt"
 	
-	apt-get update
-	apt-get install -y $(cat $DEPENDENCIES_LIST)
+	sudo apt-get update
+	sudo apt-get install -y $(cat $DEPENDENCIES_LIST)
 
 	# Prefer GCC/G++ 9 for this stack
 	update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-9 90
 	update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-9 90
 
 	# Ensure modern Meson/Ninja (Mesa needs Meson >= 0.60)
-	apt-get purge -y meson || true
+	sudo apt-get purge -y meson || true
 	python3 -m pip install --no-cache-dir --upgrade pip
 	python3 -m pip install --no-cache-dir "meson>=1.2" "ninja>=1.11"
 	meson --version || true
@@ -20,21 +20,21 @@ install_dependencies() {
 
 install_cuda() {
    	cd /tmp
-    wget https://developer.download.nvidia.com/compute/cuda/repos/ubuntu2004/x86_64/cuda-ubuntu2004.pin
+    	wget https://developer.download.nvidia.com/compute/cuda/repos/ubuntu2004/x86_64/cuda-ubuntu2004.pin
 	mv cuda-ubuntu2004.pin /etc/apt/preferences.d/cuda-repository-pin-600
-	apt-key adv --fetch-keys https://developer.download.nvidia.com/compute/cuda/repos/ubuntu2004/x86_64/3bf863cc.pub
-	add-apt-repository "deb https://developer.download.nvidia.com/compute/cuda/repos/ubuntu2004/x86_64/ /"
-	apt-get update
-	apt-get -y install cuda
+	sudo apt-key adv --fetch-keys https://developer.download.nvidia.com/compute/cuda/repos/ubuntu2004/x86_64/3bf863cc.pub
+	sudo add-apt-repository "deb https://developer.download.nvidia.com/compute/cuda/repos/ubuntu2004/x86_64/ /"
+	sudo apt-get update
+	sudo apt-get -y install cuda
 }
 
 install_embree() {
 	cd /opt
-   	wget -O embree3.tgz https://github.com/embree/embree/releases/download/v$EMBREE_VERSION/embree-$EMBREE_VERSION.x86_64.linux.tar.gz
-    tar xzf embree3.tgz && rm -f embree3.tgz
+   	sudo wget -O embree3.tgz https://github.com/embree/embree/releases/download/v$EMBREE_VERSION/embree-$EMBREE_VERSION.x86_64.linux.tar.gz
+    sudo tar xzf embree3.tgz && rm -f embree3.tgz
 
     # Auto-source Embree env for interactive shells
-    cat >/etc/profile.d/embree.sh <<'EOS'
+    sudo cat >/etc/profile.d/embree.sh <<'EOS'
     if [ -f "$HOME/opt/embree-$EMBREE_VERSION.x86_64.linux/embree-vars.sh" ]; then
         . "$HOME/opt/embree-$EMBREE_VERSION.x86_64.linux/embree-vars.sh"
     fi
@@ -42,11 +42,11 @@ EOS
 }
 
 install_vulkan() {
-	mkdir -p /opt/vulkansdk
+	sudo mkdir -p /opt/vulkansdk
    	cd /opt/vulkansdk
-   	wget -O vulkansdk.tar.xz "https://sdk.lunarg.com/sdk/download/${VULKAN_VERSION}/linux/vulkansdk-linux-x86_64-${VULKAN_VERSION}.tar.xz?Human=true"
-   	tar -xf vulkansdk.tar.xz && rm -f vulkansdk.tar.xz
-   	ln -sfn "${VULKAN_VERSION}" current
+   	sudo wget -O vulkansdk.tar.xz "https://sdk.lunarg.com/sdk/download/${VULKAN_VERSION}/linux/vulkansdk-linux-x86_64-${VULKAN_VERSION}.tar.xz?Human=true"
+   	sudo tar -xf vulkansdk.tar.xz && rm -f vulkansdk.tar.xz
+   	sudo ln -sfn "${VULKAN_VERSION}" current
 }
 
 install_software() {

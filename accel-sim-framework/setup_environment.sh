@@ -6,9 +6,10 @@ export CUSTOM_SETUP_ENVIRONMENT_WAS_RUN=
 export ROOT="$HOME/projects/crisp_framework"
 export VULKAN_SIM="$ROOT/vulkan-sim"
 export MESA_SIM="$ROOT/mesa-vulkan-sim"
+export MESA_ROOT="$ROOT/mesa-vulkan-sim"
 export ACCEL_SIM="$ROOT/accel-sim-framework"
 export ACCELSIM_ROOT="$ACCEL_SIM"
-export VK_ICD_FILENAMES="$MESA_SIM/lib/share/vulkan/icd.d/lvp_icd.x86_64.json"
+export VK_ICD_FILENAMES="$MESA_SIM/lib/share/vulkan/icd.d/intel_icd.x86_64.json"
 export CC_VERSION="9.4.0"
 
 # CUDA
