@@ -1,4 +1,4 @@
-!/usr/bin/env bash
+#!/usr/bin/env bash
 export PROJECTS_DIR="$HOME/projects"
 export ROOT="$PROJECTS_DIR/crisp_framework"
 export VULKAN_SIM="$ROOT/vulkan-sim"
