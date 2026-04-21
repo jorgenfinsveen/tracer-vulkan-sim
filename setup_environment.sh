@@ -47,10 +47,10 @@ sample() {
 tracer_resolution() {
     local res="${1^^}"
 
-    if [[ "$res" =~ ^(480p|280)$ ]]; then
+    if [[ "$res" =~ ^(480P|480)$ ]]; then
         export TRACER_RESOLUTION_X="640"
         export TRACER_RESOLUTION_Y="480"
-    elif [[ "$res" =~ ^(720p|720)$ ]]; then
+    elif [[ "$res" =~ ^(720P|720)$ ]]; then
         export TRACER_RESOLUTION_X="720"
         export TRACER_RESOLUTION_Y="1280"
     elif [[ "$res" =~ ^(HD|1K)$ ]]; then
