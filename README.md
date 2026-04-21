@@ -122,7 +122,7 @@ git clone https://github.com/JRPan/godot.git Godot
 ### Setup
 
 ```bash
-mkdir -p "$HOME/traces/logs" "$HOME/traces/tracefiles"
+mkdir -p "$HOME/traces"/{480p,720p,HD,QHD,4K-UHD}
 
 export PROJECTS="$HOME/projects"
 export CRISP_ROOT="$PROJECS/crisp_framework"
@@ -147,6 +147,9 @@ cp "$CRISP_ROOT/config_turing_islip.icnt" "$GODOT_ROOT"
 
 ```bash 
 source "$HOME/projects/setup_environment.sh"
+
+# Set resolution
+tracer_resolution [RESOLUTION] # Alternatives: 480p|720p|HD|QHD|4K-UHD
 
 # For Vulkan-Samples
 vksamples
