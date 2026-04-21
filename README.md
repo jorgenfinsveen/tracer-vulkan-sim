@@ -93,9 +93,10 @@ build_accelsim_hard
 
 ```bash
 cd "$HOME/projects"
-git clone https://github.com/SaschaWillems/Vulkan.git Vulkan-Samples
+git clone https://github.com/KhronosGroup/Vulkan-Samples.git Vulkan-Samples
 
-# Follow instructions in README to build Vulkan-Sim from here
+# Follow instructions in installation guide to build Vulkan-Samples from here
+# Installation guide: https://github.com/KhronosGroup/Vulkan-Samples/blob/main/docs/build.adoc#linux
 ```
 
 ### Install Monado
@@ -104,7 +105,8 @@ git clone https://github.com/SaschaWillems/Vulkan.git Vulkan-Samples
 cd "$HOME/projects"
 git clone https://github.com/SaschaWillems/Vulkan.git Monado
 
-# Follow instructions in README to build Monado from here
+# Follow instructions in installation guide to build Monado from here
+# Installation guide: https://github.com/SaschaWillems/Vulkan/blob/master/BUILD.md#-linux
 ``` 
 
 ### Install Godot
@@ -113,7 +115,8 @@ git clone https://github.com/SaschaWillems/Vulkan.git Monado
 cd "$HOME/projects"
 git clone https://github.com/JRPan/godot.git Godot
 
-# Follow instructions in README to build Godot from here
+# Follow instructions in installation guide to build Godot from here
+# Installation guide: https://docs.godotengine.org/en/latest/about/list_of_features.html
 ``` 
 
 
