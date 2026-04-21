@@ -44,6 +44,40 @@ sample() {
 	VULKAN_APP="$1"	$VULKAN_SAMPLES sample "$1" >> "$VK_SAMPLES_DIR/$2.log"
 }
 
+tracer_resolution() {
+    local res="${1^^}"
+
+    if [[ "$res" =~ ^(480p|280)$ ]]; then
+        export TRACER_RESOLUTION_X="640"
+        export TRACER_RESOLUTION_Y="480"
+    elif [[ "$res" =~ ^(720p|720)$ ]]; then
+        export TRACER_RESOLUTION_X="720"
+        export TRACER_RESOLUTION_Y="1280"
+    elif [[ "$res" =~ ^(HD|1K)$ ]]; then
+        export TRACER_RESOLUTION_X="1920"
+        export TRACER_RESOLUTION_Y="1080"
+    elif [[ "$res" =~ ^(QHD|2K)$ ]]; then
+        export TRACER_RESOLUTION_X="2560"
+        export TRACER_RESOLUTION_Y="1440"
+    elif [[ "$res" =~ ^(4K-UHD|4K)$ ]]; then
+        export TRACER_RESOLUTION_X="3840"
+        export TRACER_RESOLUTION_Y="2160"
+    else       
+        echo "Invalid input."
+        echo -e "  Usage: tracer_resolution [480p|720p|HD|QHD|4K-UHD]"
+        echo -e "   - 480p: 480x640"
+        echo -e "   - 720p: 720x1280"
+        echo -e "   - HD: 1080x1900 (1K)"
+        echo -e "   - QHD: 2560x1440 (2K)"
+        echo -e "   - 4K-UHD: 3840x2160 (4K)"
+        return 1
+    fi
+
+    echo "Tracer resolution set:"
+    echo -e "  - width:  $TRACER_RESOLUTION_X"
+    echo -e "  - height: $TRACER_RESOLUTION_Y"
+}
+
 
 monado() {
 	if (( $# == 0 )); then

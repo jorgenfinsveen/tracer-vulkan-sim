@@ -12,3 +12,7 @@ venv/
 .vscode/
 __pycache__/
 crisp_results/
+mesa-vulkan-simgpgpusimShaders
+mesa-vulkan-simgpgpusimShaders/
+embree-3.13.5.x86_64.linux
+embree-3.13.5.x86_64.linux/
