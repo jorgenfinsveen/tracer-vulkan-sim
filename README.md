@@ -130,7 +130,7 @@ export VK_SAMPLES_ROOT="$PROJECTS/Vulkan-Samples"
 export MONADO_ROOT="$PROJECTS/Monado"
 export GODOT_ROOT="$PROJECTS/Godot"
 
-cp "$CRISP_ROOT/setup_environment.sh" "$PROJECTS"
+ln -s "$CRISP_ROOT/setup_environment.sh" "$PROJECTS"
 
 cp "$CRISP_ROOT/gpgpusim.config" "$VK_SAMPLES_ROOT"
 cp "$CRISP_ROOT/config_turing_islip.icnt" "$VK_SAMPLES_ROOT"
@@ -161,6 +161,9 @@ monado
 ```bash
 
 source "$HOME/projects/setup_environment.sh"
+
+# Set resolution
+tracer_resolution [RESOLUTION] # Alternatives: 480p|720p|HD|QHD|4K-UHD
 
 # For Vulkan-Samples
 vksamples [SAMPLE_NAME]
@@ -195,6 +198,8 @@ monado [SAMPLE_NAME]
 * VULKAN_SIM
 * MESA_SIM
 * MESA_ROOT
+* TRACER_RESOLUTION_X: Must exist during runtime.
+* TRACER_RESOLUTION_Y: Must exist during runtime.
 
 #### Make sure that these commands don't fail
 
