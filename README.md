@@ -132,14 +132,17 @@ export GODOT_ROOT="$PROJECTS/Godot"
 
 ln -s "$CRISP_ROOT/setup_environment.sh" "$PROJECTS"
 
-cp "$CRISP_ROOT/gpgpusim.config" "$VK_SAMPLES_ROOT"
-cp "$CRISP_ROOT/config_turing_islip.icnt" "$VK_SAMPLES_ROOT"
+ln -s "$CRISP_ROOT/gpgpusim.config" "$VK_SAMPLES_ROOT/gpgpusim.config"
+ln -s "$CRISP_ROOT/config_turing_islip.icnt" "$VK_SAMPLES_ROOT/config_turing_islip.icnt"
+ln -s "$CRISP_ROOT/setup_environment.sh" "$VK_SAMPLES_ROOT/setup_environment.sh"
 
-cp "$CRISP_ROOT/gpgpusim.config" "$MONADO_ROOT"
-cp "$CRISP_ROOT/config_turing_islip.icnt" "$MONADO_ROOT"
+ln -s "$CRISP_ROOT/gpgpusim.config" "$MONADO_ROOT/gpgpusim.config"
+ln -s "$CRISP_ROOT/config_turing_islip.icnt" "$MONADO_ROOT/config_turing_islip.icnt"
+ln -s "$CRISP_ROOT/setup_environment.sh" "$MONADO_ROOT/setup_environment.sh"
 
-cp "$CRISP_ROOT/gpgpusim.config" "$GODOT_ROOT"
-cp "$CRISP_ROOT/config_turing_islip.icnt" "$GODOT_ROOT"
+ln -s "$CRISP_ROOT/gpgpusim.config" "$GODOT_ROOT/gpgpusim.config"
+ln -s "$CRISP_ROOT/config_turing_islip.icnt" "$GODOT_ROOT/config_turing_islip.icnt"
+ln -s "$CRISP_ROOT/setup_environment.sh" "$GODOT_ROOT/setup_environment.sh"
 
 ```
 
